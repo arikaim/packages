@@ -132,6 +132,9 @@ class PackageManager implements PackageManagerInterface
     public function createPackage($name)
     {      
         $propertes = Self::loadPackageProperties($name,$this->path);
+        if (empty($propertes->get('name')) == true) {
+            $propertes->set('name',$name);
+        }
         $class = $this->packageClass;
 
         return new $class($this->path,$propertes,$this->cache,$this->packageRegistry);

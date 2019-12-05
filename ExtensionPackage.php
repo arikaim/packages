@@ -30,7 +30,12 @@ class ExtensionPackage extends Package implements PackageInterface
     const USER   = 0;
     const SYSTEM = 1;
 
-    const TYPE_NAME = ['user','system'];
+    /**
+     * Extension types
+     *
+     * @var array
+     */
+    private $typeName = ['user','system'];
 
     /**
      * Get extension package properties
@@ -40,17 +45,17 @@ class ExtensionPackage extends Package implements PackageInterface
      */
     public function getProperties($full = false)
     {
-        $this->properties['type'] = Self::getTypeId($this->properties->get('type'));
-    
-        $this->properties['class'] = $this->properties->get('class',ucfirst($this->properties['name']));        
-        $this->properties['installed'] = $this->packageRegistry->hasPackage($this->properties['name']);       
-        $this->properties['status'] = $this->packageRegistry->getPackageStatus($this->properties['name']);
+        $type = $this->properties->get('type','user');
+        $this->properties['type'] = $this->getTypeId($type);
+        $this->properties['class'] = ucfirst($this->getName());       
+        $this->properties['installed'] = $this->packageRegistry->hasPackage($this->getName());       
+        $this->properties['status'] = $this->packageRegistry->getPackageStatus($this->getName());
         $this->properties['admin_menu'] = $this->properties->get('admin-menu',null);
 
         if ($full == true) { 
-            $this->properties['routes'] = Arikaim::routes()->getRoutes(['extension_name' => $this->properties['name']]);
-            $this->properties['events'] = Arikaim::event()->getEvents(['extension_name' => $this->properties['name']]);
-            $this->properties['subscribers'] = Arikaim::event()->getSubscribers(['extension_name' => $this->properties['name']]);
+            $this->properties['routes'] = Arikaim::routes()->getRoutes(['extension_name' => $this->getName()]);
+            $this->properties['events'] = Arikaim::event()->getEvents(['extension_name' => $this->getName()]);
+            $this->properties['subscribers'] = Arikaim::event()->getSubscribers(['extension_name' => $this->getName()]);
             $this->properties['database'] = $this->getModels();
             $this->properties['console_commands'] = $this->getConsoleCommands();
             $this->properties['jobs'] = $this->getExtensionJobs();
@@ -306,12 +311,12 @@ class ExtensionPackage extends Package implements PackageInterface
     /**
      * Return extension type id
      *
-     * @param string $typeName
-     * @return integer
+     * @param string|integer $typeName
+     * @return integer|false
      */
-    public static function getTypeId($typeName)
+    public function getTypeId($typeName)
     {
-        return array_search($typeName,Self::TYPE_NAME);      
+        return (is_string($typeName) == true) ? array_search($typeName,$this->typeName) : $typeName;          
     }
 
     /**

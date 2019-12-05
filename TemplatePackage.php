@@ -13,11 +13,15 @@ use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Arikaim;
 
+use Arikaim\Core\Packages\Traits\ViewComponents;
+
 /**
  * Template package 
 */
 class TemplatePackage extends Package
 {
+    use ViewComponents;
+
     /**
      * Get package properties
      *
@@ -26,8 +30,12 @@ class TemplatePackage extends Package
      */
     public function getProperties($full = false)
     {
-        if ($full == true) {           
+        if ($full == true) {    
+            $this->viewPath = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
             $this->properties->set('routes',$this->getRoutes());
+            $this->properties['pages'] = $this->getPages();
+            $this->properties['components'] = $this->getComponents();
+            $this->properties['macros'] = $this->getMacros();
         }
 
         return $this->properties; 

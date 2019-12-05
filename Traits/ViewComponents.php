@@ -23,7 +23,7 @@ trait ViewComponents
      */
     public function getViewPath()
     {
-        return $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR;
+        return (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR : $this->viewPath;
     }
 
     /**
@@ -117,10 +117,10 @@ trait ViewComponents
     public function getComponents($path = null)
     {       
         $path = (empty($path) == true) ? $this->getComponentsPath() : $path;
-
         if (File::exists($path) == false) {
             return [];
         }
+        
         $items = [];
         $dir = new \RecursiveDirectoryIterator($path,\RecursiveDirectoryIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($dir,\RecursiveIteratorIterator::SELF_FIRST);
