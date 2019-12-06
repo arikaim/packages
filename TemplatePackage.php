@@ -12,7 +12,6 @@ namespace Arikaim\Core\Packages;
 use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Arikaim;
-
 use Arikaim\Core\Packages\Traits\ViewComponents;
 
 /**
@@ -71,12 +70,12 @@ class TemplatePackage extends Package
           
             $handlerClass = Factory::getControllerClass("Controller"); 
             $pageName = $this->getName() . ":" . $route['page'];
-            $result = Arikaim::routes()->saveTemplateRoute($route['path'],$handlerClass,'Controller',$this->getName(),$pageName);
+            $result = Arikaim::routes()->saveTemplateRoute($route['path'],$handlerClass,null,$this->getName(),$pageName);
             if ($result != false) {
                 $routesAdded++;
             }
         }
-
+        
         return ($routesAdded == $routesCount);           
     }
     

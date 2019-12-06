@@ -165,7 +165,7 @@ class ExtensionPackage extends Package implements PackageInterface
         // clear cache
         $this->cache->clear();
 
-        $details = $this->getProperties(true);
+        $details = $this->getProperties(false);
         $extensionName = $this->getName();
 
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
