@@ -268,7 +268,7 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
-     * Instaall all packages
+     * Install all packages
      *
      * @return bool
      */

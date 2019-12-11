@@ -28,10 +28,10 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @var array
      */
     private static $packageClass = [
-        PackageManager::EXTENSION_PACKAGE => CORE_NAMESPACE . "\\Packages\\ExtensionPackage",
-        PackageManager::LIBRARY_PACKAGE   => CORE_NAMESPACE . "\\Packages\\LibraryPackage",
-        PackageManager::TEMPLATE_PACKAGE  => CORE_NAMESPACE . "\\Packages\\TemplatePackage",
-        PackageManager::MODULE_PACKAGE    => CORE_NAMESPACE . "\\Packages\\ModulePackage"
+        PackageManager::EXTENSION_PACKAGE => "Arikaim\\Core\\Packages\\ExtensionPackage",
+        PackageManager::LIBRARY_PACKAGE   => "Arikaim\\Core\\Packages\\LibraryPackage",
+        PackageManager::TEMPLATE_PACKAGE  => "Arikaim\\Core\\Packages\\TemplatePackage",
+        PackageManager::MODULE_PACKAGE    => "Arikaim\\Core\\Packages\\ModulePackage"
     ];
 
     /**
