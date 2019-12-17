@@ -77,6 +77,13 @@ abstract class Repository implements RepositoryInterface
     protected $private;
 
     /**
+     * Temp directory
+     *
+     * @var string
+     */
+    protected $tempDir;
+
+    /**
      * Constructor
      * 
      * @param string $repositoryUrl  
@@ -88,7 +95,7 @@ abstract class Repository implements RepositoryInterface
         $this->httpClient = $httpClient; 
         $this->repositoryDir = $repositoryDir;    
         $this->private = $private;
-
+        $this->tempDir = $storage->getFuillPath() . 'temp' . DIRECTORY_SEPARATOR;
         $this->resolvePackageName();
     }
 

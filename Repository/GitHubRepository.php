@@ -102,6 +102,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;
                     $destinatinPath = $this->packagesDir . $packageName;
+
                     $result = File::copy($sourcePath,$destinatinPath);
                     
                     return $result;
@@ -131,6 +132,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
         $zipFile = $this->repositoryDir . $packageFileName;
     
         $this->storage->deleteDir('temp/' . $repositoryFolder);
+
         ZipFile::extract($zipFile,$this->tempDir);
 
         return ($this->storage->has('temp/' . $repositoryFolder) == true) ? $repositoryFolder : false;
