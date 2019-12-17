@@ -13,6 +13,7 @@ use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\ZipFile;
+use Arikaim\Core\Utils\Utils;
 
 /**
  * GitHub repository driver class
@@ -31,9 +32,10 @@ class GitHubRepository extends Repository implements RepositoryInterface
       
         $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
         $this->storage->delete('repository/' . $this->getPackageFileName($version));
-        try {
+
+        try {         
             $this->httpClient->get($url,['sink' => $packageFileName]);
-        } catch (\Exception $e) {
+        } catch (\Exception $e) {    
             return false;
         }
       
@@ -95,6 +97,8 @@ class GitHubRepository extends Repository implements RepositoryInterface
             if (Utils::isJson($json) == true) {
                 $packageProperties = json_decode($json,true);
                 $packageName = (isset($packageProperties['name']) == true) ? $packageProperties['name'] : false;
+
+                exit();
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;
                     $destinatinPath = $this->packagesDir . $packageName;
