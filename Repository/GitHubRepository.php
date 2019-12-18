@@ -97,8 +97,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
             if (Utils::isJson($json) == true) {
                 $packageProperties = json_decode($json,true);
                 $packageName = (isset($packageProperties['name']) == true) ? $packageProperties['name'] : false;
-
-                exit();
+                
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;
                     $destinatinPath = $this->packagesDir . $packageName;
