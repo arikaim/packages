@@ -13,6 +13,7 @@ use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\ZipFile;
+use Arikaim\Core\Utils\Utils;
 
 /**
  * GitHub private repository driver class
@@ -78,7 +79,7 @@ class GitHubPrivateRepository extends Repository implements RepositoryInterface
                 $packageName = (isset($packageProperties['name']) == true) ? $packageProperties['name'] : false;
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;
-                    $destinatinPath = $this->packagesDir . $packageName;
+                    $destinatinPath = $this->installDir . $packageName;
                     $result = File::copy($sourcePath,$destinatinPath);
                     
                     return $result;

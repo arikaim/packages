@@ -84,16 +84,24 @@ abstract class Repository implements RepositoryInterface
     protected $tempDir;
 
     /**
+     * Package install dir
+     *
+     * @var string
+     */
+    protected $installDir;
+
+    /**
      * Constructor
      * 
      * @param string $repositoryUrl  
      */
-    public function __construct($repositoryUrl, $private = false, $repositoryDir, StorageInterface $storage, HttpClientInterface $httpClient)
+    public function __construct($repositoryUrl, $private = false, $repositoryDir, $installDir, StorageInterface $storage, HttpClientInterface $httpClient)
     {
         $this->repositoryUrl = $repositoryUrl;   
         $this->storage = $storage;  
         $this->httpClient = $httpClient; 
-        $this->repositoryDir = $repositoryDir;    
+        $this->repositoryDir = $repositoryDir;  
+        $this->installDir = $installDir;  
         $this->private = $private;
         $this->tempDir = $storage->getFuillPath() . 'temp' . DIRECTORY_SEPARATOR;
         $this->resolvePackageName();

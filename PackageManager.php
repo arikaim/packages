@@ -377,9 +377,9 @@ class PackageManager implements PackageManagerInterface
         $type = $this->resolveRepositoryType($repositoryUrl,$private);
         switch ($type) {
             case Self::GITHUB_REPOSITORY:           
-                return new GitHubRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->storage,$this->httpClient);
+                return new GitHubRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->path,$this->storage,$this->httpClient);
             case Self::GITHUB_PRIVATE_REPOSITORY:
-                return new GitHubPrivateRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->storage,$this->httpClient);
+                return new GitHubPrivateRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->path,$this->storage,$this->httpClient);
         }
 
         return null;

@@ -100,7 +100,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
                 
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;
-                    $destinatinPath = $this->packagesDir . $packageName;
+                    $destinatinPath = $this->installDir . $packageName;
 
                     $result = File::copy($sourcePath,$destinatinPath);
                     
