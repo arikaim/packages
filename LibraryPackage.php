@@ -11,6 +11,9 @@ namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
+use Arikaim\Core\Utils\Text;
+use Arikaim\Core\Http\Url;
+use Arikaim\Core\Arikaim;
 
 /**
  * UI Library Package class
@@ -30,11 +33,32 @@ class LibraryPackage extends Package implements PackageInterface
     /**
      * Get library params
      *
-     * @return void
+     * @return array
      */
     public function getParams()
     {
         return $this->properties->get('params',[]);
+    }
+
+    /**
+     * Resolve library params
+     *
+     * @param array $params
+     * @return array
+     */
+    public function resolveParams()
+    {      
+        $params = $this->getParams();
+        $vars = [
+            'domian'    => DOMAIN,
+            'base_url'  => Url::BASE_URL
+        ];
+
+        $options = Arikaim::options()->get('library.params');
+        $libraryParams = (isset($options[$this->getName()]) == true) ? $options[$this->getName()] : [];
+        $vars = array_merge($vars,$libraryParams);
+
+        return Text::renderMultiple($params,$vars);    
     }
 
     /**

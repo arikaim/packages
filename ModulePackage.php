@@ -98,9 +98,10 @@ class ModulePackage extends Package implements PackageInterface
     /**
      * Install module
      *
+     * @param boolean|null $primary Primary package replaces routes or other params
      * @return bool
      */
-    public function install()
+    public function install($primary = null)
     {
         // clear cached items
         $this->cache->clear();

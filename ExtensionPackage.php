@@ -51,6 +51,7 @@ class ExtensionPackage extends Package implements PackageInterface
         $this->properties['installed'] = $this->packageRegistry->hasPackage($this->getName());       
         $this->properties['status'] = $this->packageRegistry->getPackageStatus($this->getName());
         $this->properties['admin_menu'] = $this->properties->get('admin-menu',null);
+        $this->properties['primary'] = $this->packageRegistry->isPrimary($this->getName());
 
         if ($full == true) { 
             $this->properties['routes'] = Arikaim::routes()->getRoutes(['extension_name' => $this->getName()]);
@@ -65,6 +66,18 @@ class ExtensionPackage extends Package implements PackageInterface
         }
         
         return $this->properties; 
+    }
+
+    /**
+     * Set package as primary
+     *
+     * @return boolean
+     */
+    public function setPrimary()
+    {
+        $result = $this->packageRegistry->setPrimary($this->getName());            
+      
+        return $result;       
     }
 
     /**
@@ -158,21 +171,27 @@ class ExtensionPackage extends Package implements PackageInterface
     /**
      * Install extension package
      *
-     * @return bool
+     * @param boolean|null $primary Primary package replaces routes or other params
+     * @return mixed|true
      */
-    public function install()
+    public function install($primary = null)
     {
         // clear cache
         $this->cache->clear();
 
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
-
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
         if (is_object($extObj) == false) {
             return false;
         }
-       
+        
+        $primary = (empty($primary) == true) ? $details['primary'] : $primary;
+        // check for primary 
+        if ($primary == true) {
+            $extObj->setPrimary();
+        }
+
         // delete extension routes
         Arikaim::routes()->deleteRoutes(['extension_name' => $extensionName]);
 
@@ -185,7 +204,7 @@ class ExtensionPackage extends Package implements PackageInterface
         // delete registered events subscribers
         Arikaim::event()->deleteSubscribers(['extension_name' => $extensionName]);
 
-        // run install extension
+        // run install extension      
         $extObj->install(); 
       
         // get console commands classes
@@ -195,15 +214,15 @@ class ExtensionPackage extends Package implements PackageInterface
         $this->registerEventsSubscribers();
                    
         $details->set('status',1);
-        $result = $this->packageRegistry->AddPackage($extensionName,$details->toArray());
+        $this->packageRegistry->AddPackage($extensionName,$details->toArray());
 
-        return ($result !== false);
+        return ($extObj->hasError() == true) ? $extObj->getErrors() : true;        
     }
 
     /**
      * Uninstall extension package
      *
-     * @return bool
+     * @return mixed|true
      */
     public function unInstall() 
     {
@@ -230,11 +249,10 @@ class ExtensionPackage extends Package implements PackageInterface
         Arikaim::queue()->deleteJobs(['extension_name' => $extensionName]);
     
         // run extension unInstall
-        $extObj->unInstall();
-        
-        $result = $this->packageRegistry->removePackage($extensionName);
+        $extObj->unInstall();        
+        $this->packageRegistry->removePackage($extensionName);
 
-        return ($result !== false);
+        return ($extObj->hasError() == true) ? $extObj->getErrors() : true;     
     }
 
     /**

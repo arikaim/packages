@@ -53,9 +53,10 @@ interface PackageInterface
     /**
      * Install package
      *
+     * @param boolean|null $primary Primary package replaces routes or other params
      * @return bool
      */
-    public function install();
+    public function install($primary = null);
 
     /**
      * Unintsll package
@@ -77,4 +78,11 @@ interface PackageInterface
      * @return bool
      */
     public function disable();
+
+    /**
+     * Set package as primary
+     *
+     * @return boolean
+    */
+    public function setPrimary();
 }

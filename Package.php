@@ -83,6 +83,16 @@ class Package implements PackageInterface
     }
 
     /**
+     * Set package as primary
+     *
+     * @return boolean
+     */
+    public function setPrimary()
+    {
+        return true;
+    }
+
+    /**
      * Get package type
      *
      * @return string
@@ -138,9 +148,10 @@ class Package implements PackageInterface
     /**
      * Install package.
      *
+     * @param boolean|null $primary Primary package replaces routes or other params
      * @return bool
      */
-    public function install()   
+    public function install($primary = null)   
     {        
         return false;
     }

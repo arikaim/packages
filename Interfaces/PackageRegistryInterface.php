@@ -71,4 +71,20 @@ interface PackageRegistryInterface
      * @return integer
     */
     public function getPackageStatus($name);
+
+    /**
+     * Set package as primary
+     *
+     * @param string $name
+     * @return boolean
+    */
+    public function setPrimary($name);
+
+    /**
+     * Return true if package is primary.
+     *  
+     * @param string $name
+     * @return boolean
+    */
+    public function isPrimary($name);
 }
