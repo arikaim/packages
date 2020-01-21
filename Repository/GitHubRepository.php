@@ -14,6 +14,7 @@ use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\ZipFile;
 use Arikaim\Core\Utils\Utils;
+use Exception;
 
 /**
  * GitHub repository driver class
@@ -30,13 +31,21 @@ class GitHubRepository extends Repository implements RepositoryInterface
         $version = (empty($version) == true) ? $this->getLastVersion() : $version;
         $url = "http://github.com/" . $this->getPackageName() . "/archive/" . $version . ".zip";
       
-        $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
-        $this->storage->delete('repository/' . $this->getPackageFileName($version));
+        File::setWritable($this->repositoryDir);
 
+        $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
+
+        if ($this->storage->has('repository/' . $this->getPackageFileName($version)) == true) {
+            try {         
+                $this->storage->delete('repository/' . $this->getPackageFileName($version),false);
+            } catch (Exception $e) {                   
+                return false;
+            }
+        }
+       
         try {         
             $this->httpClient->get($url,['sink' => $packageFileName]);
-        } catch (\Exception $e) {    
-            return false;
+        } catch (Exception $e) {              
         }
       
         return $this->storage->has('repository/' . $this->getPackageFileName($version));
@@ -88,20 +97,20 @@ class GitHubRepository extends Repository implements RepositoryInterface
 
         if ($result == true) {
             $repositoryFolder = $this->extractRepository($version);
-            if ($repositoryFolder == false) {
-                // Error extracting zip repository file
+            if ($repositoryFolder === false) {
+                // Error extracting zip repository file               
                 return false;
             }
+           
             $json = $this->storage->read('temp/' . $repositoryFolder . '/arikaim-package.json');
             
             if (Utils::isJson($json) == true) {
                 $packageProperties = json_decode($json,true);
                 $packageName = (isset($packageProperties['name']) == true) ? $packageProperties['name'] : false;
-                
+
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;
                     $destinatinPath = $this->installDir . $packageName;
-
                     $result = File::copy($sourcePath,$destinatinPath);
                     
                     return $result;
@@ -109,7 +118,8 @@ class GitHubRepository extends Repository implements RepositoryInterface
                 // Missing package name in arikaim-package.json file.
                 return false;
             }
-            // Not valid package
+            // Not valid package           
+
             return false;
         }
 
@@ -129,11 +139,16 @@ class GitHubRepository extends Repository implements RepositoryInterface
         $repositoryFolder = $repositoryName . "-" . $version;
         $packageFileName = $this->getPackageFileName($version);
         $zipFile = $this->repositoryDir . $packageFileName;
-    
-        $this->storage->deleteDir('temp/' . $repositoryFolder);
+        
+        if (File::exists($this->tempDir . $repositoryFolder) == true) {
+            try {
+                $deleted  = $this->storage->deleteDir('temp/' . $repositoryFolder);
+            } catch(Exception $e) {
+            }
+        }
 
-        ZipFile::extract($zipFile,$this->tempDir);
+        $result = ZipFile::extract($zipFile,$this->tempDir);
 
-        return ($this->storage->has('temp/' . $repositoryFolder) == true) ? $repositoryFolder : false;
+        return ($result == true) ? $repositoryFolder : false;
     }
 }
