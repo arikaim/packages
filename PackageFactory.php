@@ -10,7 +10,6 @@
 namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Interfaces\Packages\PackageFactoryInterface;
-use Arikaim\Core\Interfaces\CacheInterface;
 use Arikaim\Core\Packages\PackageManager;
 use Arikaim\Core\Packages\PackageManagerFactory;
 
@@ -20,18 +19,10 @@ use Arikaim\Core\Packages\PackageManagerFactory;
 class PackageFactory implements PackageFactoryInterface
 {
     /**
-     * Cache
-     *
-     * @var CacheInterface
-     */
-    private $cache;
-
-    /**
      * Constructor
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct()
     {
-        $this->cache = $cache;  
     }
 
     /**
@@ -47,6 +38,6 @@ class PackageFactory implements PackageFactoryInterface
         $class = PackageManagerFactory::getPackageClass($packageType);
         $registry = PackageManagerFactory::createPackageRegistry($packageType);
 
-        return new $class($path,$propertes,$this->cache,$registry);
+        return new $class($path,$propertes,$registry);
     }
 }

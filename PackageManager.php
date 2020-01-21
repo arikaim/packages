@@ -137,7 +137,7 @@ class PackageManager implements PackageManagerInterface
         }
         $class = $this->packageClass;
 
-        return new $class($this->path,$propertes,$this->cache,$this->packageRegistry);
+        return new $class($this->path,$propertes,$this->packageRegistry);
     }
 
     /**
@@ -274,6 +274,8 @@ class PackageManager implements PackageManagerInterface
      */
     public function installAllPackages()
     {
+        $this->cache->clear();
+
         $errors = 0;
         $packages = $this->getPackages();
         foreach ($packages as $name) {

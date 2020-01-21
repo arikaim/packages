@@ -103,8 +103,6 @@ class ModulePackage extends Package implements PackageInterface
      */
     public function install($primary = null)
     {
-        // clear cached items
-        $this->cache->clear();
         $data = $this->properties->toArray();
 
         $module = Factory::createModule($this->getName(),$this->getClass());
@@ -139,8 +137,6 @@ class ModulePackage extends Package implements PackageInterface
      */
     public function unInstall() 
     {
-        // clear cached items
-        $this->cache->clear();
         $result = $this->packageRegistry->removePackage($this->getName());
 
         return ($result !== false);
@@ -153,9 +149,6 @@ class ModulePackage extends Package implements PackageInterface
      */
     public function enable() 
     {
-        // clear cached items
-        $this->cache->clear();
-
         return $this->packageRegistry->setPackageStatus($this->getName(),1); 
     }
 
@@ -166,9 +159,6 @@ class ModulePackage extends Package implements PackageInterface
      */
     public function disable() 
     {
-        // clear cached items
-        $this->cache->clear();
-
         return $this->packageRegistry->setPackageStatus($this->getName(),0);  
     }   
 

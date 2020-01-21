@@ -14,7 +14,6 @@ use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Arikaim;
-
 use Arikaim\Core\Packages\Traits\ViewComponents;
 
 /**
@@ -176,9 +175,6 @@ class ExtensionPackage extends Package implements PackageInterface
      */
     public function install($primary = null)
     {
-        // clear cache
-        $this->cache->clear();
-
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
@@ -225,10 +221,7 @@ class ExtensionPackage extends Package implements PackageInterface
      * @return mixed|true
      */
     public function unInstall() 
-    {
-        // clear extension cache
-        $this->cache->clear();
-        
+    { 
         $details = $this->getProperties(true);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
@@ -262,9 +255,6 @@ class ExtensionPackage extends Package implements PackageInterface
      */
     public function enable() 
     {
-        // clear extension cache
-        $this->cache->clear();
-
         $name = $this->getName();
         $this->packageRegistry->setPackageStatus($name,1);
 
@@ -284,9 +274,6 @@ class ExtensionPackage extends Package implements PackageInterface
      */
     public function disable() 
     {
-        // clear extension cache
-        $this->cache->clear();
-        
         $name = $this->getName();
         $this->packageRegistry->setPackageStatus($name,0);
 

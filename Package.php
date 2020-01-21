@@ -28,13 +28,6 @@ class Package implements PackageInterface
     protected $properties;
 
     /**
-     * Cache
-     *
-     * @var CacheInterface
-     */
-    protected $cache;
-
-    /**
      * Package Registry Interface
      *
      * @var PackageRegistryInterface
@@ -53,12 +46,11 @@ class Package implements PackageInterface
      *
      * @param CollectionInterface $properties
      */
-    public function __construct($path, CollectionInterface $properties, CacheInterface $cache, PackageRegistryInterface $packageRegistry = null) 
+    public function __construct($path, CollectionInterface $properties, PackageRegistryInterface $packageRegistry = null) 
     {
-        $this->path = $path;
-        $properties['version'] = Utils::formatVersion($properties->get('version','1.0.0'));
+        $this->path = $path;      
         $this->properties = $properties;
-        $this->cache = $cache;
+        $this->properties['version'] = Utils::formatVersion($properties->get('version','1.0.0'));       
         $this->packageRegistry = $packageRegistry;
     }
 

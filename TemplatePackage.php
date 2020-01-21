@@ -65,9 +65,6 @@ class TemplatePackage extends Package
      */
     public function install($primary = null)
     {
-        // clear cache
-        $this->cache->clear();
-
         $routes = $this->getRoutes();
         $routesCount = count($routes);
 
@@ -118,8 +115,6 @@ class TemplatePackage extends Package
      */
     public function unInstall() 
     {
-        // clear cached items
-        $this->cache->clear();
         $result = Arikaim::routes()->deleteRoutes(['template_name' => $this->getName()]);
        
         return $result;
@@ -132,9 +127,6 @@ class TemplatePackage extends Package
      */
     public function enable() 
     {
-        // clear cached items
-        $this->cache->clear();
-
         return true;
     }
 
@@ -145,9 +137,6 @@ class TemplatePackage extends Package
      */
     public function disable() 
     {
-        // clear cached items
-        $this->cache->clear();
-
         return true;
     }   
 
