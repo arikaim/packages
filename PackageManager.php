@@ -279,6 +279,7 @@ class PackageManager implements PackageManagerInterface
         $errors = 0;
         $packages = $this->getPackages();
         foreach ($packages as $name) {
+            echo "install:$name";
             $errors += ($this->installPackage($name) == false) ? 1 : 0;
         }
 
