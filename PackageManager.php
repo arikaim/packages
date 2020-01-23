@@ -383,7 +383,7 @@ class PackageManager implements PackageManagerInterface
      * @param boolean $private
      * @return void
      */
-    protected function createRepository($repositoryUrl, $private)
+    public function createRepository($repositoryUrl, $private = false)
     {
         $type = $this->resolveRepositoryType($repositoryUrl,$private);
         switch ($type) {
@@ -397,13 +397,32 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
+     * Create repository url
+     *
+     * @param string $packageName
+     * @param string $type
+     * @return string|null
+     */
+    public static function createRepositoryUrl($packageName, $type)
+    {
+        switch ($type) {
+            case Self::GITHUB_REPOSITORY:           
+                return "http://github.com/" . $packageName . ".git";
+            case Self::GITHUB_PRIVATE_REPOSITORY:
+                return "http://github.com/" . $packageName . ".git";
+        }
+
+        return null;
+    }
+
+    /**
      * Resolve package repository type
      *   
      * @param string $repositoryUrl
      * @param boolean $private
      * @return string|null
      */
-    protected function resolveRepositoryType($repositoryUrl, $private)
+    protected function resolveRepositoryType($repositoryUrl, $private = false)
     {
         if (empty($repositoryUrl) == true) {
             return null;
