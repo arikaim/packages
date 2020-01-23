@@ -59,6 +59,17 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
     ];
 
     /**
+     * Package categories
+     *
+     * @var array
+     */
+    private static $packageCategory = [
+        'themes'     => PackageManager::TEMPLATE_PACKAGE,
+        'extensions' => PackageManager::EXTENSION_PACKAGE,
+        'modules'    => PackageManager::MODULE_PACKAGE,        
+    ];
+
+    /**
      * Cache
      *
      * @var CacheInterface
@@ -97,6 +108,10 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      */
     public function create($packageType)
     {
+        if (array_key_exists($packageType,Self::$packageCategory) === true) {
+            $packageType = Self::$packageCategory[$packageType];
+        }
+
         $packageClass = Self::getPackageClass($packageType);
         $path = Self::getPackagePath($packageType);
         $registry = Self::createPackageRegistry($packageType);

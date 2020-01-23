@@ -141,6 +141,19 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
+     * Return tru if package exists
+     *
+     * @param string $name
+     * @return boolean
+     */
+    public function hasPackage($name)
+    {
+        $fileName = $this->path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
+        
+        return File::exists($fileName);
+    }
+
+    /**
      * Get package repository
      *
      * @param string $packageName
@@ -278,8 +291,7 @@ class PackageManager implements PackageManagerInterface
 
         $errors = 0;
         $packages = $this->getPackages();
-        foreach ($packages as $name) {
-            echo "install:$name";
+        foreach ($packages as $name) {           
             $errors += ($this->installPackage($name) == false) ? 1 : 0;
         }
 
