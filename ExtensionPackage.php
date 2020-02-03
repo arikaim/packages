@@ -46,7 +46,7 @@ class ExtensionPackage extends Package implements PackageInterface
     {
         $type = $this->properties->get('type','user');
         $this->properties['type'] = $this->getTypeId($type);
-        $this->properties['class'] = ucfirst($this->getName());       
+        $this->properties['class'] = (empty($this->properties['class']) == true) ? ucfirst($this->getName()) : $this->properties['class'];       
         $this->properties['installed'] = $this->packageRegistry->hasPackage($this->getName());       
         $this->properties['status'] = $this->packageRegistry->getPackageStatus($this->getName());
         $this->properties['admin_menu'] = $this->properties->get('admin-menu',null);
