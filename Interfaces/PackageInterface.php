@@ -85,4 +85,11 @@ interface PackageInterface
      * @return boolean
     */
     public function setPrimary();
+
+    /**
+     * Get require property
+     *
+     * @return CollectionInterface
+     */
+    public function getRequire();
 }

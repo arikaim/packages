@@ -13,7 +13,7 @@ use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
 use Arikaim\Core\Collection\Interfaces\CollectionInterface;
-use Arikaim\Core\Interfaces\CacheInterface;
+use Arikaim\Core\Collection\Collection;
 
 /**
  * Package base class
@@ -113,6 +113,18 @@ class Package implements PackageInterface
     public function getProperties($full = false)
     {
         return $this->properties;
+    }
+
+    /**
+     * Get require property
+     *
+     * @return CollectionInterface
+     */
+    public function getRequire()
+    {
+        $require = $this->properties->get('require',[]);
+
+        return new Collection($require);
     }
 
     /**
