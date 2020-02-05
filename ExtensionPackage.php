@@ -184,7 +184,7 @@ class ExtensionPackage extends Package implements PackageInterface
         
         $primary = (empty($primary) == true) ? $details['primary'] : $primary;
         // check for primary 
-        if ($primary == true) {
+        if ($primary === true) {
             $extObj->setPrimary();
         }
 
@@ -210,8 +210,9 @@ class ExtensionPackage extends Package implements PackageInterface
         $this->registerEventsSubscribers();
                    
         $details->set('status',1);
-        $this->packageRegistry->AddPackage($extensionName,$details->toArray());
 
+        $this->packageRegistry->AddPackage($extensionName,$details->toArray());
+      
         return ($extObj->hasError() == true) ? $extObj->getErrors() : true;        
     }
 
