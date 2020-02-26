@@ -29,7 +29,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
     public function download($version = null)
     {
         $version = (empty($version) == true) ? $this->getLastVersion() : $version;
-        $url = "http://github.com/" . $this->getPackageName() . "/archive/" . $version . ".zip";
+        $url = "https://github.com/" . $this->getPackageName() . "/archive/" . $version . ".zip";
       
         File::setWritable($this->repositoryDir);
 
@@ -59,7 +59,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
     public function getLastVersion()
     {
         $packageName = $this->getPackageName();
-        $url = "http://api.github.com/repos/" . $packageName . "/releases/latest";
+        $url = "https://api.github.com/repos/" . $packageName . "/releases/latest";
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
         if (is_array($data) == true) {
