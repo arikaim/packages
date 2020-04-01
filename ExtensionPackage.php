@@ -15,6 +15,7 @@ use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Arikaim;
 use Arikaim\Core\Packages\Traits\ViewComponents;
+use DirectoryIterator;
 
 /**
  * Extension Package
@@ -92,7 +93,7 @@ class ExtensionPackage extends Package implements PackageInterface
             return [];
         }
 
-        foreach (new \DirectoryIterator($path) as $file) {
+        foreach (new DirectoryIterator($path) as $file) {
             if (
                 $file->isDot() == true || 
                 $file->isDir() == true ||
@@ -147,7 +148,7 @@ class ExtensionPackage extends Package implements PackageInterface
             return [];
         }
         $result = [];
-        foreach (new \DirectoryIterator($path) as $file) {
+        foreach (new DirectoryIterator($path) as $file) {
             if (
                 $file->isDot() == true || 
                 $file->isDir() == true ||
@@ -301,7 +302,7 @@ class ExtensionPackage extends Package implements PackageInterface
             return $count;
         }
 
-        foreach (new \DirectoryIterator($path) as $file) {
+        foreach (new DirectoryIterator($path) as $file) {
             if (($file->isDot() == true) || ($file->isDir() == true)) continue;
             if ($file->getExtension() != 'php') continue;
             

@@ -11,9 +11,13 @@ namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\Factory;
+use Arikaim\Core\Utils\Path;
+use Arikaim\Core\Http\Url;
+use Arikaim\Core\Utils\File;
 use Arikaim\Core\Arikaim;
 use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Collection\Collection;
+use DirectoryIterator;
 
 /**
  * Template package 
@@ -104,8 +108,42 @@ class TemplatePackage extends Package
                 }
             }
         }
-        
+        // build assets
+        $this->buildAssets();
+
         return ($routesAdded == $routesCount);           
+    }
+    
+    /**
+     * Build css template files
+     *
+     * @return boolean
+     */
+    public function buildAssets()
+    {        
+        $cssPath = Path::TEMPLATES_PATH . $this->getName() . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR;
+        $twig = Arikaim::view()->createEnvironment($cssPath);
+        $params = [
+            'template_url' => Url::TEMPLATES_URL . '/' . $this->getName() . '/'
+        ];
+
+        if (File::isWritable($cssPath) == false) {
+            File::setWritable($cssPath);
+        }
+        
+        foreach (new DirectoryIterator($cssPath) as $file) {
+            if (
+                $file->isDot() == true || 
+                $file->isDir() == true ||
+                $file->getExtension() != 'html'
+            ) continue;
+            
+            $code = $twig->render($file->getFilename(),$params);
+            $cssfileName = str_replace('.html','',$file->getFilename());
+            File::write($cssPath . $cssfileName,$code);
+        }
+
+        return true;
     }
     
     /**
