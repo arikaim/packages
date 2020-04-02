@@ -132,15 +132,20 @@ class TemplatePackage extends Package
         }
         
         foreach (new DirectoryIterator($cssPath) as $file) {
-            if (
-                $file->isDot() == true || 
-                $file->isDir() == true ||
-                $file->getExtension() != 'html'
-            ) continue;
-            
-            $code = $twig->render($file->getFilename(),$params);
-            $cssfileName = str_replace('.html','',$file->getFilename());
-            File::write($cssPath . $cssfileName,$code);
+            if ($file->isDot() == true || $file->isDir() == true) {
+                continue;
+            }            
+            $fileName = $file->getFilename();
+            $tokens = explode('.',$fileName);
+          
+            if (isset($tokens[1]) == true) {
+                if ($tokens[1] == 'html') {
+                    $code = $twig->render($fileName,$params);
+                    $cssfileName = str_replace('.html','',$fileName);
+                    File::write($cssPath . $cssfileName,$code);
+                }
+            }
+           
         }
 
         return true;
