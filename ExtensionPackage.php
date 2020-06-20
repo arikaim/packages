@@ -213,8 +213,28 @@ class ExtensionPackage extends Package implements PackageInterface
         $details->set('status',1);
 
         $this->packageRegistry->AddPackage($extensionName,$details->toArray());
-      
+        
         return ($extObj->hasError() == true) ? $extObj->getErrors() : true;        
+    }
+
+    /**
+     * Run post install actions
+     *     
+     * @return boolean
+     */
+    public function postInstall()
+    {
+        $details = $this->getProperties(false);
+        $extensionName = $this->getName();
+        $extObj = Factory::createExtension($extensionName,$details->get('class'));
+        if (is_object($extObj) == false) {
+            return false;
+        }
+
+        // run install extension      
+        $extObj->postInstall();
+
+        return true;        
     }
 
     /**

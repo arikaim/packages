@@ -59,6 +59,13 @@ interface PackageInterface
     public function install($primary = null);
 
     /**
+     * Run post install actions
+     *     
+     * @return boolean
+     */
+    public function postInstall();
+    
+    /**
      * Unintsll package
      *
      * @return bool

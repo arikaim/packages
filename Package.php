@@ -161,6 +161,16 @@ class Package implements PackageInterface
     }
 
     /**
+     * Run post install actions
+     *     
+     * @return boolean
+     */
+    public function postInstall()
+    {
+        return true;
+    }
+
+    /**
      * UnInstall package
      *
      * @return bool

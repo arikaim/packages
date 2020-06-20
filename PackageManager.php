@@ -288,11 +288,27 @@ class PackageManager implements PackageManagerInterface
     public function installAllPackages()
     {
         $this->cache->clear();
-
         $errors = 0;
         $packages = $this->getPackages();
         foreach ($packages as $name) {           
             $errors += ($this->installPackage($name) == false) ? 1 : 0;
+        }
+
+        return ($errors == 0);
+    }
+
+    /**
+     * Run post install actions on all packages
+     *
+     * @return bool
+     */
+    public function postInstallAllPackages()
+    {
+        $this->cache->clear();
+        $errors = 0;
+        $packages = $this->getPackages();
+        foreach ($packages as $name) {           
+            $errors += ($this->postInstallPackage($name) == false) ? 1 : 0;
         }
 
         return ($errors == 0);
@@ -309,6 +325,19 @@ class PackageManager implements PackageManagerInterface
         $package = $this->createPackage($name);
 
         return $package->install();
+    }
+
+    /**
+     * Run post install actions on package
+     *
+     * @param string $name
+     * @return void
+     */
+    public function postInstallPackage($name)
+    {
+        $package = $this->createPackage($name);
+
+        return $package->postInstall();
     }
 
     /**
