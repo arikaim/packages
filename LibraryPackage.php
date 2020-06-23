@@ -23,11 +23,17 @@ class LibraryPackage extends Package implements PackageInterface
     /**
      * Return library files
      *
+     * @param string|null $version
      * @return array
      */
-    public function getFiles()
+    public function getFiles($version = null)
     {
-        return $this->properties->get('files',[]);
+        if (empty($version) == true) {
+            return $this->properties->get('files',[]);
+        }
+        $versions = $this->properties->get('versions',[]);
+
+        return (isset($versions[$version]) == true) ? $versions[$version]['files'] : $this->properties->get('files',[]);
     }
 
     /**
