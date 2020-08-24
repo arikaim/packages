@@ -100,11 +100,11 @@ class ExtensionPackage extends Package implements PackageInterface
                 $file->getExtension() != 'php'
             ) continue;
           
-            $item['base_class'] = str_replace(".php","",$file->getFilename());
+            $item['base_class'] = \str_replace(".php","",$file->getFilename());
             $job = Factory::createJob($item['base_class'],$this->getName());
-            if (is_object($job) == true) {
+            if (\is_object($job) == true) {
                 $item['name'] = $job->getName();
-                array_push($result,$item);
+                \array_push($result,$item);
             }
         }
 
@@ -125,11 +125,11 @@ class ExtensionPackage extends Package implements PackageInterface
         $result = [];
         foreach ($extension['console_commands'] as $class) {
             $command = Factory::createInstance($class);
-            if (is_object($command) ==true) {
+            if (\is_object($command) ==true) {
                 $item['name'] = $command->getName();
                 $item['title'] = $command->getDescription();      
                 $item['help'] = "php cli " . $command->getName();         
-                array_push($result,$item);
+                \array_push($result,$item);
             }          
         } 
 
@@ -156,12 +156,12 @@ class ExtensionPackage extends Package implements PackageInterface
             ) continue;
          
             $fileName = $file->getFilename();
-            $baseClass = str_replace(".php","",$fileName);
+            $baseClass = \str_replace(".php","",$fileName);
             $schema = Factory::createSchema($baseClass,$this->getName());
 
-            if (is_subclass_of($schema,'Arikaim\Core\Db\Schema') == true) {               
+            if (\is_subclass_of($schema,'Arikaim\Core\Db\Schema') == true) {               
                 $item['name'] = $schema->getTableName();               
-                array_push($result,$item);
+                \array_push($result,$item);
             }
         }    
 
@@ -179,7 +179,7 @@ class ExtensionPackage extends Package implements PackageInterface
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
-        if (is_object($extObj) == false) {
+        if (\is_object($extObj) == false) {
             return false;
         }
         
@@ -227,7 +227,7 @@ class ExtensionPackage extends Package implements PackageInterface
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
-        if (is_object($extObj) == false) {
+        if (\is_object($extObj) == false) {
             return false;
         }
 
@@ -258,7 +258,7 @@ class ExtensionPackage extends Package implements PackageInterface
         Arikaim::event()->deleteSubscribers(['extension_name' => $extensionName]);
 
         // delete extension options
-        Arikaim::options()->remove(null,$extensionName);
+        Arikaim::options()->removeOptions(null,$extensionName);
 
         // delete jobs 
         Arikaim::queue()->deleteJobs(['extension_name' => $extensionName]);
@@ -343,7 +343,7 @@ class ExtensionPackage extends Package implements PackageInterface
      */
     public function getTypeId($typeName)
     {
-        return (is_string($typeName) == true) ? array_search($typeName,$this->typeName) : $typeName;          
+        return (\is_string($typeName) == true) ? \array_search($typeName,$this->typeName) : $typeName;          
     }
 
     /**

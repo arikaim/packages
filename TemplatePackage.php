@@ -99,7 +99,7 @@ class TemplatePackage extends Package
             $pattern = $route['path']; 
             // Route type
             $type = ($route->get('home',false) == false) ? 1 : 3; 
-
+          
             $result = Arikaim::routes()->saveTemplateRoute($pattern,$handlerClass,$handlerMethod,$this->getName(),$pageName,$auth,$primary,$redirect,$type,$languagePath);
             if ($result != false) {
                 $routesAdded++;
@@ -111,7 +111,7 @@ class TemplatePackage extends Package
         // build assets
         $this->buildAssets();
 
-        return ($routesAdded == $routesCount);           
+        return true;          
     }
     
     /**
@@ -136,12 +136,12 @@ class TemplatePackage extends Package
                 continue;
             }            
             $fileName = $file->getFilename();
-            $tokens = explode('.',$fileName);
+            $tokens = \explode('.',$fileName);
           
             if (isset($tokens[1]) == true) {
                 if ($tokens[1] == 'html') {
                     $code = $twig->render($fileName,$params);
-                    $cssfileName = str_replace('.html','',$fileName);
+                    $cssfileName = \str_replace('.html','',$fileName);
                     File::write($cssPath . $cssfileName,$code);
                 }
             }

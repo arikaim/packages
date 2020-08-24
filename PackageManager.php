@@ -178,7 +178,7 @@ class PackageManager implements PackageManagerInterface
     public function getPackages($cached = false, $filter = null)
     {
         $result = ($cached == true) ? $this->cache->fetch($this->packageType . '.list') : null;
-        if (is_array($result) == false) {
+        if (\is_array($result) == false) {
             $result = $this->scan($filter);
             $this->cache->save($this->packageType . '.list',$result,5);
         } 
@@ -206,7 +206,7 @@ class PackageManager implements PackageManagerInterface
     {         
         $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
         $data = File::readJsonFile($fileName);
-        $data = (is_array($data) == true) ? $data : [];
+        $data = (\is_array($data) == true) ? $data : [];
 
         $properties = new Collection($data);    
         if (empty($properties->name) == true) {
@@ -226,20 +226,20 @@ class PackageManager implements PackageManagerInterface
     {
         $items = [];
         foreach (new \DirectoryIterator($this->path) as $file) {
-            if ($file->isDot() == true || $file->isDir() == false || substr($file->getFilename(),0,1) == '.') {
+            if ($file->isDot() == true || $file->isDir() == false || \substr($file->getFilename(),0,1) == '.') {
                 continue;
             }
             $name = $file->getFilename();
-            if (is_array($filter) == true) {
+            if (\is_array($filter) == true) {
                 $package = $this->createPackage($name);
                 $properties = $package->getProperties();                
                 foreach ($filter as $key => $value) {                
                     if ($properties->get($key) == $value) {
-                        array_push($items,$name);   
+                        \array_push($items,$name);   
                     }
                 }
             } else {
-                array_push($items,$name);        
+                \array_push($items,$name);        
             }
         }  
         
@@ -471,10 +471,10 @@ class PackageManager implements PackageManagerInterface
         if ($repositoryUrl == 'arikaim') {
             return Self::ARIKAIM_REPOSITORY;
         }
-        if (substr($repositoryUrl,0,8) == 'composer') {
+        if (\substr($repositoryUrl,0,8) == 'composer') {
             return Self::COMPOSER_REPOSITORY;
         }
-        $url = parse_url($repositoryUrl);
+        $url = \parse_url($repositoryUrl);
 
         if ($url['host'] == 'github.com' || $url['host'] == 'www.github.com') {
             return ($private == false) ? Self::GITHUB_REPOSITORY : Self::GITHUB_PRIVATE_REPOSITORY;

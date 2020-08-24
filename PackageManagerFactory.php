@@ -108,7 +108,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      */
     public function create($packageType)
     {
-        if (array_key_exists($packageType,Self::$packageCategory) === true) {
+        if (\array_key_exists($packageType,Self::$packageCategory) === true) {
             $packageType = Self::$packageCategory[$packageType];
         }
 

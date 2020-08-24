@@ -62,7 +62,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
         $url = "https://api.github.com/repos/" . $packageName . "/releases/latest";
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
-        if (is_array($data) == true) {
+        if (\is_array($data) == true) {
             return (isset($data['tag_name']) == true) ? $data['tag_name'] : '';
         }
 
@@ -76,9 +76,9 @@ class GitHubRepository extends Repository implements RepositoryInterface
      */
     protected function resolvePackageName()
     {
-        $url = parse_url($this->repositoryUrl);
-        $path = trim(str_replace('.git','',$url['path']),'/');
-        $tokens = explode('/',$path);   
+        $url = \parse_url($this->repositoryUrl);
+        $path = \trim(\str_replace('.git','',$url['path']),'/');
+        $tokens = \explode('/',$path);   
 
         $this->repositoryName = $tokens[1];    
         $this->packageName = $tokens[0] . '/' .  $this->repositoryName;       
@@ -105,7 +105,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
             $json = $this->storage->read('temp/' . $repositoryFolder . '/arikaim-package.json');
             
             if (Utils::isJson($json) == true) {
-                $packageProperties = json_decode($json,true);
+                $packageProperties = \json_decode($json,true);
                 $packageName = (isset($packageProperties['name']) == true) ? $packageProperties['name'] : false;
 
                 if ($packageName != false) {   

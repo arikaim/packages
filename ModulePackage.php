@@ -83,12 +83,12 @@ class ModulePackage extends Package implements PackageInterface
             ) continue;
          
             $fileName = $file->getFilename();
-            $baseClass = str_replace(".php","",$fileName);
+            $baseClass = \str_replace(".php","",$fileName);
             $class = Factory::getModuleConsoleClassName($this->getName(),$baseClass);          
 
             $command = Factory::createInstance($class);
-            if (is_subclass_of($command,'Arikaim\Core\System\Console\ConsoleCommand') == true) {                                    
-                array_push($result,$class);
+            if (\is_subclass_of($command,'Arikaim\Core\System\Console\ConsoleCommand') == true) {                                    
+                \array_push($result,$class);
             }
         }     
         
@@ -106,7 +106,7 @@ class ModulePackage extends Package implements PackageInterface
         $data = $this->properties->toArray();
 
         $module = Factory::createModule($this->getName(),$this->getClass());
-        if (is_object($module) == false) {
+        if (\is_object($module) == false) {
             return false;
         }
        
@@ -124,7 +124,7 @@ class ModulePackage extends Package implements PackageInterface
             'class'             => $this->getClass(),
             'console_commands'  => $this->getConsoleCommands()
         ];
-        $data = array_merge($data,$details);
+        $data = \array_merge($data,$details);
         $result = $this->packageRegistry->AddPackage($this->getName(),$data);
 
         return ($result !== false);
@@ -170,7 +170,7 @@ class ModulePackage extends Package implements PackageInterface
      */
     public static function getTypeId($typeName)
     {
-        return array_search($typeName,Self::TYPE_NAME);
+        return \array_search($typeName,Self::TYPE_NAME);
     }
 
     /**

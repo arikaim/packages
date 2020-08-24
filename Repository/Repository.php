@@ -91,10 +91,15 @@ abstract class Repository implements RepositoryInterface
     protected $installDir;
 
     /**
-     * Constructor
-     * 
-     * @param string $repositoryUrl  
-     */
+    * Constructor
+    *
+    * @param string $repositoryUrl
+    * @param boolean $private
+    * @param string $repositoryDir
+    * @param string $installDir
+    * @param StorageInterface $storage
+    * @param HttpClientInterface $httpClient
+    */
     public function __construct($repositoryUrl, $private = false, $repositoryDir, $installDir, StorageInterface $storage, HttpClientInterface $httpClient)
     {
         $this->repositoryUrl = $repositoryUrl;   
@@ -103,7 +108,7 @@ abstract class Repository implements RepositoryInterface
         $this->repositoryDir = $repositoryDir;  
         $this->installDir = $installDir;  
         $this->private = $private;
-        $this->tempDir = $storage->getFuillPath() . 'temp' . DIRECTORY_SEPARATOR;
+        $this->tempDir = $storage->getFullPath() . 'temp' . DIRECTORY_SEPARATOR;
         $this->resolvePackageName();
     }
 
@@ -149,7 +154,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function getPackageFileName($version)
     {
-        $fileName = str_replace('/','_',$this->getPackageName());
+        $fileName = \str_replace('/','_',$this->getPackageName());
 
         return $fileName . '-' . $version . '.zip';
     }

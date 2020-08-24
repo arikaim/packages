@@ -8,7 +8,7 @@ Packages manager for Arikaim CMS
 
 
 #### Requirements 
-  * PHP 7.1
+  * PHP 7.1, 7.2, 7.3
 
 
 

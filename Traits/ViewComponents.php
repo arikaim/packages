@@ -76,8 +76,8 @@ trait ViewComponents
             $fileExt = $file->getExtension();
             if ($fileExt != "html" && $fileExt != "htm") continue;           
             
-            $item['name'] = str_replace(".$fileExt",'',$file->getFilename());
-            array_push($items,$item);            
+            $item['name'] = \str_replace(".$fileExt",'',$file->getFilename());
+            \array_push($items,$item);            
         }
 
         return $items;
@@ -101,7 +101,7 @@ trait ViewComponents
             if ($file->isDot() == true) continue;
             if ($file->isDir() == true) {
                 $item['name'] = $file->getFilename();
-                array_push($items,$item);
+                \array_push($items,$item);
             }
         }
 
@@ -130,11 +130,11 @@ trait ViewComponents
                 $item['name'] = $file->getFilename();   
                 $item['path'] = $file->getPathname();
                 
-                $componentPath = str_replace($path,'',$file->getRealPath());                
-                $componentPath = str_replace(DIRECTORY_SEPARATOR,'.',$componentPath);
+                $componentPath = \str_replace($path,'',$file->getRealPath());                
+                $componentPath = \str_replace(DIRECTORY_SEPARATOR,'.',$componentPath);
                
                 $item['full_name'] = $componentPath;
-                array_push($items,$item);
+                \array_push($items,$item);
             }
         }
 
