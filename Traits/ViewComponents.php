@@ -23,12 +23,15 @@ trait ViewComponents
      */
     public function getViewPath()
     {
+        if ($this->getType() == 'template') {
+            return $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+        }
         return (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR : $this->viewPath;
     }
 
     /**
      * Get components path
-     *   
+     *  
      * @return string
      */
     public function getComponentsPath()  
@@ -38,7 +41,7 @@ trait ViewComponents
 
     /**
      * Get pages path
-     *    
+     *        
      * @return string
      */
     public function getPagesPath()  
@@ -65,10 +68,10 @@ trait ViewComponents
     public function getMacros($path = null)
     {       
         $path = (empty($path) == true) ? $this->getMacrosPath() : $path;
-
         if (File::exists($path) == false) {
             return [];
         }
+        
         $items = [];
         foreach (new \DirectoryIterator($path) as $file) {
             if ($file->isDot() == true || $file->isDir() == true) continue;
@@ -86,21 +89,65 @@ trait ViewComponents
     /**
      * Scan directory and return pages list
      *
-     * @param string|null $path
+     * @param string $path
      * @return array
      */
-    public function getPages($path = null)
+    public function getPages($parent = '')
     {
-        $path = (empty($path) == true) ? $this->getPagesPath() : $path;
+        return $this->getComponents($parent,'pages');
+    }
 
+    /**
+     * Get page path
+     *
+     * @param string $pageName
+     * @return string
+     */
+    public function getPagePath($pageName)
+    {
+        $pagePath = \str_replace('.',DIRECTORY_SEPARATOR,$pageName);
+        $path = $this->getPagesPath() . $pagePath;
+
+        return $path;
+    }
+
+    /**
+     * Get component path
+     *
+     * @param string $componentName
+     * @return string
+     */
+    public function getComponentPath($componentName)
+    {
+        $componentPath = \str_replace('.',DIRECTORY_SEPARATOR,$componentName);
+        $path = $this->getComponentsPath() . $componentPath;
+
+        return $path;
+    }
+
+    /**
+     * Scan directory and return components list
+     *
+     * @param string $parent
+     * @param string $type
+     * @return array
+     */
+    public function getComponents($parent = '', $type = 'components')
+    {
+        $path = ($type == 'components') ? $this->getComponentPath($parent) : $this->getPagePath($parent);
         if (File::exists($path) == false) {
             return [];
-        }
-        $items = [];
+        }        
+
+        $items = [];    
+
         foreach (new \DirectoryIterator($path) as $file) {
             if ($file->isDot() == true) continue;
             if ($file->isDir() == true) {
-                $item['name'] = $file->getFilename();
+                $item['parent'] = $parent; 
+                $item['name'] = $file->getFilename();    
+                $item['full_name'] = (empty($parent) == false) ? $item['parent'] . "." . $item['name'] : $item['name'];  
+                $item['id'] = (empty($parent) == false) ? $item['parent'] . "_" . $item['name'] : $item['name'];       
                 \array_push($items,$item);
             }
         }
@@ -114,14 +161,14 @@ trait ViewComponents
      * @param string|null $path
      * @return array
      */
-    public function getComponents($path = null)
+    public function getComponentsRecursive($path = null)
     {       
         $path = (empty($path) == true) ? $this->getComponentsPath() : $path;
         if (File::exists($path) == false) {
             return [];
-        }
-        
+        }        
         $items = [];
+
         $dir = new \RecursiveDirectoryIterator($path,\RecursiveDirectoryIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($dir,\RecursiveIteratorIterator::SELF_FIRST);
 

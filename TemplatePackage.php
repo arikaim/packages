@@ -15,16 +15,20 @@ use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Http\Url;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Arikaim;
-use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Collection\Collection;
 use DirectoryIterator;
+
+use Arikaim\Core\Packages\Traits\ViewComponents;
+use Arikaim\Core\Packages\Traits\ComponentTranslations;
 
 /**
  * Template package 
 */
 class TemplatePackage extends Package
 {
-    use ViewComponents;
+    use    
+        ViewComponents,
+        ComponentTranslations;
 
     /**
      * Get package properties
@@ -37,9 +41,12 @@ class TemplatePackage extends Package
         $this->properties['icon'] = $this->properties->get('icon','file alternate outline'); 
         if ($full == true) {              
             $this->viewPath = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+            $this->properties['path'] = $this->viewPath;
+            $this->properties['components_path'] = $this->getComponentsPath();
+            $this->properties['pages_path'] = $this->getPagesPath();
             $this->properties['routes'] = Arikaim::routes()->getRoutes(['template_name' => $this->getName()]);
             $this->properties['pages'] = $this->getPages();
-            $this->properties['components'] = $this->getComponents();
+            $this->properties['components'] = $this->getComponentsRecursive();
             $this->properties['macros'] = $this->getMacros();
 
             $primaryTemplate = Arikaim::options()->get('primary.template',null);
