@@ -20,6 +20,16 @@ use Arikaim\Core\Collection\Arrays;
 trait ComponentTranslations 
 {
     /**
+     * Skip component option files
+     *
+     * @var array
+     */
+    private $skipFiles = [
+        'component.json',
+        'page.json'
+    ];
+
+    /**
      * Get package view components translations
      *
      * @param string $componentName
@@ -198,6 +208,10 @@ trait ComponentTranslations
     {
         $result = [];
         foreach ($componentFiles as $file) {
+            if (\in_array($file,$this->skipFiles) == true) {
+                // skip component options file
+                continue;
+            }
            if (File::getExtension($file) == 'json') { 
                 $tokens = \explode('-',\str_replace('.json','',$file));
                 $languageCode = (isset($tokens[1]) == false) ? 'en' : \end($tokens);  
