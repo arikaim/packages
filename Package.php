@@ -75,6 +75,16 @@ class Package implements PackageInterface
     }
 
     /**
+     * Get suppported languages
+     *
+     * @return array|null
+     */
+    public function getLanguages()
+    {
+        return $this->properties->get('languages',null);
+    }
+
+    /**
      * Set package as primary
      *
      * @return boolean
