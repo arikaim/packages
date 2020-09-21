@@ -10,6 +10,7 @@
 namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Utils\Utils;
+use Arikaim\Core\Packages\PackageValidator;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
 use Arikaim\Core\Collection\Interfaces\CollectionInterface;
@@ -53,6 +54,11 @@ class Package implements PackageInterface
         $this->properties['version'] = Utils::formatVersion($properties->get('version','1.0.0'));       
         $this->packageRegistry = $packageRegistry;
     }
+
+    public function validator()
+    {
+        return new PackageValidator($this->properties->get('require',[]));
+    } 
 
     /**
      * Get package root path

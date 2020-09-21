@@ -144,6 +144,20 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
     }
 
     /**
+     * Get package descriptor file name
+     *
+     * @param string $packageType
+     * @param string $packageName
+     * @return string
+     */
+    public static function getPackageDescriptorFileName($packageType, $packageName)
+    {
+        $path = Self::getPackagePath($packageType);
+
+        return $path . $packageName . DIRECTORY_SEPARATOR . 'arikaim-package.json';
+    }
+
+    /**
      * Get package path
      *
      * @param string $packageType
