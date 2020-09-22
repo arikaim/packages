@@ -54,6 +54,8 @@ class ModulePackage extends Package implements PackageInterface
         if ($full == true) {          
             $this->properties->set('installed',$this->packageRegistry->hasPackage($this->getName()));
             $this->properties->set('status',$this->packageRegistry->getPackageStatus($this->getName()));
+            $this->properties['console_commands'] = $this->getConsoleCommands();
+            $this->properties['drivers'] = $this->getDrivers();
 
             $service = Factory::createModule($this->getName(),$this->getClass());
             $error = ($service == null) ? false : $service->getTestError();
@@ -63,7 +65,34 @@ class ModulePackage extends Package implements PackageInterface
         return $this->properties; 
     }
 
-     /**
+    /**
+     * Get module console commands class list.
+     *
+     * @return array
+     */
+    public function getDrivers()
+    { 
+        $path = $this->getDriversPath();
+        if (File::exists($path) == false) {
+            return [];
+        }
+        $result = [];
+        foreach (new \DirectoryIterator($path) as $file) {
+            if (
+                $file->isDot() == true || 
+                $file->isDir() == true ||
+                $file->getExtension() != 'php'
+            ) continue;
+         
+            $fileName = $file->getFilename();
+            $baseClass = \str_replace(".php","",$fileName);            
+            $result[] = $baseClass;
+        }     
+        
+        return $result;
+    }
+
+    /**
      * Get module console commands class list.
      *
      * @return array
@@ -87,8 +116,12 @@ class ModulePackage extends Package implements PackageInterface
             $class = Factory::getModuleConsoleClassName($this->getName(),$baseClass);          
 
             $command = Factory::createInstance($class);
-            if (\is_subclass_of($command,'Arikaim\Core\System\Console\ConsoleCommand') == true) {                                    
-                \array_push($result,$class);
+
+            if (\is_subclass_of($command,'Arikaim\Core\System\Console\ConsoleCommand') == true) {                   
+                $item['name'] = $command->getName();
+                $item['title'] = $command->getDescription();      
+                $item['help'] = "php cli " . $command->getName();         
+                \array_push($result,$item);                                                              
             }
         }     
         
@@ -181,5 +214,15 @@ class ModulePackage extends Package implements PackageInterface
     public function getConsolePath()
     {
         return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * Get module drivers path
+     *    
+     * @return string
+     */
+    public function getDriversPath()
+    {
+        return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'driver' . DIRECTORY_SEPARATOR;
     }
 }

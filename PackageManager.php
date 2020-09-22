@@ -226,7 +226,7 @@ class PackageManager implements PackageManagerInterface
     {
         $items = [];
         foreach (new \DirectoryIterator($this->path) as $file) {
-            if ($file->isDot() == true || $file->isDir() == false || \substr($file->getFilename(),0,1) == '.') {
+            if ($file->isDot() == true || $file->isDir() == false) {
                 continue;
             }
             $name = $file->getFilename();
