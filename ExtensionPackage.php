@@ -100,7 +100,7 @@ class ExtensionPackage extends Package implements PackageInterface
                 $file->getExtension() != 'php'
             ) continue;
           
-            $item['base_class'] = \str_replace(".php","",$file->getFilename());
+            $item['base_class'] = \str_replace('.php','',$file->getFilename());
             $job = Factory::createJob($item['base_class'],$this->getName());
             if (\is_object($job) == true) {
                 $item['name'] = $job->getName();
@@ -128,7 +128,7 @@ class ExtensionPackage extends Package implements PackageInterface
             if (\is_object($command) ==true) {
                 $item['name'] = $command->getName();
                 $item['title'] = $command->getDescription();      
-                $item['help'] = "php cli " . $command->getName();         
+                $item['help'] = 'php cli ' . $command->getName();         
                 \array_push($result,$item);
             }          
         } 
@@ -156,7 +156,7 @@ class ExtensionPackage extends Package implements PackageInterface
             ) continue;
          
             $fileName = $file->getFilename();
-            $baseClass = \str_replace(".php","",$fileName);
+            $baseClass = \str_replace('.php','',$fileName);
             $schema = Factory::createSchema($baseClass,$this->getName());
 
             if (\is_subclass_of($schema,'Arikaim\Core\Db\Schema') == true) {               
@@ -326,7 +326,7 @@ class ExtensionPackage extends Package implements PackageInterface
             if (($file->isDot() == true) || ($file->isDir() == true)) continue;
             if ($file->getExtension() != 'php') continue;
             
-            $baseClass = str_replace(".php","",$file->getFilename());
+            $baseClass = str_replace('.php','',$file->getFilename());
             // add event subscriber to db table
             $result = Arikaim::event()->registerSubscriber($baseClass,$name);
             $count += ($result == true) ? 1 : 0;

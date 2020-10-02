@@ -85,7 +85,7 @@ class ModulePackage extends Package implements PackageInterface
             ) continue;
          
             $fileName = $file->getFilename();
-            $baseClass = \str_replace(".php","",$fileName);            
+            $baseClass = \str_replace('.php','',$fileName);            
             $result[] = $baseClass;
         }     
         
@@ -112,7 +112,7 @@ class ModulePackage extends Package implements PackageInterface
             ) continue;
          
             $fileName = $file->getFilename();
-            $baseClass = \str_replace(".php","",$fileName);
+            $baseClass = \str_replace('.php','',$fileName);
             $class = Factory::getModuleConsoleClassName($this->getName(),$baseClass);          
 
             $command = Factory::createInstance($class);
@@ -120,7 +120,7 @@ class ModulePackage extends Package implements PackageInterface
             if (\is_subclass_of($command,'Arikaim\Core\System\Console\ConsoleCommand') == true) {                   
                 $item['name'] = $command->getName();
                 $item['title'] = $command->getDescription();      
-                $item['help'] = "php cli " . $command->getName();         
+                $item['help'] = 'php cli ' . $command->getName();         
                 \array_push($result,$item);                                                              
             }
         }     

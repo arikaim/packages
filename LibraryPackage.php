@@ -45,6 +45,6 @@ class LibraryPackage extends Package implements PackageInterface
      */
     public function getThemeFile($theme)
     {
-        return $this->properties->getByPath("themes/$theme/file","");
+        return $this->properties->getByPath('themes/' . $theme . '/file','');
     }
 }

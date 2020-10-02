@@ -38,7 +38,7 @@ class TemplatePackage extends Package
      */
     public function getProperties($full = false)
     {
-        $this->properties['icon'] = $this->properties->get('icon','file alternate outline'); 
+        $this->properties['icon'] = $this->properties->get('icon',null); 
         if ($full == true) {              
             $this->viewPath = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
             $this->properties['path'] = $this->viewPath;
@@ -77,8 +77,7 @@ class TemplatePackage extends Package
     public function install($primary = null)
     {
         $routes = $this->getRoutes();
-        $routesCount = count($routes);
-
+       
         // install template routes
         $routesAdded = 0;
         $primaryTemplate = Arikaim::options()->get('primary.template',null);
@@ -93,12 +92,12 @@ class TemplatePackage extends Package
             if ($route->isEmpty('handler') == false) {    
                 $handlerClass = Factory::getExtensionControllerClass($route->getByPath('handler/extension'),$route->getByPath('handler/class'));
             } else {
-                $handlerClass = Factory::getControllerClass("Controller");
+                $handlerClass = Factory::getControllerClass('Controller');
             }
             //       
             $handlerParams = $route->getByPath('handler/params',null); 
             $handlerMethod = $route->getByPath('handler/method',null);
-            $pageName = ($route->isEmpty('page') == false) ? $this->getName() . ":" . $route['page'] : null;
+            $pageName = ($route->isEmpty('page') == false) ? $this->getName() . ':' . $route['page'] : null;
             $auth = $route->getByPath('access/auth',null);
             $auth = Arikaim::access()->resolveAuthType($auth);
             $redirect = $route->getByPath('access/redirect',null);

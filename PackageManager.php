@@ -448,9 +448,9 @@ class PackageManager implements PackageManagerInterface
     {
         switch ($type) {
             case Self::GITHUB_REPOSITORY:           
-                return "http://github.com/" . $packageName . ".git";
+                return 'http://github.com/' . $packageName . '.git';
             case Self::GITHUB_PRIVATE_REPOSITORY:
-                return "http://github.com/" . $packageName . ".git";
+                return 'http://github.com/' . $packageName . '.git';
         }
 
         return null;

@@ -28,10 +28,10 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @var array
      */
     private static $packageClass = [
-        PackageManager::EXTENSION_PACKAGE => "Arikaim\\Core\\Packages\\ExtensionPackage",
-        PackageManager::LIBRARY_PACKAGE   => "Arikaim\\Core\\Packages\\LibraryPackage",
-        PackageManager::TEMPLATE_PACKAGE  => "Arikaim\\Core\\Packages\\TemplatePackage",
-        PackageManager::MODULE_PACKAGE    => "Arikaim\\Core\\Packages\\ModulePackage"
+        PackageManager::EXTENSION_PACKAGE => 'Arikaim\\Core\\Packages\\ExtensionPackage',
+        PackageManager::LIBRARY_PACKAGE   => 'Arikaim\\Core\\Packages\\LibraryPackage',
+        PackageManager::TEMPLATE_PACKAGE  => 'Arikaim\\Core\\Packages\\TemplatePackage',
+        PackageManager::MODULE_PACKAGE    => 'Arikaim\\Core\\Packages\\ModulePackage'
     ];
 
     /**
@@ -52,10 +52,10 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @var array
      */
     private static $packageRegistryClass = [
-        PackageManager::EXTENSION_PACKAGE => CORE_NAMESPACE . "\\Models\\Extensions",
+        PackageManager::EXTENSION_PACKAGE => CORE_NAMESPACE . '\\Models\\Extensions',
         PackageManager::LIBRARY_PACKAGE   => null,
         PackageManager::TEMPLATE_PACKAGE  => null,
-        PackageManager::MODULE_PACKAGE    => CORE_NAMESPACE . "\\Models\\Modules",
+        PackageManager::MODULE_PACKAGE    => CORE_NAMESPACE . '\\Models\\Modules',
     ];
 
     /**

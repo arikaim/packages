@@ -26,7 +26,7 @@ trait ViewComponents
         if ($this->getType() == 'template') {
             return $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
         }
-        return (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR : $this->viewPath;
+        return (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR : $this->viewPath;
     }
 
     /**
@@ -56,7 +56,7 @@ trait ViewComponents
      */
     public function getMacrosPath()
     {
-        return $this->getViewPath() . "macros" . DIRECTORY_SEPARATOR;
+        return $this->getViewPath() . 'macros' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -77,9 +77,9 @@ trait ViewComponents
             if ($file->isDot() == true || $file->isDir() == true) continue;
             
             $fileExt = $file->getExtension();
-            if ($fileExt != "html" && $fileExt != "htm") continue;           
+            if ($fileExt != 'html' && $fileExt != 'htm') continue;           
             
-            $item['name'] = \str_replace(".$fileExt",'',$file->getFilename());
+            $item['name'] = \str_replace('.' . $fileExt,'',$file->getFilename());
             \array_push($items,$item);            
         }
 
@@ -146,8 +146,8 @@ trait ViewComponents
             if ($file->isDir() == true) {
                 $item['parent'] = $parent; 
                 $item['name'] = $file->getFilename();    
-                $item['full_name'] = (empty($parent) == false) ? $item['parent'] . "." . $item['name'] : $item['name'];  
-                $item['id'] = (empty($parent) == false) ? $item['parent'] . "_" . $item['name'] : $item['name'];       
+                $item['full_name'] = (empty($parent) == false) ? $item['parent'] . '.' . $item['name'] : $item['name'];  
+                $item['id'] = (empty($parent) == false) ? $item['parent'] . '_' . $item['name'] : $item['name'];       
                 \array_push($items,$item);
             }
         }

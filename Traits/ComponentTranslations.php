@@ -143,7 +143,7 @@ trait ComponentTranslations
      * @param string $type
      * @return mixed
      */
-    public function readTranlationProperty($data, $key, $separator = "_", $language = null, $type = 'components')
+    public function readTranlationProperty($data, $key, $separator = '_', $language = null, $type = 'components')
     {
         if (\is_string($data) == true) {
             $data = $this->readTranslation($data,$language,$type);
@@ -164,7 +164,7 @@ trait ComponentTranslations
      * @param string $separator
      * @return array
      */
-    public function setTranslationProperty(array $data, $key, $value, $separator = "_")
+    public function setTranslationProperty(array $data, $key, $value, $separator = '_')
     {
         return Arrays::setValue($data,$key,$value,$separator);       
     }
@@ -179,7 +179,7 @@ trait ComponentTranslations
     public function resolveTranslationFileName($path, $language)
     {
         $baseName = File::baseName($path);
-        $fileName = ($language == 'en') ? $baseName . ".json" : $baseName . "-" . $language . ".json";
+        $fileName = ($language == 'en') ? $baseName . '.json' : $baseName . '-' . $language . '.json';
 
         return $path . DIRECTORY_SEPARATOR . $fileName; 
     }

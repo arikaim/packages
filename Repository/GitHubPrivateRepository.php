@@ -104,7 +104,7 @@ class GitHubPrivateRepository extends Repository implements RepositoryInterface
     protected function extractRepository($version)
     {
         $repositoryName = $this->getRepositoryName();
-        $repositoryFolder = $repositoryName . "-" . $version;
+        $repositoryFolder = $repositoryName . '-' . $version;
         $packageFileName = $this->getPackageFileName($version);
         $zipFile = $this->repositoryDir . $packageFileName;
     
