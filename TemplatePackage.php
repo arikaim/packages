@@ -47,6 +47,7 @@ class TemplatePackage extends Package
             $this->properties['routes'] = Arikaim::routes()->getRoutes(['template_name' => $this->getName()]);
             $this->properties['pages'] = $this->getPages();
             $this->properties['components'] = $this->getComponentsRecursive();
+            $this->properties['emails'] = $this->getEmails();
             $this->properties['macros'] = $this->getMacros();
 
             $primaryTemplate = Arikaim::options()->get('primary.template',null);

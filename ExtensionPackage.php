@@ -61,6 +61,7 @@ class ExtensionPackage extends Package implements PackageInterface
             $this->properties['console_commands'] = $this->getConsoleCommands();
             $this->properties['jobs'] = $this->getExtensionJobs();
             $this->properties['pages'] = $this->getPages();
+            $this->properties['emails'] = $this->getEmails();
             $this->properties['components'] = $this->getComponentsRecursive();
             $this->properties['macros'] = $this->getMacros();
         }

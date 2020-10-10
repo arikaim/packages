@@ -19,14 +19,18 @@ trait ViewComponents
     /**
      * Get view path
      *    
+     * @param string|null $componentsType
      * @return string
      */
-    public function getViewPath()
+    public function getViewPath($componentsType = null)
     {
         if ($this->getType() == 'template') {
-            return $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+            $path = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+        } else {
+            $path = (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR : $this->viewPath;
         }
-        return (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR : $this->viewPath;
+        
+        return (empty($componentsType) == true) ? $path : $path . $componentsType . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -36,7 +40,7 @@ trait ViewComponents
      */
     public function getComponentsPath()  
     {
-        return $this->getViewPath() . 'components' . DIRECTORY_SEPARATOR;
+        return $this->getViewPath('components');
     }
 
     /**
@@ -46,7 +50,17 @@ trait ViewComponents
      */
     public function getPagesPath()  
     {
-        return $this->getViewPath() . 'pages' . DIRECTORY_SEPARATOR;
+        return $this->getViewPath('pages');
+    }
+
+    /**
+     * Get emails components path
+     *
+     * @return string
+     */
+    public function getEmailsPath()  
+    {
+        return $this->getViewPath('emails');
     }
 
     /**
@@ -56,7 +70,7 @@ trait ViewComponents
      */
     public function getMacrosPath()
     {
-        return $this->getViewPath() . 'macros' . DIRECTORY_SEPARATOR;
+        return $this->getViewPath('macros');
     }
 
     /**
@@ -98,29 +112,27 @@ trait ViewComponents
     }
 
     /**
-     * Get page path
+     * Scan directory and return emails list
      *
-     * @param string $pageName
-     * @return string
+     * @param string $path
+     * @return array
      */
-    public function getPagePath($pageName)
+    public function getEmails($parent = '')
     {
-        $pagePath = \str_replace('.',DIRECTORY_SEPARATOR,$pageName);
-        $path = $this->getPagesPath() . $pagePath;
-
-        return $path;
+        return $this->getComponents($parent,'emails');
     }
 
     /**
      * Get component path
      *
      * @param string $componentName
+     * @param string $type
      * @return string
      */
-    public function getComponentPath($componentName)
+    public function getComponentPath($componentName, $type = 'components')
     {
         $componentPath = \str_replace('.',DIRECTORY_SEPARATOR,$componentName);
-        $path = $this->getComponentsPath() . $componentPath;
+        $path = $this->getViewPath($type) . $componentPath;
 
         return $path;
     }
@@ -134,7 +146,7 @@ trait ViewComponents
      */
     public function getComponents($parent = '', $type = 'components')
     {
-        $path = ($type == 'components') ? $this->getComponentPath($parent) : $this->getPagePath($parent);
+        $path = $this->getComponentPath($parent,$type);
         if (File::exists($path) == false) {
             return [];
         }        
@@ -144,10 +156,14 @@ trait ViewComponents
         foreach (new \DirectoryIterator($path) as $file) {
             if ($file->isDot() == true) continue;
             if ($file->isDir() == true) {
-                $item['parent'] = $parent; 
                 $item['name'] = $file->getFilename();    
+                if (\substr($item['name'],0,1) == '.') continue;
+                
+                $item['parent'] = $parent;                 
                 $item['full_name'] = (empty($parent) == false) ? $item['parent'] . '.' . $item['name'] : $item['name'];  
-                $item['id'] = (empty($parent) == false) ? $item['parent'] . '_' . $item['name'] : $item['name'];       
+                $fileId = (empty($parent) == false) ? $item['parent'] . '_' . $item['name'] : $item['name'];  
+                $item['id'] = \str_replace('.','_',$fileId);
+
                 \array_push($items,$item);
             }
         }

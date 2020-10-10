@@ -38,7 +38,7 @@ trait ComponentTranslations
      */
     public function getComponentTranslations($componentName, $type = 'components')
     {                       
-        $path = ($type == 'components') ? $this->getComponentPath($componentName) : $this->getPagePath($componentName);
+        $path = $this->getComponentPath($componentName,$type);
        
         $files = [];
         $languages = [];       
