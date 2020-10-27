@@ -44,6 +44,13 @@ class PackageManager implements PackageManagerInterface
     const COMPOSER_REPOSITORY       = 'composer';
 
     /**
+     * Cache save time
+     *
+     * @var integer
+     */
+    public static $cacheSaveTime = 4;
+
+    /**
      * Package type
      *
      * @var string
@@ -111,6 +118,8 @@ class PackageManager implements PackageManagerInterface
         $this->packageClass = $packageClass;
       
         $this->packageRegistry = $packageRegistry;
+
+        Self::$cacheSaveTime = \defined('CACHE_SAVE_TIME') ? \constant('CACHE_SAVE_TIME') : Self::$cacheSaveTime;
     }
 
     /**
@@ -180,7 +189,7 @@ class PackageManager implements PackageManagerInterface
         $result = ($cached == true) ? $this->cache->fetch($this->packageType . '.list') : null;
         if (\is_array($result) == false) {
             $result = $this->scan($filter);
-            $this->cache->save($this->packageType . '.list',$result,5);
+            $this->cache->save($this->packageType . '.list',$result,Self::$cacheSaveTime);
         } 
         
         return $result;

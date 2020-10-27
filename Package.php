@@ -55,6 +55,11 @@ class Package implements PackageInterface
         $this->packageRegistry = $packageRegistry;
     }
 
+    /**
+     * Create package validator
+     *
+     * @return PackageValidator
+     */
     public function validator()
     {
         return new PackageValidator($this->properties->get('require',[]));
