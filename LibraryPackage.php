@@ -47,4 +47,36 @@ class LibraryPackage extends Package implements PackageInterface
     {
         return $this->properties->getByPath('themes/' . $theme . '/file','');
     }
+
+    /**
+     * Disable library
+     *
+     * @return void
+     */
+    public function disable()
+    {
+        $this->properties->set('disabled',true);      
+
+    } 
+
+    /**
+     * Enable library
+     *
+     * @return void
+     */
+    public function enable()
+    {
+        $this->properties->set('disabled',false);      
+    } 
+
+    /**
+     * Set library status (enabled, disbled)
+     *
+     * @param bool $status
+     * @return void
+     */
+    public function setStatus($status)
+    {
+        $this->properties->set('disabled',!$status);      
+    }
 }

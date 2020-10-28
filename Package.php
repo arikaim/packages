@@ -10,6 +10,7 @@
 namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Utils\Utils;
+use Arikaim\Core\Utils\File;
 use Arikaim\Core\Packages\PackageValidator;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
@@ -220,4 +221,21 @@ class Package implements PackageInterface
     {        
         return false;
     }  
+
+    /**
+     * Save package properties file 
+     * 
+     * @return bool
+     */
+    public function savePackageProperties() 
+    {         
+        $fileName = $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'arikaim-package.json';
+        $data = $this->properties->toArray();
+        if (File::isWritable($fileName) == false) {
+            File::setWritable($fileName);
+        }
+        $result = File::write($fileName,Utils::jsonEncode($data));
+
+        return $result;
+    }
 }
