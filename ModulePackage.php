@@ -137,7 +137,7 @@ class ModulePackage extends Package implements PackageInterface
     public function install($primary = null)
     {
         $data = $this->properties->toArray();
-
+               
         $module = Factory::createModule($this->getName(),$this->getClass());
         if (\is_object($module) == false) {
             return false;

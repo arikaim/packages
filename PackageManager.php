@@ -136,7 +136,7 @@ class PackageManager implements PackageManagerInterface
      * Create package 
      *
      * @param string $name
-     * @return PackageInterface
+     * @return PackageInterface|null
     */
     public function createPackage($name)
     {      
@@ -145,8 +145,12 @@ class PackageManager implements PackageManagerInterface
             $propertes->set('name',$name);
         }
         $class = $this->packageClass;
+        $package = null;
+        if (\class_exists($class) == true) {
+            $package = new $class($this->path,$propertes,$this->packageRegistry);
+        }
 
-        return new $class($this->path,$propertes,$this->packageRegistry);
+        return $package;
     }
 
     /**
@@ -241,10 +245,12 @@ class PackageManager implements PackageManagerInterface
             $name = $file->getFilename();
             if (\is_array($filter) == true) {
                 $package = $this->createPackage($name);
-                $properties = $package->getProperties();                
-                foreach ($filter as $key => $value) {                
-                    if ($properties->get($key) == $value) {
-                        \array_push($items,$name);   
+                if (empty($package) == false) {
+                    $properties = $package->getProperties();                
+                    foreach ($filter as $key => $value) {                
+                        if ($properties->get($key) == $value) {
+                            \array_push($items,$name);   
+                        }
                     }
                 }
             } else {
@@ -260,13 +266,13 @@ class PackageManager implements PackageManagerInterface
      *
      * @param string $name
      * @param boolean $full
-     * @return Collection
+     * @return Collection|null
      */
     public function getPackageProperties($name, $full = false)
     {
         $package = $this->createPackage($name);
 
-        return $package->getProperties($full);
+        return (empty($package) == false) ? $package->getProperties($full) : null;
     }
 
     /**
@@ -292,15 +298,28 @@ class PackageManager implements PackageManagerInterface
     /**
      * Install all packages
      *
+     * @param Closure|null $onProgress
+     * @param Closure|null $onProgressError
      * @return bool
      */
-    public function installAllPackages()
+    public function installAllPackages($onProgress = null, $onProgressError = null)
     {
         $this->cache->clear();
         $errors = 0;
         $packages = $this->getPackages();
-        foreach ($packages as $name) {           
-            $errors += ($this->installPackage($name) == false) ? 1 : 0;
+
+        foreach ($packages as $name) {             
+            $result = $this->installPackage($name);   
+            if ($result == true) {               
+                if (\is_callable($onProgress) == true) {
+                    $onProgress($name);
+                }
+            } else {
+                if (\is_callable($onProgressError) == true) {
+                    $onProgressError($name);
+                }
+                $errors += 1;
+            }         
         }
 
         return ($errors == 0);
@@ -333,20 +352,20 @@ class PackageManager implements PackageManagerInterface
     {
         $package = $this->createPackage($name);
 
-        return $package->install();
+        return (empty($package) == false) ? $package->install() : false;
     }
 
     /**
      * Run post install actions on package
      *
      * @param string $name
-     * @return void
+     * @return mixed
      */
     public function postInstallPackage($name)
     {
         $package = $this->createPackage($name);
 
-        return $package->postInstall();
+        return (empty($package) == false) ? $package->postInstall() : false;
     }
 
     /**
@@ -359,7 +378,7 @@ class PackageManager implements PackageManagerInterface
     {
         $package = $this->createPackage($name);
 
-        return $package->unInstall();
+        return (empty($package) == false) ? $package->unInstall() : false;
     }
 
     /**
@@ -372,7 +391,7 @@ class PackageManager implements PackageManagerInterface
     {
         $package = $this->createPackage($name);
 
-        return $package->enable();
+        return (empty($package) == false) ? $package->enable() : false;
     }
 
     /**
@@ -385,7 +404,7 @@ class PackageManager implements PackageManagerInterface
     {
         $package = $this->createPackage($name);
 
-        return $package->disable();
+        return (empty($package) == false) ? $package->disable() : false;
     }
 
     /**
@@ -409,6 +428,9 @@ class PackageManager implements PackageManagerInterface
     public function createBackup($name)
     {
         $package = $this->createPackage($name);
+        if (empty($package) == true) {
+            return false;
+        }
 
         $fileName = $package->getName() . '-' . $package->getVersion() . '.zip';
         $sourcePath = $this->getPath() . $name . DIRECTORY_SEPARATOR;
