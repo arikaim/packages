@@ -18,14 +18,13 @@ use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 */
 abstract class Repository implements RepositoryInterface
 {
-
     /**
      * Install package
      *
      * @param string|null $version
      * @return boolean
      */
-    abstract public function install($version = null);
+    abstract public function install(?string $version = null): bool;
 
     /**
      * Repository url
@@ -100,7 +99,14 @@ abstract class Repository implements RepositoryInterface
     * @param StorageInterface $storage
     * @param HttpClientInterface $httpClient
     */
-    public function __construct($repositoryUrl, $private = false, $repositoryDir, $installDir, StorageInterface $storage, HttpClientInterface $httpClient)
+    public function __construct(
+        string $repositoryUrl, 
+        bool $private = false, 
+        string $repositoryDir, 
+        string $installDir, 
+        StorageInterface $storage,
+        HttpClientInterface $httpClient
+    )
     {
         $this->repositoryUrl = $repositoryUrl;   
         $this->storage = $storage;  
@@ -117,7 +123,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return boolean
      */
-    public function isPrivate()
+    public function isPrivate(): bool
     {
         return $this->private;
     }
@@ -127,7 +133,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return string
      */
-    public function getRepositoryUrl()
+    public function getRepositoryUrl(): string
     {
         return $this->repositoryUrl;
     }
@@ -135,16 +141,17 @@ abstract class Repository implements RepositoryInterface
     /**
      * Download package
      *
+     * @param string|null $version
      * @return bool
      */
-    public abstract function download($version = null);
+    public abstract function download(?string $version = null): bool;
     
     /**
      * Get package last version
      *
      * @return string
      */
-    public abstract function getLastVersion();
+    public abstract function getLastVersion(): ?string;
 
     /**
      * Get package file name
@@ -152,7 +159,7 @@ abstract class Repository implements RepositoryInterface
      * @param string $version
      * @return string
      */
-    public function getPackageFileName($version)
+    public function getPackageFileName(string $version): string
     {
         $fileName = \str_replace('/','_',$this->getPackageName());
 
@@ -164,7 +171,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return string
      */
-    public function getPackageName()
+    public function getPackageName(): string
     {
         return $this->packageName;
     }
@@ -174,7 +181,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return string
      */
-    public function getRepositoryName()
+    public function getRepositoryName(): string
     {
         return $this->repositoryName;
     }
@@ -184,7 +191,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return void
     */
-    protected function resolvePackageName()
+    protected function resolvePackageName(): void
     {
     }
 }

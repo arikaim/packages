@@ -33,7 +33,7 @@ class ModulePackage extends Package implements PackageInterface
      *
      * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         return $this->properties->get('class',ucfirst($this->getName()));
     }
@@ -44,7 +44,7 @@ class ModulePackage extends Package implements PackageInterface
      * @param boolean $full
      * @return Collection
      */
-    public function getProperties($full = false)
+    public function getProperties(bool $full = false)
     {
         // set default values
         $this->properties['type'] = $this->properties->get('type','service');
@@ -70,12 +70,13 @@ class ModulePackage extends Package implements PackageInterface
      *
      * @return array
      */
-    public function getDrivers()
+    public function getDrivers(): array
     { 
         $path = $this->getDriversPath();
         if (File::exists($path) == false) {
             return [];
         }
+
         $result = [];
         foreach (new \DirectoryIterator($path) as $file) {
             if (
@@ -97,12 +98,13 @@ class ModulePackage extends Package implements PackageInterface
      *
      * @return array
      */
-    public function getConsoleCommands()
+    public function getConsoleCommands(): array
     {      
         $path = $this->getConsolePath();
         if (File::exists($path) == false) {
             return [];
         }
+
         $result = [];
         foreach (new \DirectoryIterator($path) as $file) {
             if (
@@ -134,7 +136,7 @@ class ModulePackage extends Package implements PackageInterface
      * @param boolean|null $primary Primary package replaces routes or other params
      * @return bool
      */
-    public function install($primary = null)
+    public function install(?bool $primary = null): bool
     {
         $data = $this->properties->toArray();
                
@@ -168,7 +170,7 @@ class ModulePackage extends Package implements PackageInterface
      *
      * @return bool
      */
-    public function unInstall() 
+    public function unInstall(): bool 
     {
         $result = $this->packageRegistry->removePackage($this->getName());
 
@@ -180,7 +182,7 @@ class ModulePackage extends Package implements PackageInterface
      *
      * @return bool
      */
-    public function enable() 
+    public function enable(): bool 
     {
         return $this->packageRegistry->setPackageStatus($this->getName(),1); 
     }
@@ -190,7 +192,7 @@ class ModulePackage extends Package implements PackageInterface
      *
      * @return bool
      */
-    public function disable() 
+    public function disable(): bool 
     {
         return $this->packageRegistry->setPackageStatus($this->getName(),0);  
     }   
@@ -211,7 +213,7 @@ class ModulePackage extends Package implements PackageInterface
      *    
      * @return string
      */
-    public function getConsolePath()
+    public function getConsolePath(): string
     {
         return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR;
     }
@@ -221,7 +223,7 @@ class ModulePackage extends Package implements PackageInterface
      *    
      * @return string
      */
-    public function getDriversPath()
+    public function getDriversPath(): string
     {
         return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'driver' . DIRECTORY_SEPARATOR;
     }

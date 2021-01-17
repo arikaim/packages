@@ -19,21 +19,21 @@ interface PackageInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get Package version
      *
      * @return string
      */
-    public function getVersion();
+    public function getVersion(): string;
 
     /**
      * Get package type
      *
-     * @return string
+     * @return string|null
     */
-    public function getType();
+    public function getType(): ?string;
 
     /**
      * Return package properties
@@ -41,14 +41,14 @@ interface PackageInterface
      * @param boolean $full
      * @return Collection
      */
-    public function getProperties($full = false);
+    public function getProperties(bool $full = false);
 
     /**
      * Validate package properties 
      *
      * @return bool
      */
-    public function validate();
+    public function validate(): bool;
 
     /**
      * Install package
@@ -56,42 +56,42 @@ interface PackageInterface
      * @param boolean|null $primary Primary package replaces routes or other params
      * @return bool
      */
-    public function install($primary = null);
+    public function install(?bool $primary = null): bool;
 
     /**
      * Run post install actions
      *     
      * @return boolean
      */
-    public function postInstall();
+    public function postInstall(): bool;
     
     /**
      * Unintsll package
      *
      * @return bool
      */
-    public function unInstall();
+    public function unInstall(): bool;
 
     /**
      * Enable package
      *
      * @return bool
      */
-    public function enable();
+    public function enable(): bool;
 
     /**
      * Disable package
      *
      * @return bool
      */
-    public function disable();
+    public function disable(): bool;
 
     /**
      * Set package as primary
      *
      * @return boolean
     */
-    public function setPrimary();
+    public function setPrimary(): bool;
 
     /**
      * Get require property

@@ -43,7 +43,7 @@ class ExtensionPackage extends Package implements PackageInterface
      * @param boolean $full
      * @return Collection
      */
-    public function getProperties($full = false)
+    public function getProperties(bool $full = false)
     {
         $type = $this->properties->get('type','user');
         $this->properties['type'] = $this->getTypeId($type);
@@ -74,11 +74,11 @@ class ExtensionPackage extends Package implements PackageInterface
      *
      * @return boolean
      */
-    public function setPrimary()
+    public function setPrimary(): bool
     {
         $result = $this->packageRegistry->setPrimary($this->getName());            
       
-        return $result;       
+        return (bool)$result;       
     }
 
     /**
@@ -86,7 +86,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *
      * @return array
      */
-    public function getExtensionJobs()
+    public function getExtensionJobs(): array
     {
         $path = $this->getJobsPath();
         $result = [];
@@ -117,7 +117,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *
      * @return array
      */
-    public function getConsoleCommands()
+    public function getConsoleCommands(): array
     {
         $extension = $this->packageRegistry->getPackage($this->getName()); 
         if ($extension == false) {
@@ -142,12 +142,13 @@ class ExtensionPackage extends Package implements PackageInterface
      *
      * @return array
      */
-    public function getModels()
+    public function getModels(): array
     {      
         $path = $this->getModelsSchemaPath();
         if (File::exists($path) == false) {
             return [];
         }
+
         $result = [];
         foreach (new DirectoryIterator($path) as $file) {
             if (
@@ -175,7 +176,7 @@ class ExtensionPackage extends Package implements PackageInterface
      * @param boolean|null $primary Primary package replaces routes or other params
      * @return mixed|true
      */
-    public function install($primary = null)
+    public function install(?bool $primary = null): bool
     {
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
@@ -223,7 +224,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *     
      * @return boolean
      */
-    public function postInstall()
+    public function postInstall(): bool
     {
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
@@ -241,9 +242,9 @@ class ExtensionPackage extends Package implements PackageInterface
     /**
      * Uninstall extension package
      *
-     * @return mixed|true
+     * @return bool
      */
-    public function unInstall() 
+    public function unInstall(): bool 
     { 
         $details = $this->getProperties(true);
         $extensionName = $this->getName();
@@ -268,7 +269,7 @@ class ExtensionPackage extends Package implements PackageInterface
         $extObj->unInstall();        
         $this->packageRegistry->removePackage($extensionName);
 
-        return ($extObj->hasError() == true) ? $extObj->getErrors() : true;     
+        return ($extObj->hasError() == false);  
     }
 
     /**
@@ -276,7 +277,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *
      * @return bool
      */
-    public function enable() 
+    public function enable(): bool 
     {
         $name = $this->getName();
         $this->packageRegistry->setPackageStatus($name,1);
@@ -295,7 +296,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *
      * @return bool
      */
-    public function disable() 
+    public function disable(): bool 
     {
         $name = $this->getName();
         $this->packageRegistry->setPackageStatus($name,0);
@@ -314,7 +315,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *
      * @return integer
      */
-    public function registerEventsSubscribers()
+    public function registerEventsSubscribers(): int
     {
         $count = 0;
         $name = $this->getName();
@@ -352,7 +353,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *   
      * @return string
      */
-    public function getJobsPath()   
+    public function getJobsPath(): string   
     {
         return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'jobs' . DIRECTORY_SEPARATOR;
     }
@@ -362,7 +363,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *  
      * @return string
      */
-    public function getModelsSchemaPath()   
+    public function getModelsSchemaPath(): string   
     {
         return $this->getModelsPath() . 'schema' . DIRECTORY_SEPARATOR;
     }
@@ -372,7 +373,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *   
      * @return string
      */
-    public function getModelsPath()   
+    public function getModelsPath(): string   
     {
         return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR;
     }
@@ -382,7 +383,7 @@ class ExtensionPackage extends Package implements PackageInterface
      *    
      * @return string
      */
-    public function getSubscribersPath()   
+    public function getSubscribersPath(): string   
     {
         return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'subscribers' . DIRECTORY_SEPARATOR;
     }

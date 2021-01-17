@@ -19,35 +19,36 @@ interface RepositoryInterface
      *
      * @return boolean
      */
-    public function isPrivate();
+    public function isPrivate(): bool;
 
     /**
      * Download package
      *
+     * @param string|null $version
      * @return bool
      */
-    public function download($version = null);
+    public function download(?string $version = null): bool;
 
     /**
      * Get package last version
      *
      * @return string|null
      */
-    public function getLastVersion();
+    public function getLastVersion(): ?string;
 
     /**
      * Get package name
      *
      * @return string
      */
-    public function getPackageName();
+    public function getPackageName(): string;
 
     /**
      * Get repository name
      *
      * @return string
      */
-    public function getRepositoryName();
+    public function getRepositoryName(): string;
 
     /**
      * Install repository
@@ -55,12 +56,12 @@ interface RepositoryInterface
      * @param string|null $version
      * @return boolean
      */
-    public function install($version = null);
+    public function install(?string $version = null): bool;
 
     /**
      * Get repository url
      *
      * @return string
      */
-    public function getRepositoryUrl();
+    public function getRepositoryUrl(): string;
 }

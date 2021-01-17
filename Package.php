@@ -32,7 +32,7 @@ class Package implements PackageInterface
     /**
      * Package Registry Interface
      *
-     * @var PackageRegistryInterface
+     * @var PackageRegistryInterface|null
      */
     protected $packageRegistry;
 
@@ -46,9 +46,11 @@ class Package implements PackageInterface
     /**
      * Constructor
      *
+     * @param string $path    
      * @param CollectionInterface $properties
+     * @param PackageRegistryInterface|null $packageRegistry
      */
-    public function __construct($path, CollectionInterface $properties, PackageRegistryInterface $packageRegistry = null) 
+    public function __construct(string $path, CollectionInterface $properties, ?PackageRegistryInterface $packageRegistry = null) 
     {
         $this->path = $path;      
         $this->properties = $properties;
@@ -71,7 +73,7 @@ class Package implements PackageInterface
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -81,7 +83,7 @@ class Package implements PackageInterface
      *
      * @return string
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->properties->get('version','1.0.0');
     }
@@ -91,7 +93,7 @@ class Package implements PackageInterface
      *
      * @return array|null
      */
-    public function getLanguages()
+    public function getLanguages(): ?array
     {
         return $this->properties->get('languages',null);
     }
@@ -101,7 +103,7 @@ class Package implements PackageInterface
      *
      * @return boolean
      */
-    public function setPrimary()
+    public function setPrimary(): bool
     {
         return true;
     }
@@ -109,9 +111,9 @@ class Package implements PackageInterface
     /**
      * Get package type
      *
-     * @return string
+     * @return string|null
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->properties->get('package-type',null);
     }
@@ -121,7 +123,7 @@ class Package implements PackageInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->properties->get('name');
     }
@@ -132,7 +134,7 @@ class Package implements PackageInterface
      * @param boolean $full
      * @return CollectionInterface
      */
-    public function getProperties($full = false)
+    public function getProperties(bool $full = false)
     {
         return $this->properties;
     }
@@ -152,11 +154,11 @@ class Package implements PackageInterface
     /**
      * Get package property
      *
-     * @param srting $name
+     * @param string $name
      * @param mixed $default
      * @return mixed
      */
-    public function getProperty($name, $default = null)
+    public function getProperty(string $name, $default = null)
     {
         return $this->properties->get($name,$default);
     }
@@ -166,7 +168,7 @@ class Package implements PackageInterface
      *
      * @return bool
      */
-    public function validate()
+    public function validate(): bool
     {
         return true;
     }
@@ -177,7 +179,7 @@ class Package implements PackageInterface
      * @param boolean|null $primary Primary package replaces routes or other params
      * @return bool
      */
-    public function install($primary = null)   
+    public function install(?bool $primary = null): bool   
     {        
         return false;
     }
@@ -187,7 +189,7 @@ class Package implements PackageInterface
      *     
      * @return boolean
      */
-    public function postInstall()
+    public function postInstall(): bool
     {
         return true;
     }
@@ -197,7 +199,7 @@ class Package implements PackageInterface
      *
      * @return bool
      */
-    public function unInstall() 
+    public function unInstall(): bool 
     {      
         return false;  
     }
@@ -207,7 +209,7 @@ class Package implements PackageInterface
      *
      * @return bool
      */
-    public function enable()    
+    public function enable(): bool    
     {
         return false;
     }
@@ -217,7 +219,7 @@ class Package implements PackageInterface
      *
      * @return bool
      */
-    public function disable()   
+    public function disable(): bool   
     {        
         return false;
     }  
@@ -227,7 +229,7 @@ class Package implements PackageInterface
      * 
      * @return bool
      */
-    public function savePackageProperties() 
+    public function savePackageProperties(): bool 
     {         
         $fileName = $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'arikaim-package.json';
         $data = $this->properties->toArray();

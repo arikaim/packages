@@ -36,7 +36,7 @@ trait ComponentTranslations
      * @param string $type
      * @return array
      */
-    public function getComponentTranslations($componentName, $type = 'components')
+    public function getComponentTranslations(string $componentName, string $type = 'components'): array
     {                       
         $path = $this->getComponentPath($componentName,$type);
        
@@ -64,7 +64,7 @@ trait ComponentTranslations
      * @param string $type
      * @return array|false
     */
-    public function readTranslation($componentName, $language, $type = 'components') 
+    public function readTranslation(string $componentName, ?string $language, string $type = 'components') 
     {        
         $fileName = $this->getTranslationFileName($componentName,$language,$type);
 
@@ -79,7 +79,7 @@ trait ComponentTranslations
      * @param string $type
      * @return string
     */
-    public function getTranslationRelativeFileName($componentName, $language, $type = 'components')
+    public function getTranslationRelativeFileName(string $componentName, ?string $language, string $type = 'components'): string
     {
         $filePath = $this->getTranslationFileName($componentName, $language, $type);
 
@@ -94,7 +94,7 @@ trait ComponentTranslations
      * @param string $type
      * @return string
      */
-    public function getTranslationFileName($componentName, $language, $type = 'components')
+    public function getTranslationFileName(string $componentName, ?string $language, string $type = 'components')
     {
         $translations = $this->getComponentTranslations($componentName,$type);
         if ($translations === false) {          
@@ -116,11 +116,9 @@ trait ComponentTranslations
      * @param string $type
      * @return boolean
      */
-    public function saveTranslation($data, $componentName, $language, $type = 'components')
+    public function saveTranslation($data, string $componentName, ?string $language, string $type = 'components'): bool
     {
         $fileName = $this->getTranslationFileName($componentName,$language,$type);
-        
-        $jsonText = Utils::jsonEncode($data);
         if ($fileName === false) {
             return false;
         }
@@ -129,7 +127,8 @@ trait ComponentTranslations
                 return false;
             }
         }
-
+        $jsonText = Utils::jsonEncode($data);
+       
         return File::write($fileName,$jsonText); 
     }
 
@@ -143,7 +142,7 @@ trait ComponentTranslations
      * @param string $type
      * @return mixed
      */
-    public function readTranlationProperty($data, $key, $separator = '_', $language = null, $type = 'components')
+    public function readTranlationProperty($data, string $key, string $separator = '_', ?string $language = null, string $type = 'components')
     {
         if (\is_string($data) == true) {
             $data = $this->readTranslation($data,$language,$type);
@@ -164,7 +163,7 @@ trait ComponentTranslations
      * @param string $separator
      * @return array
      */
-    public function setTranslationProperty(array $data, $key, $value, $separator = '_')
+    public function setTranslationProperty(array $data, string $key, $value, string $separator = '_')
     {
         return Arrays::setValue($data,$key,$value,$separator);       
     }
@@ -176,7 +175,7 @@ trait ComponentTranslations
      * @param string $language
      * @return string
      */
-    public function resolveTranslationFileName($path, $language)
+    public function resolveTranslationFileName(string $path, ?string $language): string
     {
         $baseName = File::baseName($path);
         $fileName = ($language == 'en') ? $baseName . '.json' : $baseName . '-' . $language . '.json';
@@ -191,7 +190,7 @@ trait ComponentTranslations
      * @param string $language
      * @return boolean
      */
-    public function hasLanguage($translations, $language)
+    public function hasLanguage($translations, ?string $language): bool
     {
         $translations = (\is_array($translations) == false) ? [] : $translations;
 
@@ -204,7 +203,7 @@ trait ComponentTranslations
      * @param array $componentFiles
      * @return array
      */
-    public function getComponentLanguages(array $componentFiles)
+    public function getComponentLanguages(array $componentFiles): array
     {
         $result = [];
         foreach ($componentFiles as $file) {

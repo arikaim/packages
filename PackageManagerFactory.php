@@ -16,6 +16,7 @@ use Arikaim\Core\Interfaces\Packages\PackageManagerFactoryInterface;
 use Arikaim\Core\Interfaces\CacheInterface;
 use Arikaim\Core\Packages\PackageManager;
 use Arikaim\Core\Utils\Path;
+use Arikaim\Core\Packages\PackageValidator;
 
 /**
  * Package managers factory class
@@ -92,6 +93,10 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
 
     /**
      * Constructor
+     * 
+     * @param CacheInterface $cache
+     * @param StorageInterface $storage
+     * @param HttpClientInterface $httpClient
      */
     public function __construct(CacheInterface $cache, StorageInterface $storage, HttpClientInterface $httpClient)
     {
@@ -101,12 +106,23 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
     }
 
     /**
+     * Create validator
+     *
+     * @param array|null $requires
+     * @return PackageValidator
+     */
+    public function createValidator(?array $requires = [])
+    {
+        return new PackageValidator($requires);
+    }
+
+    /**
      * Create package manager
      *
      * @param string $packageType
      * @return PackageManagerInterface|null
      */
-    public function create($packageType)
+    public function create(string $packageType)
     {
         if (\array_key_exists($packageType,Self::$packageCategory) === true) {
             $packageType = Self::$packageCategory[$packageType];
@@ -125,7 +141,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageType
      * @return object|null
      */
-    public static function createPackageRegistry($packageType)
+    public static function createPackageRegistry(string $packageType)
     {
         $class = (isset(Self::$packageRegistryClass[$packageType]) == true) ? Self::$packageRegistryClass[$packageType] : null;
         
@@ -138,7 +154,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageType
      * @return string|null
      */
-    public static function getPackagePath($packageType)
+    public static function getPackagePath(string $packageType)
     {
         return (isset(Self::$packagePath[$packageType]) == true) ? Self::$packagePath[$packageType] : null;
     }
@@ -150,7 +166,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageName
      * @return string
      */
-    public static function getPackageDescriptorFileName($packageType, $packageName)
+    public static function getPackageDescriptorFileName(string $packageType, string $packageName): string
     {
         $path = Self::getPackagePath($packageType);
 
@@ -163,7 +179,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageType
      * @return string|null
      */
-    public static function getPackageClass($packageType)
+    public static function getPackageClass(string $packageType): ?string
     {
         return (isset(Self::$packageClass[$packageType]) == true) ? Self::$packageClass[$packageType] : null;
     }
@@ -175,7 +191,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $path
      * @return void
      */
-    public static function setPackagePath($packageType, $path)
+    public static function setPackagePath(string $packageType, string $path): void
     {
         Self::$packagePath[$packageType] = $path;
     }
@@ -187,7 +203,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $class
      * @return void
      */
-    public static function setPackageClass($packageType, $class)
+    public static function setPackageClass(string $packageType, string $class): void
     {
         Self::$packageClass[$packageType] = $class;
     }
@@ -199,7 +215,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $class
      * @return void
      */
-    public static function setPackageRegistryClass($packageType, $class)
+    public static function setPackageRegistryClass(string $packageType, string $class): void
     {
         Self::$packageRegistryClass[$packageType] = $class;
     }

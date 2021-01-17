@@ -16,16 +16,17 @@ use Arikaim\Core\Utils\ZipFile;
 use Arikaim\Core\Utils\Utils;
 
 /**
- * GitHub private repository driver class
+ * Arikaim repository driver class
 */
-class GitHubPrivateRepository extends Repository implements RepositoryInterface
+class ArikaimRepository extends Repository implements RepositoryInterface
 {
     /**
      * Download package
      *
+     * @param string|null $version
      * @return bool
      */
-    public function download($version = null)
+    public function download(?string $version = null): bool
     {
         return false;
     }
@@ -35,7 +36,7 @@ class GitHubPrivateRepository extends Repository implements RepositoryInterface
      *
      * @return string|null
      */
-    public function getLastVersion()
+    public function getLastVersion(): ?string
     {
         return null;
     }
@@ -45,7 +46,7 @@ class GitHubPrivateRepository extends Repository implements RepositoryInterface
      *
      * @return void
      */
-    protected function resolvePackageName()
+    protected function resolvePackageName(): void
     {
         $url = \parse_url($this->repositoryUrl);
         $path = \trim(\str_replace('.git','',$url['path']),'/');
@@ -61,7 +62,7 @@ class GitHubPrivateRepository extends Repository implements RepositoryInterface
      * @param string|null $version
      * @return boolean
      */
-    public function install($version = null)
+    public function install(?string $version = null): bool
     {
         $version = (empty($version) == true) ? $this->getLastVersion() : $version;
         $result = $this->download($version);
@@ -101,7 +102,7 @@ class GitHubPrivateRepository extends Repository implements RepositoryInterface
      * @param string $version
      * @return string|false  Return packge folder
      */
-    protected function extractRepository($version)
+    protected function extractRepository(string $version)
     {
         $repositoryName = $this->getRepositoryName();
         $repositoryFolder = $repositoryName . '-' . $version;

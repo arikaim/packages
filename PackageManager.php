@@ -16,7 +16,7 @@ use Arikaim\Core\Interfaces\CacheInterface;
 use Arikaim\Core\Collection\Collection;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
 use Arikaim\Core\Packages\Repository\GitHubRepository;
-use Arikaim\Core\Packages\Repository\GitHubPrivateRepository;
+use Arikaim\Core\Packages\Repository\ArikaimRepository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Utils\ZipFile;
@@ -40,9 +40,7 @@ class PackageManager implements PackageManagerInterface
     const GITHUB_REPOSITORY         = 'github';
     const GITHUB_PRIVATE_REPOSITORY = 'private-github';
     const ARIKAIM_REPOSITORY        = 'arikaim';
-    const BITBUCKET_REPOSITORY      = 'bitbucket';
-    const COMPOSER_REPOSITORY       = 'composer';
-
+   
     /**
      * Cache save time
      *
@@ -95,19 +93,22 @@ class PackageManager implements PackageManagerInterface
     /**
      * Constructor
      *
-     * @param string $path
+     * @param string $packagePath
+     * @param string $packageType
+     * @param string $packageClass
      * @param CacheInterface $cache
-     * @param object $storage
-     * @param object $httpClient
+     * @param StorageInterface $storage
+     * @param HttpClientInterface $httpClient
+     * @param PackageRegistryInterface|null $packageRegistry
      */
     public function __construct(
-        $packagePath, 
-        $packageType, 
-        $packageClass, 
+        string $packagePath, 
+        string $packageType, 
+        string $packageClass, 
         CacheInterface $cache, 
         StorageInterface $storage, 
         HttpClientInterface $httpClient, 
-        PackageRegistryInterface $packageRegistry = null
+        ?PackageRegistryInterface $packageRegistry = null
     )
     {
         $this->path = $packagePath;
@@ -115,8 +116,7 @@ class PackageManager implements PackageManagerInterface
         $this->cache = $cache;
         $this->storage = $storage;
         $this->httpClient = $httpClient;
-        $this->packageClass = $packageClass;
-      
+        $this->packageClass = $packageClass;      
         $this->packageRegistry = $packageRegistry;
 
         Self::$cacheSaveTime = \defined('CACHE_SAVE_TIME') ? \constant('CACHE_SAVE_TIME') : Self::$cacheSaveTime;
@@ -138,7 +138,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return PackageInterface|null
     */
-    public function createPackage($name)
+    public function createPackage(string $name)
     {      
         $propertes = Self::loadPackageProperties($name,$this->path);
         if (empty($propertes->get('name')) == true) {
@@ -159,7 +159,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return boolean
      */
-    public function hasPackage($name)
+    public function hasPackage(string $name): bool
     {
         $fileName = $this->path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
         
@@ -172,7 +172,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $packageName
      * @return RepositoryInterface
      */
-    public function getRepository($packageName)
+    public function getRepository(string $packageName)
     {
         $properties = Self::loadPackageProperties($packageName,$this->path);
         $repositoryUrl = $properties->get('repository',null);
@@ -186,9 +186,9 @@ class PackageManager implements PackageManagerInterface
      *
      * @param boolean $cached
      * @param mixed $filter
-     * @return array
+     * @return mixed
      */
-    public function getPackages($cached = false, $filter = null)
+    public function getPackages(bool $cached = false, $filter = null)
     {
         $result = ($cached == true) ? $this->cache->fetch($this->packageType . '.list') : null;
         if (\is_array($result) == false) {
@@ -204,7 +204,7 @@ class PackageManager implements PackageManagerInterface
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -213,9 +213,10 @@ class PackageManager implements PackageManagerInterface
      * Load package properties file 
      *
      * @param string $name
+     * @param string $path
      * @return Collection
      */
-    public static function loadPackageProperties($name, $path) 
+    public static function loadPackageProperties(string $name, ?string $path) 
     {         
         $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
         $data = File::readJsonFile($fileName);
@@ -235,7 +236,7 @@ class PackageManager implements PackageManagerInterface
      * @param mixed $filter
      * @return array
      */
-    protected function scan($filter = null)
+    protected function scan($filter = null): array
     {
         $items = [];
         foreach (new \DirectoryIterator($this->path) as $file) {
@@ -268,7 +269,7 @@ class PackageManager implements PackageManagerInterface
      * @param boolean $full
      * @return Collection|null
      */
-    public function getPackageProperties($name, $full = false)
+    public function getPackageProperties(string $name, bool $full = false)
     {
         $package = $this->createPackage($name);
 
@@ -282,7 +283,7 @@ class PackageManager implements PackageManagerInterface
      * @param mixed $value
      * @return PackageInterface|false
      */
-    public function findPackage($param, $value)
+    public function findPackage(string $param, $value)
     {
         $packages = $this->getPackages();
         foreach ($packages as $name) {
@@ -302,7 +303,7 @@ class PackageManager implements PackageManagerInterface
      * @param Closure|null $onProgressError
      * @return bool
      */
-    public function installAllPackages($onProgress = null, $onProgressError = null)
+    public function installAllPackages($onProgress = null, $onProgressError = null): bool
     {
         $this->cache->clear();
         $errors = 0;
@@ -330,10 +331,11 @@ class PackageManager implements PackageManagerInterface
      *
      * @return bool
      */
-    public function postInstallAllPackages()
+    public function postInstallAllPackages(): bool
     {
         $this->cache->clear();
         $errors = 0;
+
         $packages = $this->getPackages();
         foreach ($packages as $name) {           
             $errors += ($this->postInstallPackage($name) == false) ? 1 : 0;
@@ -348,7 +350,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return bool
      */
-    public function installPackage($name)
+    public function installPackage(string $name): bool
     {
         $package = $this->createPackage($name);
 
@@ -361,7 +363,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return mixed
      */
-    public function postInstallPackage($name)
+    public function postInstallPackage(string $name)
     {
         $package = $this->createPackage($name);
 
@@ -374,7 +376,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return bool
      */
-    public function unInstallPackage($name)
+    public function unInstallPackage(string $name): bool
     {
         $package = $this->createPackage($name);
 
@@ -387,7 +389,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return bool
      */
-    public function enablePackage($name)
+    public function enablePackage(string $name): bool
     {
         $package = $this->createPackage($name);
 
@@ -400,7 +402,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return bool
      */
-    public function disablePackage($name)
+    public function disablePackage(string $name): bool
     {
         $package = $this->createPackage($name);
 
@@ -414,7 +416,7 @@ class PackageManager implements PackageManagerInterface
      * @param string|integer $type
      * @return array
      */
-    public function getInstalled($status = null, $type = null)
+    public function getInstalled($status = null, $type = null): array
     {
         return [];
     }
@@ -425,7 +427,7 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return boolean
      */
-    public function createBackup($name)
+    public function createBackup(string $name): bool
     {
         $package = $this->createPackage($name);
         if (empty($package) == true) {
@@ -453,16 +455,16 @@ class PackageManager implements PackageManagerInterface
      *
      * @param string $repositoryUrl
      * @param boolean $private
-     * @return void
+     * @return mixed
      */
-    public function createRepository($repositoryUrl, $private = false)
+    public function createRepository(string $repositoryUrl, bool $private = false)
     {
         $type = $this->resolveRepositoryType($repositoryUrl,$private);
         switch ($type) {
             case Self::GITHUB_REPOSITORY:           
                 return new GitHubRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->path,$this->storage,$this->httpClient);
-            case Self::GITHUB_PRIVATE_REPOSITORY:
-                return new GitHubPrivateRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->path,$this->storage,$this->httpClient);
+            case Self::ARIKAIM_REPOSITORY:
+                return new ArikaimRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->path,$this->storage,$this->httpClient);
         }
 
         return null;
@@ -475,13 +477,13 @@ class PackageManager implements PackageManagerInterface
      * @param string $type
      * @return string|null
      */
-    public static function createRepositoryUrl($packageName, $type)
+    public static function createRepositoryUrl(string $packageName, string $type): ?string
     {
         switch ($type) {
             case Self::GITHUB_REPOSITORY:           
                 return 'http://github.com/' . $packageName . '.git';
-            case Self::GITHUB_PRIVATE_REPOSITORY:
-                return 'http://github.com/' . $packageName . '.git';
+            case Self::ARIKAIM_REPOSITORY:
+                return 'http://arikaim.com/api/repository/' . $packageName;
         }
 
         return null;
@@ -494,7 +496,7 @@ class PackageManager implements PackageManagerInterface
      * @param boolean $private
      * @return string|null
      */
-    protected function resolveRepositoryType($repositoryUrl, $private = false)
+    protected function resolveRepositoryType(string $repositoryUrl, bool $private = false): ?string
     {
         if (empty($repositoryUrl) == true) {
             return null;
@@ -502,17 +504,11 @@ class PackageManager implements PackageManagerInterface
         if ($repositoryUrl == 'arikaim') {
             return Self::ARIKAIM_REPOSITORY;
         }
-        if (\substr($repositoryUrl,0,8) == 'composer') {
-            return Self::COMPOSER_REPOSITORY;
-        }
+       
         $url = \parse_url($repositoryUrl);
 
         if ($url['host'] == 'github.com' || $url['host'] == 'www.github.com') {
-            return ($private == false) ? Self::GITHUB_REPOSITORY : Self::GITHUB_PRIVATE_REPOSITORY;
-        }
-
-        if ($url['host'] == 'bitbucket.org' || $url['host'] == 'www.bitbucket.org') {
-            return Self::BITBUCKET_REPOSITORY;
+            return ($private == false) ? Self::GITHUB_REPOSITORY : Self::ARIKAIM_REPOSITORY;
         }
 
         return null;       

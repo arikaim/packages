@@ -36,7 +36,7 @@ class TemplatePackage extends Package
      * @param boolean $full
      * @return Collection
      */
-    public function getProperties($full = false)
+    public function getProperties(bool $full = false)
     {
         $this->properties['icon'] = $this->properties->get('icon',null); 
         if ($full == true) {              
@@ -62,7 +62,7 @@ class TemplatePackage extends Package
      *
      * @return boolean
      */
-    public function setPrimary()
+    public function setPrimary(): bool
     {
         Arikaim::options()->set('primary.template',$this->getName());
         
@@ -75,7 +75,7 @@ class TemplatePackage extends Package
      * @param boolean|null $primary Primary package replaces routes or other params
      * @return bool
      */
-    public function install($primary = null)
+    public function install(?bool $primary = null): bool
     {
         $routes = $this->getRoutes();
        
@@ -126,7 +126,7 @@ class TemplatePackage extends Package
      *
      * @return boolean
      */
-    public function buildAssets()
+    public function buildAssets(): bool
     {        
         $cssPath = Path::TEMPLATES_PATH . $this->getName() . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR;
         $twig = Arikaim::view()->createEnvironment($cssPath);
@@ -163,7 +163,7 @@ class TemplatePackage extends Package
      *
      * @return bool
      */
-    public function unInstall() 
+    public function unInstall(): bool 
     {
         $result = Arikaim::routes()->deleteRoutes(['template_name' => $this->getName()]);
        
@@ -175,7 +175,7 @@ class TemplatePackage extends Package
      *
      * @return bool
      */
-    public function enable() 
+    public function enable(): bool 
     {
         return true;
     }
@@ -185,9 +185,9 @@ class TemplatePackage extends Package
      *
      * @return bool
      */
-    public function disable() 
+    public function disable(): bool 
     {
-        return true;
+        return false;
     }   
 
     /**
@@ -195,7 +195,7 @@ class TemplatePackage extends Package
      *
      * @return array
      */
-    public function getRoutes()
+    public function getRoutes(): array
     {
         return $this->properties->get('routes',[]);
     }

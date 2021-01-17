@@ -12,6 +12,7 @@ namespace Arikaim\Core\Packages;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Packages\PackageManagerFactory;
 use Arikaim\Core\System\Composer;
+use Arikaim\Core\Utils\Utils;
 
 /**
  * Package validator class
@@ -28,26 +29,33 @@ class PackageValidator
     /**
      * Constructor
      *
-     * @param array $requires
+     * @param array|null $requires
      */
-    public function __construct(array $requires) 
+    public function __construct(?array $requires = []) 
     {
-        $this->requires = $requires;
+        $this->requires = $requires ?? [];
     }
 
     /**
      * Validate package requirements
      *
+     * @param array|null $requires
      * @return array
      */
-    public function validate()
+    public function validate(?array $requires = null): array
     {
+        if (empty($requires) == false) {
+            $this->requires = $requires;            
+        }
+
+        $result['core'] = $this->validateCore();
         $result['library'] = $this->validateItems('library','library');
         $result['extensions'] = $this->validateItems('extension','extensions');
         $result['modules'] = $this->validateItems('module','modules');
         $result['themes'] = $this->validateItems('template','themes');
         $result['composer'] = $this->validateComposerPackages();
-        $result['count'] = count($result['library']) + 
+        $result['count'] = 
+            count($result['library']) + 
             count($result['extensions']) + 
             count($result['modules']) + 
             count($result['themes']) + 
@@ -62,46 +70,68 @@ class PackageValidator
      * @param string $name
      * @return array
      */
-    protected function parseItemName($name)
+    protected function parseItemName(string $name): array
     {
         $tokens = \explode(':',$name);
-        $version = (isset($tokens[1]) == true) ? $tokens[1] : null;
-        $option = (isset($tokens[2]) == true) ? $tokens[2] : $version;
-        $optinal = ($option == 'optional') ? true : false;
+        $version = $tokens[1] ?? null;
+        $option = $tokens[2] ?? $version;
+        $optinal = ($option == 'optional');
         $version = ($version == 'optional') ? null : $version;
         
         return [$tokens[0],$version,$optinal];
     }
 
     /**
+     * Get validation result item
+     *
+     * @param string $name
+     * @param string|null $requiredVersion
+     * @param string|null $packageVersion
+     * @param boolean $valid
+     * @param boolean $optional
+     * @return array
+     */
+    protected function getResultItem(string $name, ?string $requiredVersion, ?string $packageVersion, bool $valid, bool $optional): array
+    {
+        $warning = false;
+        if (empty($requiredVersion) == false && $valid == true) {
+            $valid = Utils::checkVersion($packageVersion,$requiredVersion);
+        }         
+        if ($optional == true && $valid == false) {
+            $warning = true;
+            $valid = true;
+        } 
+
+        return [
+            'name'            => $name,
+            'version'         => $requiredVersion,
+            'package_version' => $packageVersion,
+            'warning'         => $warning,
+            'optional'        => $optional,
+            'valid'           => $valid
+        ];
+    }  
+
+    /**
      * Validate composer packages
      *
      * @return array
      */
-    public function validateComposerPackages() 
+    public function validateComposerPackages(): array 
     {
         $result = [];
-        $items = (isset($this->requires['composer']) == true) ? $this->requires['composer'] : [];
+        $items = $this->requires['composer'] ?? [];
         if (count($items) == 0) {
             return [];
         }
         $packageInfo = Composer::getLocalPackagesInfo(ROOT_PATH . BASE_PATH,$items);
 
         foreach ($items as $item) {
-            list($name,$version,$optional) = $this->parseItemName($item);
+            list($name,$requiredVersion,$optional) = $this->parseItemName($item);
             $valid = (isset($packageInfo[$name]) == true);
-            $packageVersion = (isset($packageInfo[$name]['version']) == true) ? $packageInfo[$name]['version'] : null;
-            
-            $warning = ($valid == true) ? (\version_compare($packageVersion,$version) == -1) : false;
-              
-            $result[] = [
-                'name'            => $name,
-                'version'         => $version,
-                'package_version' => $packageVersion,
-                'warning'         => $warning,
-                'optional'        => $optional,
-                'valid'           => $valid
-            ];
+            $packageVersion = $packageInfo[$name]['version'] ?? null;
+                       
+            $result[] = $this->getResultItem($name,$requiredVersion,$packageVersion,$valid,$optional);
         }
         
         return $result;
@@ -114,33 +144,44 @@ class PackageValidator
      * @param string $requireItemKey
      * @return array
      */
-    protected function validateItems($packageType, $requireItemKey)
+    protected function validateItems(string $packageType, string $requireItemKey): array
     {
-        $items = (isset($this->requires[$requireItemKey]) == true) ? $this->requires[$requireItemKey] : [];
+        $items = $this->requires[$requireItemKey] ?? [];
         $result = [];
 
         foreach ($items as $item) {
-            list($name,$version,$optional) = $this->parseItemName($item);
+            list($name,$requiredVersion,$optional) = $this->parseItemName($item);
             $fileName = PackageManagerFactory::getPackageDescriptorFileName($packageType,$name);
             $valid = (File::exists($fileName) == true);
           
             if ($valid == true) {
                 $properties = File::readJsonFile($fileName);
-                $packageVersion = (isset($properties['version']) == true) ? $properties['version'] : null;
-                $warning = (empty($version) == false && \version_compare($packageVersion,$version) == -1);
-            } else {
-                $warning = false;
+                $packageVersion = $properties['version'] ?? null;             
+            } else {              
                 $packageVersion = null;
             }
            
-            $result[] = [
-                'name'            => $name,
-                'version'         => $version,
-                'package_version' => $packageVersion,
-                'warning'         => $warning,
-                'optional'        => $optional,
-                'valid'           => $valid
-            ];
+            $result[] = $this->getResultItem($name,$requiredVersion,$packageVersion,$valid,$optional);          
+        }
+
+        return $result;
+    }
+
+    /**
+     * Validate required items
+     *   
+     * @return array
+     */
+    protected function validateCore(): array
+    {
+        $result = [];
+        $coreItem = $this->requires['core'] ?? false;
+        $coreVersion = Composer::getInstalledPackageVersion(ROOT_PATH . BASE_PATH,ARIKAIM_PACKAGE_NAME);    
+        if ($coreItem == false) {
+            $result[] = $this->getResultItem('Core',$coreVersion,$coreVersion,true,false);           
+        } else{
+            list($name,$requiredVersion,$optional) = $this->parseItemName($coreItem);
+            $result[] = $this->getResultItem('Core',$requiredVersion,$coreVersion,true,false);        
         }
 
         return $result;

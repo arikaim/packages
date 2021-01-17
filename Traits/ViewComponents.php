@@ -22,7 +22,7 @@ trait ViewComponents
      * @param string|null $componentsType
      * @return string
      */
-    public function getViewPath($componentsType = null)
+    public function getViewPath(?string $componentsType = null): string
     {
         if ($this->getType() == 'template') {
             $path = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
@@ -38,7 +38,7 @@ trait ViewComponents
      *  
      * @return string
      */
-    public function getComponentsPath()  
+    public function getComponentsPath(): string  
     {
         return $this->getViewPath('components');
     }
@@ -48,7 +48,7 @@ trait ViewComponents
      *        
      * @return string
      */
-    public function getPagesPath()  
+    public function getPagesPath(): string  
     {
         return $this->getViewPath('pages');
     }
@@ -58,7 +58,7 @@ trait ViewComponents
      *
      * @return string
      */
-    public function getEmailsPath()  
+    public function getEmailsPath(): string  
     {
         return $this->getViewPath('emails');
     }
@@ -68,7 +68,7 @@ trait ViewComponents
      *
      * @return string
      */
-    public function getMacrosPath()
+    public function getMacrosPath(): string
     {
         return $this->getViewPath('macros');
     }
@@ -79,7 +79,7 @@ trait ViewComponents
      * @param string|null $path
      * @return array
      */
-    public function getMacros($path = null)
+    public function getMacros(?string $path = null): array
     {       
         $path = (empty($path) == true) ? $this->getMacrosPath() : $path;
         if (File::exists($path) == false) {
@@ -106,7 +106,7 @@ trait ViewComponents
      * @param string $path
      * @return array
      */
-    public function getPages($parent = '')
+    public function getPages(string $parent = '')
     {
         return $this->getComponents($parent,'pages');
     }
@@ -129,12 +129,11 @@ trait ViewComponents
      * @param string $type
      * @return string
      */
-    public function getComponentPath($componentName, $type = 'components')
+    public function getComponentPath(string $componentName, string $type = 'components'): string
     {
         $componentPath = \str_replace('.',DIRECTORY_SEPARATOR,$componentName);
-        $path = $this->getViewPath($type) . $componentPath;
-
-        return $path;
+        
+        return $this->getViewPath($type) . $componentPath;      
     }
 
     /**
@@ -144,7 +143,7 @@ trait ViewComponents
      * @param string $type
      * @return array
      */
-    public function getComponents($parent = '', $type = 'components')
+    public function getComponents(string $parent = '', string $type = 'components'): array
     {
         $path = $this->getComponentPath($parent,$type);
         if (File::exists($path) == false) {
@@ -177,7 +176,7 @@ trait ViewComponents
      * @param string|null $path
      * @return array
      */
-    public function getComponentsRecursive($path = null)
+    public function getComponentsRecursive(?string $path = null): array
     {       
         $path = (empty($path) == true) ? $this->getComponentsPath() : $path;
         if (File::exists($path) == false) {

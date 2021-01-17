@@ -28,10 +28,11 @@ class PackageFactory implements PackageFactoryInterface
     /**
      * Create package 
      *
+     * @param string $packageType
      * @param string $name
      * @return PackageInterface
     */
-    public function createPackage($packageType, $name)
+    public function createPackage(string $packageType, string $name)
     {      
         $path = PackageManagerFactory::getPackagePath($packageType);
         $propertes = PackageManager::loadPackageProperties($name,$path);

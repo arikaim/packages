@@ -23,16 +23,16 @@ class GitHubRepository extends Repository implements RepositoryInterface
 {
     /**
      * Download package
-     *
+     * 
+     * @param string|null $version
      * @return bool
      */
-    public function download($version = null)
+    public function download(?string $version = null): bool
     {
-        $version = (empty($version) == true) ? $this->getLastVersion() : $version;
+        $version = $version ?? $this->getLastVersion();
         $url = 'https://github.com/' . $this->getPackageName() . '/archive/' . $version . '.zip';
       
         File::setWritable($this->repositoryDir);
-
         $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
 
         if ($this->storage->has('repository/' . $this->getPackageFileName($version)) == true) {
@@ -56,17 +56,14 @@ class GitHubRepository extends Repository implements RepositoryInterface
      *
      * @return string
      */
-    public function getLastVersion()
+    public function getLastVersion(): string
     {
         $packageName = $this->getPackageName();
         $url = 'https://api.github.com/repos/' . $packageName . '/releases/latest';
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
-        if (\is_array($data) == true) {
-            return (isset($data['tag_name']) == true) ? $data['tag_name'] : '';
-        }
 
-        return '';
+        return (\is_array($data) == true) ? $data['tag_name'] ?? '' : '';         
     }
 
     /**
@@ -74,7 +71,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
      *
      * @return void
      */
-    protected function resolvePackageName()
+    protected function resolvePackageName(): void
     {
         $url = \parse_url($this->repositoryUrl);
         $path = \trim(\str_replace('.git','',$url['path']),'/');
@@ -90,7 +87,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
      * @param string|null $version
      * @return boolean
      */
-    public function install($version = null)
+    public function install(?string $version = null): bool
     {
         $version = (empty($version) == true) ? $this->getLastVersion() : $version;
         $result = $this->download($version);
@@ -133,7 +130,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
      * @param string $version
      * @return string|false  Return packge folder
      */
-    protected function extractRepository($version)
+    protected function extractRepository(string $version)
     {
         $repositoryName = $this->getRepositoryName();
         $repositoryFolder = $repositoryName . '-' . $version;

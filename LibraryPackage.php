@@ -22,13 +22,13 @@ class LibraryPackage extends Package implements PackageInterface
      *
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->properties->get('params',[]);
     }
 
     /**
-     * Return true if library is framework
+     * Return true if library is framework (DEPRECATED)
      *
      * @return boolean
      */
@@ -38,12 +38,12 @@ class LibraryPackage extends Package implements PackageInterface
     }
 
     /**
-     * Get theme file
+     * Get theme file (DEPRECATED)
      *
-     * @param string $theme
+     * @param string $theme  
      * @return string
      */
-    public function getThemeFile($theme)
+    public function getThemeFile($theme): string
     {
         return $this->properties->getByPath('themes/' . $theme . '/file','');
     }
@@ -51,12 +51,13 @@ class LibraryPackage extends Package implements PackageInterface
     /**
      * Disable library
      *
-     * @return void
+     * @return bool
      */
-    public function disable()
+    public function disable(): bool
     {
         $this->properties->set('disabled',true);      
 
+        return true;
     } 
 
     /**
@@ -64,9 +65,11 @@ class LibraryPackage extends Package implements PackageInterface
      *
      * @return void
      */
-    public function enable()
+    public function enable(): bool
     {
-        $this->properties->set('disabled',false);      
+        $this->properties->set('disabled',false);   
+
+        return true; 
     } 
 
     /**
@@ -75,7 +78,7 @@ class LibraryPackage extends Package implements PackageInterface
      * @param bool $status
      * @return void
      */
-    public function setStatus($status)
+    public function setStatus(bool $status): void
     {
         $this->properties->set('disabled',!$status);      
     }
