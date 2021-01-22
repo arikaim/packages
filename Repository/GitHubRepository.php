@@ -12,7 +12,6 @@ namespace Arikaim\Core\Packages\Repository;
 use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
-use Arikaim\Core\Utils\ZipFile;
 use Arikaim\Core\Utils\Utils;
 use Exception;
 
@@ -22,6 +21,27 @@ use Exception;
 class GitHubRepository extends Repository implements RepositoryInterface
 {
     /**
+     * Get last version url
+     *
+     * @return string
+     */
+    public function getLastVersionUrl(): string
+    {
+        return 'https://api.github.com/repos/' . $this->getPackageName() . '/releases/latest';
+    }
+    
+    /**
+     * Get download repo url
+     *
+     * @param string $version
+     * @return string
+     */
+    public function getDownloadUrl(string $version): string
+    {
+        return 'https://github.com/' . $this->getPackageName() . '/archive/' . $version . '.zip';
+    }
+
+    /**
      * Download package
      * 
      * @param string|null $version
@@ -30,7 +50,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
     public function download(?string $version = null): bool
     {
         $version = $version ?? $this->getLastVersion();
-        $url = 'https://github.com/' . $this->getPackageName() . '/archive/' . $version . '.zip';
+        $url = $this->getDownloadUrl($version); 
       
         File::setWritable($this->repositoryDir);
         $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
@@ -58,8 +78,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
      */
     public function getLastVersion(): string
     {
-        $packageName = $this->getPackageName();
-        $url = 'https://api.github.com/repos/' . $packageName . '/releases/latest';
+        $url = $this->getLastVersionUrl();
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
 
@@ -116,36 +135,10 @@ class GitHubRepository extends Repository implements RepositoryInterface
                 return false;
             }
             // Not valid package           
-
             return false;
         }
 
         // Can't download repository
         return false;
-    }
-
-    /**
-     * Extract repositry zip file to  storage/temp folder
-     *
-     * @param string $version
-     * @return string|false  Return packge folder
-     */
-    protected function extractRepository(string $version)
-    {
-        $repositoryName = $this->getRepositoryName();
-        $repositoryFolder = $repositoryName . '-' . $version;
-        $packageFileName = $this->getPackageFileName($version);
-        $zipFile = $this->repositoryDir . $packageFileName;
-        
-        if (File::exists($this->tempDir . $repositoryFolder) == true) {
-            try {
-                $deleted  = $this->storage->deleteDir('temp/' . $repositoryFolder);
-            } catch(Exception $e) {
-            }
-        }
-
-        $result = ZipFile::extract($zipFile,$this->tempDir);
-
-        return ($result == true) ? $repositoryFolder : false;
-    }
+    }   
 }

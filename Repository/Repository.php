@@ -12,20 +12,13 @@ namespace Arikaim\Core\Packages\Repository;
 use Arikaim\Core\Interfaces\StorageInterface;
 use Arikaim\Core\Interfaces\HttpClientInterface;
 use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
+use Arikaim\Core\Utils\ZipFile;
 
 /**
  * Repository driver base class
 */
 abstract class Repository implements RepositoryInterface
 {
-    /**
-     * Install package
-     *
-     * @param string|null $version
-     * @return boolean
-     */
-    abstract public function install(?string $version = null): bool;
-
     /**
      * Repository url
      *
@@ -119,6 +112,44 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
+     * Install package
+     *
+     * @param string|null $version
+     * @return boolean
+     */
+    abstract public function install(?string $version = null): bool;
+
+    /**
+     * Should return last version url
+     *
+     * @return string
+     */
+    abstract public function getLastVersionUrl(): string;
+
+    /**
+     * Should return download repo url
+     *
+     * @param string $version
+     * @return string
+     */
+    abstract public function getDownloadUrl(string $version): string;
+
+    /**
+     * Download package
+     *
+     * @param string|null $version
+     * @return bool
+     */
+    abstract public function download(?string $version = null): bool;
+    
+    /**
+     * Get package last version
+     *
+     * @return string
+     */
+    abstract public function getLastVersion(): ?string;
+
+    /**
      * Get access key for private repo
      *
      * @return string|null
@@ -137,21 +168,6 @@ abstract class Repository implements RepositoryInterface
     {
         return $this->repositoryUrl;
     }
-
-    /**
-     * Download package
-     *
-     * @param string|null $version
-     * @return bool
-     */
-    public abstract function download(?string $version = null): bool;
-    
-    /**
-     * Get package last version
-     *
-     * @return string
-     */
-    public abstract function getLastVersion(): ?string;
 
     /**
      * Get package file name
@@ -184,6 +200,25 @@ abstract class Repository implements RepositoryInterface
     public function getRepositoryName(): string
     {
         return $this->repositoryName;
+    }
+
+    /**
+     * Extract repositry zip file to  storage/temp folder
+     *
+     * @param string $version
+     * @return string|false  Return packge folder
+    */
+    protected function extractRepository(string $version)
+    {
+        $repositoryName = $this->getRepositoryName();
+        $repositoryFolder = $repositoryName . '-' . $version;
+        $packageFileName = $this->getPackageFileName($version);
+        $zipFile = $this->repositoryDir . $packageFileName;
+        
+        $this->storage->deleteDir('temp/' . $repositoryFolder);
+        ZipFile::extract($zipFile,$this->tempDir);
+
+        return ($this->storage->has('temp/' . $repositoryFolder) == true) ? $repositoryFolder : false;
     }
 
     /**

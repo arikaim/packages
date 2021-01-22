@@ -498,7 +498,7 @@ class PackageManager implements PackageManagerInterface
             case Self::GITHUB_REPOSITORY:           
                 return 'http://github.com/' . $packageName . '.git';
             case Self::ARIKAIM_REPOSITORY:
-                return 'http://arikaim.com/api/repository/' . $packageName;
+                return $packageName;
         }
 
         return null;

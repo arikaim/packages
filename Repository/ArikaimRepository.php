@@ -12,7 +12,6 @@ namespace Arikaim\Core\Packages\Repository;
 use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
-use Arikaim\Core\Utils\ZipFile;
 use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\App\ArikaimStore;
 use Exception;
@@ -23,6 +22,27 @@ use Exception;
 class ArikaimRepository extends Repository implements RepositoryInterface
 {
     /**
+     * Get last version url
+     *
+     * @return string
+     */
+    public function getLastVersionUrl(): string
+    {
+        return  ArikaimStore::PACKAGE_VERSION_URL . $this->getPackageName();
+    }
+    
+    /**
+     * Get download repo url
+     *
+     * @param string $version
+     * @return string
+     */
+    public function getDownloadUrl(string $version): string
+    {
+        return ArikaimStore::PACKAGE_DOWNLOAD_URL;
+    }
+
+    /**
      * Download package
      *
      * @param string|null $version
@@ -31,7 +51,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
     public function download(?string $version = null): bool
     {
         $version = $version ?? $this->getLastVersion();
-        $url = ArikaimStore::PACKAGE_DOWNLOAD_URL;
+        $url = $this->getDownloadUrl($version);
       
         File::setWritable($this->repositoryDir);
         $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
@@ -46,6 +66,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
        
         try {         
             $packageName = $this->getPackageName();
+
             $this->httpClient->put($url,[
                 'sink'        => $packageFileName,
                 'repository'  => $packageName,
@@ -64,9 +85,8 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      * @return string|null
      */
     public function getLastVersion(): ?string
-    {
-        $packageName = $this->getPackageName();
-        $url = ArikaimStore::PACKAGE_VERSION_URL . $packageName;
+    {       
+        $url = $this->getLastVersionUrl();  
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
 
@@ -80,6 +100,9 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     protected function resolvePackageName(): void
     {
+        $tokens = \explode('/',\trim($this->repositoryUrl));   
+
+        $this->repositoryName = $tokens[1];
         $this->packageName = $this->repositoryUrl;    
     }
 
@@ -121,24 +144,5 @@ class ArikaimRepository extends Repository implements RepositoryInterface
 
         // Can't download repository
         return false;
-    }
-
-    /**
-     * Extract repositry zip file to  storage/temp folder
-     *
-     * @param string $version
-     * @return string|false  Return packge folder
-     */
-    protected function extractRepository(string $version)
-    {
-        $repositoryName = $this->getRepositoryName();
-        $repositoryFolder = $repositoryName . '-' . $version;
-        $packageFileName = $this->getPackageFileName($version);
-        $zipFile = $this->repositoryDir . $packageFileName;
-    
-        $this->storage->deleteDir('temp/' . $repositoryFolder);
-        ZipFile::extract($zipFile,$this->tempDir);
-
-        return ($this->storage->has('temp/' . $repositoryFolder) == true) ? $repositoryFolder : false;
     }
 }
