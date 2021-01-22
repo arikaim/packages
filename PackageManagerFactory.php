@@ -143,7 +143,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      */
     public static function createPackageRegistry(string $packageType)
     {
-        $class = (isset(Self::$packageRegistryClass[$packageType]) == true) ? Self::$packageRegistryClass[$packageType] : null;
+        $class = Self::$packageRegistryClass[$packageType] ?? null;
         
         return (empty($class) == false) ? new $class() : null;
     }

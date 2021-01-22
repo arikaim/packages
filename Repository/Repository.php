@@ -69,11 +69,11 @@ abstract class Repository implements RepositoryInterface
     protected $repositoryDir;
 
     /**
-     * Private or Public repo
+     * Access key
      *
-     * @var boolean
+     * @var string|null
      */
-    protected $private;
+    protected $accessKey;
 
     /**
      * Temp directory
@@ -100,12 +100,12 @@ abstract class Repository implements RepositoryInterface
     * @param HttpClientInterface $httpClient
     */
     public function __construct(
-        string $repositoryUrl, 
-        bool $private = false, 
+        string $repositoryUrl,      
         string $repositoryDir, 
         string $installDir, 
         StorageInterface $storage,
-        HttpClientInterface $httpClient
+        HttpClientInterface $httpClient,
+        ?string $accessKey = null
     )
     {
         $this->repositoryUrl = $repositoryUrl;   
@@ -113,19 +113,19 @@ abstract class Repository implements RepositoryInterface
         $this->httpClient = $httpClient; 
         $this->repositoryDir = $repositoryDir;  
         $this->installDir = $installDir;  
-        $this->private = $private;
+        $this->accessKey = $accessKey;
         $this->tempDir = $storage->getFullPath() . 'temp' . DIRECTORY_SEPARATOR;
         $this->resolvePackageName();
     }
 
     /**
-     * Return true if repository is private
+     * Get access key for private repo
      *
-     * @return boolean
+     * @return string|null
      */
-    public function isPrivate(): bool
+    public function getAccessKey(): ?string
     {
-        return $this->private;
+        return $this->accessKey;
     }
 
     /**

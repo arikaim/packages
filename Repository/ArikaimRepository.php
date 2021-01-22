@@ -14,6 +14,8 @@ use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\ZipFile;
 use Arikaim\Core\Utils\Utils;
+use Arikaim\Core\App\ArikaimStore;
+use Exception;
 
 /**
  * Arikaim repository driver class
@@ -28,7 +30,32 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     public function download(?string $version = null): bool
     {
-        return false;
+        $version = $version ?? $this->getLastVersion();
+        $url = ArikaimStore::PACKAGE_DOWNLOAD_URL;
+      
+        File::setWritable($this->repositoryDir);
+        $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
+
+        if ($this->storage->has('repository/' . $this->getPackageFileName($version)) == true) {
+            try {         
+                $this->storage->delete('repository/' . $this->getPackageFileName($version),false);
+            } catch (Exception $e) {                   
+                return false;
+            }
+        }
+       
+        try {         
+            $packageName = $this->getPackageName();
+            $this->httpClient->put($url,[
+                'sink'        => $packageFileName,
+                'repository'  => $packageName,
+                'license_key' => $this->accessKey
+            ]);
+        } catch (Exception $e) { 
+            return false;             
+        }
+      
+        return $this->storage->has('repository/' . $this->getPackageFileName($version));
     }
 
     /**
@@ -38,7 +65,12 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     public function getLastVersion(): ?string
     {
-        return null;
+        $packageName = $this->getPackageName();
+        $url = ArikaimStore::PACKAGE_VERSION_URL . $packageName;
+        $json = $this->httpClient->fetch($url);
+        $data = \json_decode($json,true);
+
+        return (\is_array($data) == true) ? $data['result']['version'] ?? null : null;         
     }
 
     /**
@@ -48,12 +80,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     protected function resolvePackageName(): void
     {
-        $url = \parse_url($this->repositoryUrl);
-        $path = \trim(\str_replace('.git','',$url['path']),'/');
-        $tokens = \explode('/',$path);   
-
-        $this->repositoryName = $tokens[1];    
-        $this->packageName = $tokens[0] . '/' .  $this->repositoryName;       
+        $this->packageName = $this->repositoryUrl;    
     }
 
     /**
@@ -77,7 +104,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
             
             if (Utils::isJson($json) == true) {
                 $packageProperties = \json_decode($json,true);
-                $packageName = (isset($packageProperties['name']) == true) ? $packageProperties['name'] : false;
+                $packageName = $packageProperties['name'] ?? false;
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;
                     $destinatinPath = $this->installDir . $packageName;

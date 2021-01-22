@@ -15,11 +15,11 @@ namespace Arikaim\Core\Packages\Interfaces;
 interface RepositoryInterface 
 {  
     /**
-     * Return true if repository is private
+     * Get access key for private repo
      *
-     * @return boolean
+     * @return string|null
      */
-    public function isPrivate(): bool;
+    public function getAccessKey(): ?string;
 
     /**
      * Download package

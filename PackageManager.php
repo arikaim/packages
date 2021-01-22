@@ -170,15 +170,15 @@ class PackageManager implements PackageManagerInterface
      * Get package repository
      *
      * @param string $packageName
-     * @return RepositoryInterface
+     * @param string|null $accessKey
+     * @return RepositoryInterface|null
      */
-    public function getRepository(string $packageName)
+    public function getRepository(string $packageName, ?string $accessKey = null)
     {
         $properties = Self::loadPackageProperties($packageName,$this->path);
         $repositoryUrl = $properties->get('repository',null);
-        $private = $properties->get('private-repository',false);
        
-        return $this->createRepository($repositoryUrl,$private);
+        return (empty($repositoryUrl) == false) ? $this->createRepository($repositoryUrl,$accessKey) : null;
     }
 
     /**
@@ -454,17 +454,32 @@ class PackageManager implements PackageManagerInterface
      * Create repository driver
      *
      * @param string $repositoryUrl
-     * @param boolean $private
+     * @param string|null $accessKey
      * @return mixed
      */
-    public function createRepository(string $repositoryUrl, bool $private = false)
+    public function createRepository(string $repositoryUrl, ?string $accessKey = null)
     {
-        $type = $this->resolveRepositoryType($repositoryUrl,$private);
+        $type = $this->resolveRepositoryType($repositoryUrl);
+
         switch ($type) {
             case Self::GITHUB_REPOSITORY:           
-                return new GitHubRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->path,$this->storage,$this->httpClient);
+                return new GitHubRepository(
+                    $repositoryUrl,
+                    Path::STORAGE_REPOSITORY_PATH,
+                    $this->path,
+                    $this->storage,
+                    $this->httpClient,
+                    $accessKey
+                );
             case Self::ARIKAIM_REPOSITORY:
-                return new ArikaimRepository($repositoryUrl,$private,Path::STORAGE_REPOSITORY_PATH,$this->path,$this->storage,$this->httpClient);
+                return new ArikaimRepository(
+                    $repositoryUrl,
+                    Path::STORAGE_REPOSITORY_PATH,
+                    $this->path,
+                    $this->storage,
+                    $this->httpClient,
+                    $accessKey
+                );
         }
 
         return null;
@@ -492,11 +507,10 @@ class PackageManager implements PackageManagerInterface
     /**
      * Resolve package repository type
      *   
-     * @param string $repositoryUrl
-     * @param boolean $private
+     * @param string $repositoryUrl   
      * @return string|null
      */
-    protected function resolveRepositoryType(string $repositoryUrl, bool $private = false): ?string
+    protected function resolveRepositoryType(string $repositoryUrl): ?string
     {
         if (empty($repositoryUrl) == true) {
             return null;
@@ -504,13 +518,13 @@ class PackageManager implements PackageManagerInterface
         if ($repositoryUrl == 'arikaim') {
             return Self::ARIKAIM_REPOSITORY;
         }
-       
         $url = \parse_url($repositoryUrl);
+        $host = $url['host'] ?? null;
 
-        if ($url['host'] == 'github.com' || $url['host'] == 'www.github.com') {
-            return ($private == false) ? Self::GITHUB_REPOSITORY : Self::ARIKAIM_REPOSITORY;
+        if (($host == 'github.com') || ($host == 'www.github.com')) {
+            return Self::GITHUB_REPOSITORY;
         }
 
-        return null;       
+        return Self::ARIKAIM_REPOSITORY;       
     }   
 }

@@ -328,7 +328,7 @@ class ExtensionPackage extends Package implements PackageInterface
             if (($file->isDot() == true) || ($file->isDir() == true)) continue;
             if ($file->getExtension() != 'php') continue;
             
-            $baseClass = str_replace('.php','',$file->getFilename());
+            $baseClass = \str_replace('.php','',$file->getFilename());
             // add event subscriber to db table
             $result = Arikaim::event()->registerSubscriber($baseClass,$name);
             $count += ($result == true) ? 1 : 0;
