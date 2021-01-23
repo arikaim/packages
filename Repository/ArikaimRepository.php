@@ -43,6 +43,16 @@ class ArikaimRepository extends Repository implements RepositoryInterface
     }
 
     /**
+     * Return true if repo is private
+     *
+     * @return boolean
+    */
+    public function isPrivate(): bool
+    {
+        return true;
+    }
+
+    /**
      * Download package
      *
      * @param string|null $version
@@ -69,8 +79,10 @@ class ArikaimRepository extends Repository implements RepositoryInterface
 
             $this->httpClient->put($url,[
                 'sink'        => $packageFileName,
-                'repository'  => $packageName,
-                'license_key' => $this->accessKey
+                'form_params' => [
+                    'repository'  => $packageName,
+                    'license_key' => $this->accessKey
+                ]
             ]);
         } catch (Exception $e) { 
             return false;             
@@ -118,7 +130,9 @@ class ArikaimRepository extends Repository implements RepositoryInterface
         $result = $this->download($version);
 
         if ($result == true) {
-            $repositoryFolder = $this->extractRepository($version);
+            $repositoryName = $this->getRepositoryName();
+            $repositoryFolder = $repositoryName . '-' . $version;
+            $repositoryFolder = $this->extractRepository($version,$this->tempDir . $repositoryFolder);
             if ($repositoryFolder == false) {
                 // Error extracting zip repository file
                 return false;

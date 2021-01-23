@@ -42,6 +42,16 @@ class GitHubRepository extends Repository implements RepositoryInterface
     }
 
     /**
+     * Return true if repo is private
+     *
+     * @return boolean
+     */
+    public function isPrivate(): bool
+    {
+        return false;
+    }
+
+    /**
      * Download package
      * 
      * @param string|null $version

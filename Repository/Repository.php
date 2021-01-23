@@ -85,12 +85,12 @@ abstract class Repository implements RepositoryInterface
     /**
     * Constructor
     *
-    * @param string $repositoryUrl
-    * @param boolean $private
+    * @param string $repositoryUrl  
     * @param string $repositoryDir
     * @param string $installDir
     * @param StorageInterface $storage
     * @param HttpClientInterface $httpClient
+    * @param boolean $accessKey
     */
     public function __construct(
         string $repositoryUrl,      
@@ -150,6 +150,13 @@ abstract class Repository implements RepositoryInterface
     abstract public function getLastVersion(): ?string;
 
     /**
+     * Return true if repo is private
+     *
+     * @return boolean
+     */
+    abstract public function isPrivate(): bool;
+
+    /**
      * Get access key for private repo
      *
      * @return string|null
@@ -206,17 +213,19 @@ abstract class Repository implements RepositoryInterface
      * Extract repositry zip file to  storage/temp folder
      *
      * @param string $version
+     * @param string|null $targetDir
      * @return string|false  Return packge folder
     */
-    protected function extractRepository(string $version)
+    protected function extractRepository(string $version, ?string $targetDir = null)
     {
+        $targetDir =  $targetDir ?? $this->tempDir;
         $repositoryName = $this->getRepositoryName();
         $repositoryFolder = $repositoryName . '-' . $version;
         $packageFileName = $this->getPackageFileName($version);
         $zipFile = $this->repositoryDir . $packageFileName;
         
         $this->storage->deleteDir('temp/' . $repositoryFolder);
-        ZipFile::extract($zipFile,$this->tempDir);
+        ZipFile::extract($zipFile,$targetDir);
 
         return ($this->storage->has('temp/' . $repositoryFolder) == true) ? $repositoryFolder : false;
     }
