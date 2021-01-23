@@ -19,6 +19,7 @@ use Arikaim\Core\Packages\Repository\GitHubRepository;
 use Arikaim\Core\Packages\Repository\ArikaimRepository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Path;
+use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Utils\ZipFile;
 
 /**
@@ -455,10 +456,14 @@ class PackageManager implements PackageManagerInterface
      *
      * @param string $repositoryUrl
      * @param string|null $accessKey
+     * @param string|null $type
      * @return mixed
      */
-    public function createRepository(string $repositoryUrl, ?string $accessKey = null)
+    public function createRepository(string $repositoryUrl, ?string $accessKey = null, ?string $type = null)
     {
+        if (Utils::isValidUrl($repositoryUrl) == false) {
+            $repositoryUrl = Self::createRepositoryUrl($repositoryUrl,$type);
+        }
         $type = $this->resolveRepositoryType($repositoryUrl);
 
         switch ($type) {
