@@ -57,7 +57,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
 
         if ($this->storage->has('repository/' . $this->getPackageFileName($version)) == true) {
             try {         
-                $this->storage->delete('repository/' . $this->getPackageFileName($version),false);
+                $this->storage->delete('repository/' . $this->getPackageFileName($version));
             } catch (Exception $e) {                   
                 return false;
             }
@@ -111,6 +111,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
         $version = (empty($version) == true) ? $this->getLastVersion() : $version;
         $result = $this->download($version);
 
+        
         if ($result == true) {
             $repositoryFolder = $this->extractRepository($version);
             if ($repositoryFolder === false) {
@@ -122,7 +123,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
             
             if (Utils::isJson($json) == true) {
                 $packageProperties = \json_decode($json,true);
-                $packageName = (isset($packageProperties['name']) == true) ? $packageProperties['name'] : false;
+                $packageName = $packageProperties['name'] ?? false;
 
                 if ($packageName != false) {   
                     $sourcePath = $this->tempDir . $repositoryFolder;

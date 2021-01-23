@@ -58,7 +58,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
 
         if ($this->storage->has('repository/' . $this->getPackageFileName($version)) == true) {
             try {         
-                $this->storage->delete('repository/' . $this->getPackageFileName($version),false);
+                $this->storage->delete('repository/' . $this->getPackageFileName($version));
             } catch (Exception $e) {                   
                 return false;
             }
