@@ -103,10 +103,10 @@ trait ViewComponents
     /**
      * Scan directory and return pages list
      *
-     * @param string $path
+     * @param string|null $path
      * @return array
      */
-    public function getPages(string $parent = '')
+    public function getPages(?string $parent = null): array
     {
         return $this->getComponents($parent,'pages');
     }
@@ -114,10 +114,10 @@ trait ViewComponents
     /**
      * Scan directory and return emails list
      *
-     * @param string $path
+     * @param string|null $path
      * @return array
      */
-    public function getEmails($parent = '')
+    public function getEmails(?string $parent = null): array
     {
         return $this->getComponents($parent,'emails');
     }
@@ -125,12 +125,13 @@ trait ViewComponents
     /**
      * Get component path
      *
-     * @param string $componentName
+     * @param string|null $componentName
      * @param string $type
      * @return string
      */
-    public function getComponentPath(string $componentName, string $type = 'components'): string
+    public function getComponentPath(?string $componentName, string $type = 'components'): string
     {
+        $componentName = $componentName ?? '';
         $componentPath = \str_replace('.',DIRECTORY_SEPARATOR,$componentName);
         
         return $this->getViewPath($type) . $componentPath;      
@@ -139,12 +140,13 @@ trait ViewComponents
     /**
      * Scan directory and return components list
      *
-     * @param string $parent
+     * @param string|null $parent
      * @param string $type
      * @return array
      */
-    public function getComponents(string $parent = '', string $type = 'components'): array
+    public function getComponents(?string $parent = null, string $type = 'components'): array
     {
+        $parent = $parent ?? '';
         $path = $this->getComponentPath($parent,$type);
         if (File::exists($path) == false) {
             return [];

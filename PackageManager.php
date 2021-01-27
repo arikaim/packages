@@ -177,9 +177,10 @@ class PackageManager implements PackageManagerInterface
     public function getRepository(string $packageName, ?string $accessKey = null)
     {
         $properties = Self::loadPackageProperties($packageName,$this->path);
-        $repositoryUrl = $properties->get('repository',null);
-       
-        return (empty($repositoryUrl) == false) ? $this->createRepository($repositoryUrl,$accessKey) : null;
+        $url = $properties->get('repository',null);
+        $type = $properties->get('repository-type',Self::GITHUB_REPOSITORY);
+
+        return (empty($repositoryUrl) == false) ? $this->createRepository($url,$accessKey,$type) : null;
     }
 
     /**
@@ -494,11 +495,13 @@ class PackageManager implements PackageManagerInterface
      * Create repository url
      *
      * @param string $packageName
-     * @param string $type
+     * @param string|null $type
      * @return string|null
      */
-    public static function createRepositoryUrl(string $packageName, string $type): ?string
+    public static function createRepositoryUrl(string $packageName, ?string $type): ?string
     {
+        $type = $type ?? Self::GITHUB_REPOSITORY; 
+        
         switch ($type) {
             case Self::GITHUB_REPOSITORY:           
                 return 'http://github.com/' . $packageName . '.git';

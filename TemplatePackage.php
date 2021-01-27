@@ -9,6 +9,8 @@
 */
 namespace Arikaim\Core\Packages;
 
+use Arikaim\Core\Packages\Interfaces\PackageInterface;
+use Arikaim\Core\Packages\Interfaces\ViewComponentsInterface;
 use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\Path;
@@ -24,7 +26,7 @@ use Arikaim\Core\Packages\Traits\ComponentTranslations;
 /**
  * Template package 
 */
-class TemplatePackage extends Package
+class TemplatePackage extends Package implements PackageInterface, ViewComponentsInterface
 {
     use    
         ViewComponents,

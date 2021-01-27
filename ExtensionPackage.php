@@ -10,6 +10,7 @@
 namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
+use Arikaim\Core\Packages\Interfaces\ViewComponentsInterface;
 use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Factory;
@@ -20,7 +21,7 @@ use DirectoryIterator;
 /**
  * Extension Package
 */
-class ExtensionPackage extends Package implements PackageInterface
+class ExtensionPackage extends Package implements PackageInterface, ViewComponentsInterface
 {
     use ViewComponents;
 
