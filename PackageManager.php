@@ -21,6 +21,7 @@ use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Utils\ZipFile;
+use Closure;
 
 /**
  * Package managers base class
@@ -303,17 +304,20 @@ class PackageManager implements PackageManagerInterface
      *
      * @param Closure|null $onProgress
      * @param Closure|null $onProgressError
+     * @param bool $skipErrors
      * @return bool
      */
-    public function installAllPackages($onProgress = null, $onProgressError = null): bool
+    public function installAllPackages(?Closure $onProgress = null, ?Closure $onProgressError = null, bool $skipErrors = true): bool
     {
         $this->cache->clear();
         $errors = 0;
         $packages = $this->getPackages();
 
-        foreach ($packages as $name) {             
+        foreach ($packages as $name) {       
+            $package = $this->createPackage($name);
+
             $result = $this->installPackage($name);   
-            if ($result == true) {               
+            if (($result == true) || ($skipErrors == true)) {               
                 if (\is_callable($onProgress) == true) {
                     $onProgress($name);
                 }
