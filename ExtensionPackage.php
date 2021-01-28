@@ -217,7 +217,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
 
         $this->packageRegistry->AddPackage($extensionName,$details->toArray());
         
-        return ($extObj->hasError() == true) ? $extObj->getErrors() : true;        
+        return ($extObj->hasError() == false);  
     }
 
     /**

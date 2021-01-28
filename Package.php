@@ -181,7 +181,7 @@ class Package implements PackageInterface
      */
     public function install(?bool $primary = null): bool   
     {        
-        return false;
+        return true;
     }
 
     /**
@@ -201,7 +201,7 @@ class Package implements PackageInterface
      */
     public function unInstall(): bool 
     {      
-        return false;  
+        return true;  
     }
 
     /**
