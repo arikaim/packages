@@ -48,12 +48,14 @@ class PackageValidator
             $this->requires = $requires;            
         }
 
-        $result['core'] = $this->validateCore();
-        $result['library'] = $this->validateItems('library','library');
-        $result['extensions'] = $this->validateItems('extension','extensions');
-        $result['modules'] = $this->validateItems('module','modules');
-        $result['themes'] = $this->validateItems('template','themes');
-        $result['composer'] = $this->validateComposerPackages();
+        $result = [
+            'core'       => $this->validateCore(),
+            'library'    => $this->validateItems('library','library'),
+            'extensions' => $this->validateItems('extension','extensions'),
+            'modules'    => $this->validateItems('module','modules'),
+            'themes'     => $this->validateItems('template','themes'),
+            'composer'   => $this->validateComposerPackages()
+        ];
         $result['count'] = 
             count($result['library']) + 
             count($result['extensions']) + 

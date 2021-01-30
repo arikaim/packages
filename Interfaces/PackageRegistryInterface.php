@@ -20,7 +20,7 @@ interface PackageRegistryInterface
      * @param string $name
      * @return array|false
      */
-    public function getPackage($name);
+    public function getPackage(string $name);
 
     /**
      * Add package
@@ -29,7 +29,7 @@ interface PackageRegistryInterface
      * @param array $data
      * @return boolean
      */
-    public function addPackage($name, array $data);
+    public function addPackage(string $name, array $data): bool;
 
     /**
      * Remove Package
@@ -37,7 +37,7 @@ interface PackageRegistryInterface
      * @param string $name
      * @return boolean
      */
-    public function removePackage($name);
+    public function removePackage(string $name): bool;
 
     /**
      * Get package list
@@ -45,7 +45,7 @@ interface PackageRegistryInterface
      * @param array $filter
      * @return array
     */
-    public function getPackagesList($filter = []);
+    public function getPackagesList(array $filter = []);
 
     /**
      * Return true if package is installed
@@ -53,24 +53,24 @@ interface PackageRegistryInterface
      * @param string $name
      * @return boolean
      */
-    public function hasPackage($name);
+    public function hasPackage(string $name): bool;
 
     /**
      * Set package status
      *
      * @param string $name
-     * @param integer $status
+     * @param integer|string $status
      * @return boolean
     */
-    public function setPackageStatus($name, $status);
+    public function setPackageStatus(string $name, $status): bool;
 
     /**
      * Get package status
      *
      * @param string $name
-     * @return integer
+     * @return integer|null
     */
-    public function getPackageStatus($name);
+    public function getPackageStatus(string $name): ?int;
 
     /**
      * Set package as primary
@@ -78,13 +78,13 @@ interface PackageRegistryInterface
      * @param string $name
      * @return boolean
     */
-    public function setPrimary($name);
+    public function setPrimary(string $name): bool;
 
     /**
      * Return true if package is primary.
      *  
      * @param string $name
-     * @return boolean
+     * @return boolean|null
     */
-    public function isPrimary($name);
+    public function isPrimary(string $name): ?bool;
 }
