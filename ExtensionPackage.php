@@ -71,6 +71,16 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
     }
 
     /**
+     * Return true if package is installed
+     *
+     * @return boolean
+     */
+    public function isInstalled(): bool
+    {
+        return $this->packageRegistry->hasPackage($this->getName());
+    } 
+
+    /**
      * Set package as primary
      *
      * @return boolean

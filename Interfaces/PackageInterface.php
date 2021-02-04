@@ -15,6 +15,13 @@ namespace Arikaim\Core\Packages\Interfaces;
 interface PackageInterface 
 {  
     /**
+     * Return true if package is installed
+     *
+     * @return boolean
+     */
+    public function isInstalled(): bool;
+    
+    /**
      * Return package name
      *
      * @return string

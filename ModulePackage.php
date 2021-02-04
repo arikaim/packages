@@ -66,6 +66,16 @@ class ModulePackage extends Package implements PackageInterface
     }
 
     /**
+     * Return true if package is installed
+     *
+     * @return boolean
+     */
+    public function isInstalled(): bool
+    {
+        return $this->packageRegistry->hasPackage($this->getName());
+    }
+    
+    /**
      * Get module console commands class list.
      *
      * @return array

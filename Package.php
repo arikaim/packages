@@ -59,6 +59,16 @@ class Package implements PackageInterface
     }
 
     /**
+     * Return true if package is installed
+     *
+     * @return boolean
+     */
+    public function isInstalled(): bool
+    {
+        return true;
+    } 
+
+    /**
      * Create package validator
      *
      * @return PackageValidator
