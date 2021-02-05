@@ -59,6 +59,16 @@ class Package implements PackageInterface
     }
 
     /**
+     * Get drivers classes list
+     *
+     * @return array
+     */
+    public function getDrivers(): array
+    {
+        return [];
+    }
+
+    /**
      * Return true if package is installed
      *
      * @return boolean

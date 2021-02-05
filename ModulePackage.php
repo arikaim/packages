@@ -13,12 +13,15 @@ use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
+use Arikaim\Core\Packages\Traits\Drivers;
 
 /**
  * Module Package class
 */
 class ModulePackage extends Package implements PackageInterface
 {
+    use Drivers;
+
     const SERVICE = 0;
     const PACKAGE = 1;
     const MIDDLEWARE = 2; 
@@ -75,34 +78,6 @@ class ModulePackage extends Package implements PackageInterface
         return $this->packageRegistry->hasPackage($this->getName());
     }
     
-    /**
-     * Get module console commands class list.
-     *
-     * @return array
-     */
-    public function getDrivers(): array
-    { 
-        $path = $this->getDriversPath();
-        if (File::exists($path) == false) {
-            return [];
-        }
-
-        $result = [];
-        foreach (new \DirectoryIterator($path) as $file) {
-            if (
-                $file->isDot() == true || 
-                $file->isDir() == true ||
-                $file->getExtension() != 'php'
-            ) continue;
-         
-            $fileName = $file->getFilename();
-            $baseClass = \str_replace('.php','',$fileName);            
-            $result[] = $baseClass;
-        }     
-        
-        return $result;
-    }
-
     /**
      * Get module console commands class list.
      *
@@ -226,15 +201,5 @@ class ModulePackage extends Package implements PackageInterface
     public function getConsolePath(): string
     {
         return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR;
-    }
-
-    /**
-     * Get module drivers path
-     *    
-     * @return string
-     */
-    public function getDriversPath(): string
-    {
-        return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'driver' . DIRECTORY_SEPARATOR;
     }
 }

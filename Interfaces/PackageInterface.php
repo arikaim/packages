@@ -15,6 +15,13 @@ namespace Arikaim\Core\Packages\Interfaces;
 interface PackageInterface 
 {  
     /**
+     * Get drivers classes list
+     *
+     * @return array
+     */
+    public function getDrivers(): array;
+    
+    /**
      * Return true if package is installed
      *
      * @return boolean

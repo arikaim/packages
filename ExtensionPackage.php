@@ -16,6 +16,7 @@ use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Arikaim;
 use Arikaim\Core\Packages\Traits\ViewComponents;
+use Arikaim\Core\Packages\Traits\Drivers;
 use DirectoryIterator;
 
 /**
@@ -23,7 +24,8 @@ use DirectoryIterator;
 */
 class ExtensionPackage extends Package implements PackageInterface, ViewComponentsInterface
 {
-    use ViewComponents;
+    use ViewComponents,
+        Drivers;
 
     /**
      *  Extension type
