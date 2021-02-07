@@ -11,7 +11,7 @@ namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Packages\PackageManagerFactory;
-use Arikaim\Core\System\Composer;
+use Arikaim\Core\Packages\Composer;
 use Arikaim\Core\Utils\Utils;
 
 /**
