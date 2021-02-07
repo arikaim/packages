@@ -14,6 +14,7 @@ use Arikaim\Core\Interfaces\StorageInterface;
 use Arikaim\Core\Interfaces\HttpClientInterface;
 use Arikaim\Core\Interfaces\CacheInterface;
 use Arikaim\Core\Collection\Collection;
+use Arikaim\Core\Packages\Composer;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
 use Arikaim\Core\Packages\Repository\GitHubRepository;
 use Arikaim\Core\Packages\Repository\ArikaimRepository;
@@ -35,6 +36,7 @@ class PackageManager implements PackageManagerInterface
     const TEMPLATE_PACKAGE  = 'template';
     const MODULE_PACKAGE    = 'module';
     const LIBRARY_PACKAGE   = 'library';
+    const COMPOSER_PACKAGE  = 'composer';
     
     /**
      *  Repository type
@@ -142,7 +144,7 @@ class PackageManager implements PackageManagerInterface
     */
     public function createPackage(string $name)
     {      
-        $propertes = Self::loadPackageProperties($name,$this->path);
+        $propertes = Self::loadPackageProperties($name,$this->path,$this->packageType);
         if (empty($propertes->get('name')) == true) {
             $propertes->set('name',$name);
         }
@@ -177,7 +179,7 @@ class PackageManager implements PackageManagerInterface
      */
     public function getRepository(string $packageName, ?string $accessKey = null)
     {
-        $properties = Self::loadPackageProperties($packageName,$this->path);
+        $properties = Self::loadPackageProperties($packageName,$this->path,$this->packageType);
         $url = $properties->get('repository',null);
         $type = $properties->get('repository-type',Self::GITHUB_REPOSITORY);
 
@@ -219,11 +221,17 @@ class PackageManager implements PackageManagerInterface
      * @param string $path
      * @return Collection
      */
-    public static function loadPackageProperties(string $name, ?string $path) 
+    public static function loadPackageProperties(string $name, ?string $path, ?string $packageType = null) 
     {         
-        $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
-        $data = File::readJsonFile($fileName);
-        $data = (\is_array($data) == true) ? $data : [];
+        if ($packageType == Self::COMPOSER_PACKAGE) {
+            $data = Composer::getInstalledPackageInfo($name);
+            $data = (\is_array($data) == true) ? $data : [];
+        } else {
+            $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
+            $data = File::readJsonFile($fileName);
+            $data = (\is_array($data) == true) ? $data : [];
+        }
+       
 
         $properties = new Collection($data);    
         if (empty($properties->name) == true) {
@@ -236,11 +244,16 @@ class PackageManager implements PackageManagerInterface
     /**
      * Explore packages root directory
      *
-     * @param mixed $filter
+     * @param array|null $filter
      * @return array
      */
-    protected function scan($filter = null): array
+    protected function scan(?array $filter = null): array
     {
+        if ($this->packageType == Self::COMPOSER_PACKAGE) {
+            $result = Composer::readInstalledPackages();
+            return (\is_array($result) == true) ? $result : []; 
+        }
+
         $items = [];
         foreach (new \DirectoryIterator($this->path) as $file) {
             if ($file->isDot() == true || $file->isDir() == false) {
@@ -290,7 +303,7 @@ class PackageManager implements PackageManagerInterface
     {
         $packages = $this->getPackages();
         foreach ($packages as $name) {
-            $properties = Self::loadPackageProperties($name,$this->path);
+            $properties = Self::loadPackageProperties($name,$this->path,$this->packageType);
             if ($properties->get($param) == $value) {
                 return $this->createPackage($name);
             }

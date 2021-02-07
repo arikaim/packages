@@ -32,7 +32,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::EXTENSION_PACKAGE => 'Arikaim\\Core\\Packages\\ExtensionPackage',
         PackageManager::LIBRARY_PACKAGE   => 'Arikaim\\Core\\Packages\\LibraryPackage',
         PackageManager::TEMPLATE_PACKAGE  => 'Arikaim\\Core\\Packages\\TemplatePackage',
-        PackageManager::MODULE_PACKAGE    => 'Arikaim\\Core\\Packages\\ModulePackage'
+        PackageManager::MODULE_PACKAGE    => 'Arikaim\\Core\\Packages\\ModulePackage',
+        PackageManager::COMPOSER_PACKAGE  => 'Arikaim\\Core\\Packages\\ComposerPackage'
     ];
 
     /**
@@ -44,7 +45,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::EXTENSION_PACKAGE => Path::EXTENSIONS_PATH,
         PackageManager::LIBRARY_PACKAGE   => Path::LIBRARY_PATH,
         PackageManager::TEMPLATE_PACKAGE  => Path::TEMPLATES_PATH,
-        PackageManager::MODULE_PACKAGE    => Path::MODULES_PATH
+        PackageManager::MODULE_PACKAGE    => Path::MODULES_PATH,
+        PackageManager::COMPOSER_PACKAGE  => Path::COMPOSER_VENDOR_PATH
     ];
 
     /**
@@ -57,6 +59,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::LIBRARY_PACKAGE   => null,
         PackageManager::TEMPLATE_PACKAGE  => null,
         PackageManager::MODULE_PACKAGE    => CORE_NAMESPACE . '\\Models\\Modules',
+        PackageManager::COMPOSER_PACKAGE  => null
     ];
 
     /**
@@ -67,7 +70,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
     private static $packageCategory = [
         'themes'     => PackageManager::TEMPLATE_PACKAGE,
         'extensions' => PackageManager::EXTENSION_PACKAGE,
-        'modules'    => PackageManager::MODULE_PACKAGE,        
+        'modules'    => PackageManager::MODULE_PACKAGE,   
+        'composer'   => PackageManager::COMPOSER_PACKAGE,        
     ];
 
     /**
