@@ -52,7 +52,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
             $this->properties['emails'] = $this->getEmails();
             $this->properties['macros'] = $this->getMacros();
 
-            $primaryTemplate = Arikaim::options()->get('primary.template',null);
+            $primaryTemplate = Arikaim::config()->getByPath('settings/primaryTemplate',null);
             $this->properties['primary'] = ($primaryTemplate == $this->getName());
         }
 
@@ -66,8 +66,9 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      */
     public function setPrimary(): bool
     {
-        Arikaim::options()->set('primary.template',$this->getName());
-        
+        Arikaim::config()->setValue('settings/primaryTemplate',$this->getName());
+        Arikaim::config()->save();
+
         return true;
     }
 
@@ -83,7 +84,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
        
         // install template routes
         $routesAdded = 0;
-        $primaryTemplate = Arikaim::options()->get('primary.template',null);
+        $primaryTemplate = Arikaim::config()->getByPath('settings/primaryTemplate','system');
         $primary = (empty($primary) == true) ? ($this->getName() == $primaryTemplate) : $primary;
 
         foreach ($routes as $item) {

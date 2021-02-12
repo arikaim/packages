@@ -82,7 +82,7 @@ class Composer
      */
     public static function getPackageData(string $vendor, string $package)
     {
-        $info = Curl::get('https://packagist.org/packages/' . $vendor .'/' . $package . '.json');
+        $info = Curl::get(Self::getPacakgeInfoUrl($vendor,$package));
 
         return (empty($info) == true) ? null : \json_decode($info,true);
     }
@@ -96,7 +96,7 @@ class Composer
      */
     public static function getPackageInfo(string $vendor, string $package)
     {            
-        $info = Curl::get('https://packagist.org/packages/' . $vendor . '/' . $package . '.json');
+        $info = Curl::get(Self::getPacakgeInfoUrl($vendor,$package));
         $data = \json_decode($info,true);
 
         return (\is_array($data) == true) ? $data : null;       
@@ -226,5 +226,17 @@ class Composer
         $filePath = $path . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'installed.json';
 
         return File::readJsonFile($filePath);       
-    }    
+    }   
+    
+    /**
+     * Get package info url
+     *
+     * @param string $vendor
+     * @param string $package
+     * @return string
+     */
+    public static function getPacakgeInfoUrl(string $vendor, string $package): string
+    {
+        return 'https://packagist.org/packages/' . $vendor . '/' . $package . '.json';
+    }
 }

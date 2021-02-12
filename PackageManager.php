@@ -18,6 +18,7 @@ use Arikaim\Core\Packages\Composer;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
 use Arikaim\Core\Packages\Repository\GitHubRepository;
 use Arikaim\Core\Packages\Repository\ArikaimRepository;
+use Arikaim\Core\Packages\Repository\ComposerRepository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Utils\Utils;
@@ -44,7 +45,8 @@ class PackageManager implements PackageManagerInterface
     const GITHUB_REPOSITORY         = 'github';
     const GITHUB_PRIVATE_REPOSITORY = 'private-github';
     const ARIKAIM_REPOSITORY        = 'arikaim';
-   
+    const COMPOSER_REPOSITORY       = 'composer';
+
     /**
      * Cache save time
      *
@@ -226,6 +228,7 @@ class PackageManager implements PackageManagerInterface
         if ($packageType == Self::COMPOSER_PACKAGE) {
             $data = Composer::getInstalledPackageInfo($name);
             $data = (\is_array($data) == true) ? $data : [];
+            $data['repository-type'] = Self::COMPOSER_REPOSITORY;
         } else {
             $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
             $data = File::readJsonFile($fileName);
@@ -503,6 +506,8 @@ class PackageManager implements PackageManagerInterface
                     $this->httpClient,
                     $accessKey
                 );
+            case Self::COMPOSER_REPOSITORY:
+                return new ComposerRepository($repositoryUrl);
         }
 
         return null;
@@ -523,6 +528,8 @@ class PackageManager implements PackageManagerInterface
             case Self::GITHUB_REPOSITORY:           
                 return 'http://github.com/' . $packageName . '.git';
             case Self::ARIKAIM_REPOSITORY:
+                return $packageName;
+            case Self::COMPOSER_REPOSITORY:
                 return $packageName;
         }
 

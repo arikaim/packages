@@ -43,23 +43,23 @@ abstract class Repository implements RepositoryInterface
     /**
      * Local storage
      *
-     * @var StorageInterface
+     * @var StorageInterface|null
      */
-    protected $storage;
+    protected $storage = null;
 
     /**
      * Http client
      *
-     * @var HttpClientInterface
+     * @var HttpClientInterface|null
      */
-    protected $httpClient;
+    protected $httpClient = null;
 
     /**
      * Storage repository dir
      *
-     * @var string
+     * @var string|null
      */
-    protected $repositoryDir;
+    protected $repositoryDir = null;
 
     /**
      * Access key
@@ -78,26 +78,26 @@ abstract class Repository implements RepositoryInterface
     /**
      * Package install dir
      *
-     * @var string
+     * @var string|null
      */
-    protected $installDir;
+    protected $installDir = null;
 
     /**
     * Constructor
     *
     * @param string $repositoryUrl  
-    * @param string $repositoryDir
-    * @param string $installDir
-    * @param StorageInterface $storage
-    * @param HttpClientInterface $httpClient
+    * @param string|null $repositoryDir
+    * @param string|null $installDir
+    * @param StorageInterface|null $storage
+    * @param HttpClientInterface|null $httpClient
     * @param boolean $accessKey
     */
     public function __construct(
         string $repositoryUrl,      
-        string $repositoryDir, 
-        string $installDir, 
-        StorageInterface $storage,
-        HttpClientInterface $httpClient,
+        ?string $repositoryDir = null, 
+        ?string $installDir = null, 
+        ?StorageInterface $storage = null,
+        ?HttpClientInterface $httpClient = null,
         ?string $accessKey = null
     )
     {
