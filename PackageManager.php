@@ -451,25 +451,28 @@ class PackageManager implements PackageManagerInterface
      */
     public function createBackup(string $name): bool
     {
+        if (File::isWritable(Path::STORAGE_BACKUP_PATH) == false) {
+            File::setWritable(Path::STORAGE_BACKUP_PATH);
+        }
+
         $package = $this->createPackage($name);
         if (empty($package) == true) {
             return false;
         }
 
-        $fileName = $package->getName() . '-' . $package->getVersion() . '.zip';
+        $fileName = $package->getName() . '-' . $this->packageType . '-' . $package->getVersion() . '.zip';
         $sourcePath = $this->getPath() . $name . DIRECTORY_SEPARATOR;
-        $destinationPath = Path::STORAGE_BACKUP_PATH . $package->getType() . DIRECTORY_SEPARATOR;
-        if (File::exists($destinationPath) == false) {
-            File::makeDir($destinationPath);
-            File::setWritable($destinationPath);
+       
+        if (File::exists($sourcePath) == false) {
+            // source path not exist
+            return false;
         }
-        
-        $zipFile = $destinationPath . $fileName;
+        $zipFile = Path::STORAGE_BACKUP_PATH . $fileName;
         if (File::exists($zipFile) == true) {
             File::delete($zipFile);
         }
         
-        return ZipFile::create($sourcePath,$zipFile,['.git']);
+        return ZipFile::create($sourcePath,$zipFile,['.git']);       
     }
 
     /**
