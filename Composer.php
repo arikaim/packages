@@ -123,12 +123,12 @@ class Composer
 
     /**
      * Get installed package version
-     *
-     * @param string $path
+     *     
      * @param string $packageName
+     * @param string|null $path
      * @return string|false
      */
-    public static function getInstalledPackageVersion(string $path, string $packageName)
+    public static function getInstalledPackageVersion(string $packageName, ?string $path = null)
     {
         $packages = Self::readInstalledPackages($path);
         if ($packages === false) {
@@ -163,12 +163,12 @@ class Composer
 
     /**
      * Get local package info
-     *
-     * @param string $path
+     *   
      * @param array $packagesList
+     * @param string|null $path
      * @return array
      */
-    public static function getLocalPackagesInfo(string $path, array $packagesList)
+    public static function getLocalPackagesInfo(array $packagesList, ?string $path = null)
     {
         $packages = Self::readInstalledPackages($path);     
         foreach ($packagesList as $item) {
@@ -192,12 +192,12 @@ class Composer
 
     /**
      * Return true if composer package is installed
-     *
-     * @param string $path
+     *   
      * @param string|array $packageList
+     * @param string|null $path
      * @return boolean
      */
-    public static function isInstalled(string $path, $packageList)
+    public static function isInstalled($packageList, ?string $path = null)
     {
         $packages = Self::readInstalledPackages($path);
         if ($packages === false) {
@@ -206,7 +206,7 @@ class Composer
         $packageList = (\is_string($packageList) == true) ? [$packageList] : $packageList;
         
         foreach ($packageList as $package) {          
-            if (Self::getInstalledPackageVersion($path,$package) === false) {
+            if (Self::getInstalledPackageVersion($package,$path) === false) {
                 return false;
             }
         }

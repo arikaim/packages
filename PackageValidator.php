@@ -126,7 +126,7 @@ class PackageValidator
         if (count($items) == 0) {
             return [];
         }
-        $packageInfo = Composer::getLocalPackagesInfo(ROOT_PATH . BASE_PATH,$items);
+        $packageInfo = Composer::getLocalPackagesInfo($items);
 
         foreach ($items as $item) {
             list($name,$requiredVersion,$optional) = $this->parseItemName($item);
@@ -178,7 +178,7 @@ class PackageValidator
     {
         $result = [];
         $coreItem = $this->requires['core'] ?? false;
-        $coreVersion = Composer::getInstalledPackageVersion(ROOT_PATH . BASE_PATH,ARIKAIM_PACKAGE_NAME);    
+        $coreVersion = Composer::getInstalledPackageVersion(ARIKAIM_PACKAGE_NAME);    
         if ($coreItem == false) {
             $result[] = $this->getResultItem('Core',$coreVersion,$coreVersion,true,false);           
         } else{
