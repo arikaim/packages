@@ -71,9 +71,9 @@ abstract class Repository implements RepositoryInterface
     /**
      * Temp directory
      *
-     * @var string
+     * @var string|null
      */
-    protected $tempDir;
+    protected $tempDir = null;
 
     /**
      * Package install dir
@@ -107,7 +107,7 @@ abstract class Repository implements RepositoryInterface
         $this->repositoryDir = $repositoryDir;  
         $this->installDir = $installDir;  
         $this->accessKey = $accessKey;
-        $this->tempDir = $storage->getFullPath() . 'temp' . DIRECTORY_SEPARATOR;
+        $this->tempDir = (empty($storage) == false) ? $storage->getFullPath() . 'temp' . DIRECTORY_SEPARATOR : null;
         $this->resolvePackageName();
     }
 
@@ -218,7 +218,7 @@ abstract class Repository implements RepositoryInterface
     */
     protected function extractRepository(string $version, ?string $targetDir = null)
     {
-        $targetDir =  $targetDir ?? $this->tempDir;
+        $targetDir = $targetDir ?? $this->tempDir;
         $repositoryName = $this->getRepositoryName();
         $repositoryFolder = $repositoryName . '-' . $version;
         $packageFileName = $this->getPackageFileName($version);
