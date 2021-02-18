@@ -36,9 +36,9 @@ abstract class Repository implements RepositoryInterface
     /**
      * Repo name
      *
-     * @var string
+     * @var string|null
      */
-    protected $repositoryName;
+    protected $repositoryName = null;
 
     /**
      * Local storage
@@ -206,7 +206,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function getRepositoryName(): string
     {
-        return $this->repositoryName;
+        return $this->repositoryName ?? '';
     }
 
     /**

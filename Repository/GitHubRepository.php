@@ -91,7 +91,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
         $url = $this->getLastVersionUrl();
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
-
+        
         return (\is_array($data) == true) ? $data['tag_name'] ?? '' : '';         
     }
 
@@ -106,7 +106,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
         $path = \trim(\str_replace('.git','',$url['path']),'/');
         $tokens = \explode('/',$path);   
 
-        $this->repositoryName = $tokens[1];    
+        $this->repositoryName = $tokens[1] ?? '';    
         $this->packageName = $tokens[0] . '/' .  $this->repositoryName;       
     }
 
