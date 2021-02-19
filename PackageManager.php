@@ -455,6 +455,11 @@ class PackageManager implements PackageManagerInterface
             File::setWritable(Path::STORAGE_BACKUP_PATH);
         }
 
+        if ($this->hasPackage($name) == false) {
+            // package not exists
+            return false;
+        }
+        
         $package = $this->createPackage($name);
         if (empty($package) == true) {
             return false;
