@@ -102,8 +102,13 @@ class GitHubRepository extends Repository implements RepositoryInterface
      */
     protected function resolvePackageName(): void
     {
-        $url = \parse_url($this->repositoryUrl);
-        $path = \trim(\str_replace('.git','',$url['path']),'/');
+        if (Utils::isValidUrl($this->repositoryUrl) == true) {
+            $url = \parse_url($this->repositoryUrl);
+            $path = \trim(\str_replace('.git','',$url['path']),'/');
+        } else {
+            $path = $this->repositoryUrl;
+        }
+
         $tokens = \explode('/',$path);   
 
         $this->repositoryName = $tokens[1] ?? '';    
