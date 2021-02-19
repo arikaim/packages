@@ -65,13 +65,9 @@ class ArikaimRepository extends Repository implements RepositoryInterface
       
         File::setWritable($this->repositoryDir);
         $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
-
-        if ($this->storage->has('repository/' . $this->getPackageFileName($version)) == true) {
-            try {         
-                $this->storage->delete('repository/' . $this->getPackageFileName($version));
-            } catch (Exception $e) {                   
-                return false;
-            }
+      
+        if (File::exists($packageFileName) == true) {
+            File::delete($packageFileName);   
         }
        
         try {         
@@ -85,10 +81,11 @@ class ArikaimRepository extends Repository implements RepositoryInterface
                 ]
             ]);
         } catch (Exception $e) { 
-            return false;             
+            echo $e->getMessage();  
+            return false;               
         }
       
-        return $this->storage->has('repository/' . $this->getPackageFileName($version));
+        return File::exists($packageFileName);
     }
 
     /**

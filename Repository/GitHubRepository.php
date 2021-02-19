@@ -13,6 +13,7 @@ use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Utils;
+use Arikaim\Core\Utils\Path;
 use Exception;
 
 /**
@@ -65,20 +66,18 @@ class GitHubRepository extends Repository implements RepositoryInterface
         File::setWritable($this->repositoryDir);
         $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
 
-        if ($this->storage->has('repository/' . $this->getPackageFileName($version)) == true) {
-            try {         
-                $this->storage->delete('repository/' . $this->getPackageFileName($version));
-            } catch (Exception $e) {                   
-                return false;
-            }
+        if (File::exists($packageFileName) == true) {
+            File::delete($packageFileName);           
         }
        
         try {         
             $this->httpClient->get($url,['sink' => $packageFileName]);
-        } catch (Exception $e) {              
+        } catch (Exception $e) {  
+            echo $e->getMessage();  
+            return false;          
         }
       
-        return $this->storage->has('repository/' . $this->getPackageFileName($version));
+        return File::exists($packageFileName);
     }
 
     /**
@@ -134,7 +133,7 @@ class GitHubRepository extends Repository implements RepositoryInterface
                 return false;
             }
            
-            $json = $this->storage->read('temp/' . $repositoryFolder . '/arikaim-package.json');
+            $json = File::read(Path::STORAGE_TEMP_PATH . $repositoryFolder . '/arikaim-package.json');
             
             if (Utils::isJson($json) == true) {
                 $packageProperties = \json_decode($json,true);
