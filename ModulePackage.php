@@ -14,6 +14,9 @@ use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Packages\Traits\Drivers;
+use Arikaim\Core\Interfaces\ModuleInterface;
+use Arikaim\Core\Arikaim;
+use Exception;
 
 /**
  * Module Package class
@@ -119,6 +122,7 @@ class ModulePackage extends Package implements PackageInterface
      * Install module
      *
      * @param boolean|null $primary Primary package replaces routes or other params
+     * @throws Exception
      * @return bool
      */
     public function install(?bool $primary = null): bool
@@ -127,9 +131,49 @@ class ModulePackage extends Package implements PackageInterface
                
         $module = Factory::createModule($this->getName(),$this->getClass());
         if (\is_object($module) == false) {
+            throw new Exception('Not valid module class.');
             return false;
         }
        
+        if ($module instanceof ModuleInterface) {
+            $module->setModuleName($this->getName());
+        } else {
+            throw new Exception('Not valid module class type.');  
+            return false;          
+        }
+
+        // Bind methods
+
+        /**
+         *  Install driver
+         */
+        $module->installDriver = function(
+            string $name,
+            ?string $class = null,
+            ?string $category = null,
+            ?string $title = null,
+            ?string $description = null,
+            ?string $version = null,
+            array $config = []) 
+        {
+            return Arikaim::driver()->install($name,$class,$category,$title,$description,$version,$config);
+        };
+
+        /**
+         * Register service provider
+         *
+         * @param string $serviceProvider
+         * @return boolean
+         */
+        $module->registerService = function(string $serviceProvider): bool
+        {
+            if (\class_exists($serviceProvider) == false) {
+                $serviceProvider = Factory::getModuleNamespace($this->getModuleName()) . "\\Service\\$serviceProvider";
+            }
+
+            return (bool)Arikaim::get('service')->register($serviceProvider);            
+        };
+
         $module->install();
 
         unset($data['requires']);
