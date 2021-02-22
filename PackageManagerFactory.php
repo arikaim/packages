@@ -29,11 +29,12 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @var array
      */
     private static $packageClass = [
-        PackageManager::EXTENSION_PACKAGE => 'Arikaim\\Core\\Packages\\ExtensionPackage',
-        PackageManager::LIBRARY_PACKAGE   => 'Arikaim\\Core\\Packages\\LibraryPackage',
-        PackageManager::TEMPLATE_PACKAGE  => 'Arikaim\\Core\\Packages\\TemplatePackage',
-        PackageManager::MODULE_PACKAGE    => 'Arikaim\\Core\\Packages\\ModulePackage',
-        PackageManager::COMPOSER_PACKAGE  => 'Arikaim\\Core\\Packages\\ComposerPackage'
+        PackageManager::EXTENSION_PACKAGE          => 'Arikaim\\Core\\Packages\\ExtensionPackage',
+        PackageManager::LIBRARY_PACKAGE            => 'Arikaim\\Core\\Packages\\LibraryPackage',
+        PackageManager::TEMPLATE_PACKAGE           => 'Arikaim\\Core\\Packages\\TemplatePackage',
+        PackageManager::MODULE_PACKAGE             => 'Arikaim\\Core\\Packages\\ModulePackage',
+        PackageManager::COMPOSER_PACKAGE           => 'Arikaim\\Core\\Packages\\ComposerPackage',
+        PackageManager::COMPONENTS_LIBRARY_PACKAGE => 'Arikaim\\Core\\Packages\\ComponentsLibraryPackage'
     ];
 
     /**
@@ -42,11 +43,12 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @var array
      */
     private static $packagePath = [
-        PackageManager::EXTENSION_PACKAGE => Path::EXTENSIONS_PATH,
-        PackageManager::LIBRARY_PACKAGE   => Path::LIBRARY_PATH,
-        PackageManager::TEMPLATE_PACKAGE  => Path::TEMPLATES_PATH,
-        PackageManager::MODULE_PACKAGE    => Path::MODULES_PATH,
-        PackageManager::COMPOSER_PACKAGE  => Path::COMPOSER_VENDOR_PATH
+        PackageManager::EXTENSION_PACKAGE           => Path::EXTENSIONS_PATH,
+        PackageManager::LIBRARY_PACKAGE             => Path::LIBRARY_PATH,
+        PackageManager::TEMPLATE_PACKAGE            => Path::TEMPLATES_PATH,
+        PackageManager::MODULE_PACKAGE              => Path::MODULES_PATH,
+        PackageManager::COMPOSER_PACKAGE            => Path::COMPOSER_VENDOR_PATH,
+        PackageManager::COMPONENTS_LIBRARY_PACKAGE  => Path::COMPONENTS_PATH
     ];
 
     /**
@@ -55,11 +57,12 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @var array
      */
     private static $packageRegistryClass = [
-        PackageManager::EXTENSION_PACKAGE => CORE_NAMESPACE . '\\Models\\Extensions',
-        PackageManager::LIBRARY_PACKAGE   => null,
-        PackageManager::TEMPLATE_PACKAGE  => null,
-        PackageManager::MODULE_PACKAGE    => CORE_NAMESPACE . '\\Models\\Modules',
-        PackageManager::COMPOSER_PACKAGE  => null
+        PackageManager::EXTENSION_PACKAGE          => CORE_NAMESPACE . '\\Models\\Extensions',
+        PackageManager::LIBRARY_PACKAGE            => null,
+        PackageManager::TEMPLATE_PACKAGE           => null,
+        PackageManager::MODULE_PACKAGE             => CORE_NAMESPACE . '\\Models\\Modules',
+        PackageManager::COMPOSER_PACKAGE           => null,
+        PackageManager::COMPONENTS_LIBRARY_PACKAGE => null
     ];
 
     /**
@@ -71,7 +74,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         'themes'     => PackageManager::TEMPLATE_PACKAGE,
         'extensions' => PackageManager::EXTENSION_PACKAGE,
         'modules'    => PackageManager::MODULE_PACKAGE,   
-        'composer'   => PackageManager::COMPOSER_PACKAGE,        
+        'composer'   => PackageManager::COMPOSER_PACKAGE,       
+        'components' => PackageManager::COMPONENTS_LIBRARY_PACKAGE,        
     ];
 
     /**

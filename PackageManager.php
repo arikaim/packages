@@ -33,12 +33,13 @@ class PackageManager implements PackageManagerInterface
     /**
      *  Package type
      */
-    const EXTENSION_PACKAGE = 'extension';
-    const TEMPLATE_PACKAGE  = 'template';
-    const MODULE_PACKAGE    = 'module';
-    const LIBRARY_PACKAGE   = 'library';
-    const COMPOSER_PACKAGE  = 'composer';
-    
+    const EXTENSION_PACKAGE          = 'extension';
+    const TEMPLATE_PACKAGE           = 'template';
+    const MODULE_PACKAGE             = 'module';
+    const LIBRARY_PACKAGE            = 'library';
+    const COMPOSER_PACKAGE           = 'composer';
+    const COMPONENTS_LIBRARY_PACKAGE = 'components';
+
     /**
      *  Repository type
     */
