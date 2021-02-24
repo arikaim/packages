@@ -17,4 +17,13 @@ use Arikaim\Core\Packages\Package;
 */
 class ComposerPackage extends Package implements PackageInterface
 {
+    /**
+     * Get installed composer package details
+     *
+     * @return mixed
+     */
+    public function getDetails()
+    {
+        return Composer::getInstalledPackageInfo($this->getName());
+    }
 }
