@@ -146,6 +146,8 @@ class Composer
         if ($packages === false) {
             return false;
         }
+        $packages = $packages['packages'] ?? $packages;
+
         foreach ($packages as $package) {
             if ($package['name'] == $packageName) {
                 return $package['version'];
@@ -164,6 +166,8 @@ class Composer
     public static function getInstalledPackageInfo(string $name): ?array
     {
         $packages = Self::readInstalledPackages();     
+        $packages = $packages['packages'] ?? $packages;
+
         foreach ($packages as $package) {
             if ($package['name'] == $name) {
                 return $package;
@@ -213,10 +217,6 @@ class Composer
      */
     public static function isInstalled($packageList, ?string $path = null)
     {
-        $packages = Self::readInstalledPackages($path);
-        if ($packages === false) {
-            return false;
-        }
         $packageList = (\is_string($packageList) == true) ? [$packageList] : $packageList;
         
         foreach ($packageList as $package) {          
