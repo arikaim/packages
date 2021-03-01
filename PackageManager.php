@@ -254,8 +254,10 @@ class PackageManager implements PackageManagerInterface
     protected function scan(?array $filter = null): array
     {
         if ($this->packageType == Self::COMPOSER_PACKAGE) {
-            $result = Composer::readInstalledPackages();
-            return (\is_array($result) == true) ? $result : []; 
+            $packages = Composer::readInstalledPackages();
+            $packages = $packages['packages'] ?? $packages;
+            
+            return (\is_array($packages) == true) ? $packages : []; 
         }
 
         $items = [];
