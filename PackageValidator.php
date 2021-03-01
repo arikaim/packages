@@ -132,7 +132,10 @@ class PackageValidator
             list($name,$requiredVersion,$optional) = $this->parseItemName($item);
             $valid = (isset($packageInfo[$name]) == true);
             $packageVersion = $packageInfo[$name]['version'] ?? null;
-                       
+            if (empty($packageVersion) == true) {
+                $valid = false;
+            }  
+             
             $result[] = $this->getResultItem($name,$requiredVersion,$packageVersion,$valid,$optional);
         }
         

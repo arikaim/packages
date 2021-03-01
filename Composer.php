@@ -62,6 +62,18 @@ class Composer
     }
 
     /**
+     * Run remove package command
+     *
+     * @param string $packageName
+     * @param boolean $quiet     
+     * @return void
+     */
+    public static function removePackage(string $packageName, bool $quiet = true)
+    {
+        return Self::run('remove',[$packageName],$quiet);
+    }
+
+    /**
      * Run require package command
      *
      * @param string $packageName
@@ -170,12 +182,14 @@ class Composer
      */
     public static function getLocalPackagesInfo(array $packagesList, ?string $path = null)
     {
-        $packages = Self::readInstalledPackages($path);     
+        $installedPackages = Self::readInstalledPackages($path);     
+        $packages = $installedPackages['packages'] ?? $installedPackages;
+
         foreach ($packagesList as $item) {
             $result[$item]['version'] = null;                  
         }
         
-        if ($packages === false) {
+        if (\is_array($packages) == false) {
             return $result;
         }
 
