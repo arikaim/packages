@@ -24,12 +24,18 @@ trait ViewComponents
      */
     public function getViewPath(?string $componentsType = null): string
     {
-        if ($this->getType() == 'template') {
-            $path = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
-        } else {
-            $path = (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR : $this->viewPath;
+        switch ($this->getType()) {
+            case 'template': 
+                $path = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+                break;
+            case 'components':
+                $path = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+                break;
+            default: 
+                $path = (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR : $this->viewPath;
+                break;
         }
-        
+
         return (empty($componentsType) == true) ? $path : $path . $componentsType . DIRECTORY_SEPARATOR;
     }
 
@@ -153,7 +159,6 @@ trait ViewComponents
         }        
 
         $items = [];    
-
         foreach (new \DirectoryIterator($path) as $file) {
             if ($file->isDot() == true) continue;
             if ($file->isDir() == true) {
@@ -184,22 +189,29 @@ trait ViewComponents
         if (File::exists($path) == false) {
             return [];
         }        
-        $items = [];
 
-        $dir = new \RecursiveDirectoryIterator($path,\RecursiveDirectoryIterator::SKIP_DOTS);
-        $iterator = new \RecursiveIteratorIterator($dir,\RecursiveIteratorIterator::SELF_FIRST);
+        $items = [];
+        $exclude = ['.git','.github'];
+        $filter = function ($file, $key, $iterator) use ($exclude) {
+            if ($iterator->hasChildren() && \in_array($file->getBaseName(),$exclude) == false) {
+                return true;
+            }
+        
+            return ($file->isDir() == true && \in_array($file->getBaseName(),$exclude) == false);
+        };
+        $dir = new \RecursiveDirectoryIterator($path,\RecursiveDirectoryIterator::SKIP_DOTS);    
+        $filterIterator = new \RecursiveCallbackFilterIterator($dir,$filter);
+        $iterator = new \RecursiveIteratorIterator($filterIterator,\RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $file) {
-            if ($file->isDir() == true) {
-                $item['name'] = $file->getFilename();   
-                $item['path'] = $file->getPathname();
-                
-                $componentPath = \str_replace($path,'',$file->getRealPath());                
-                $componentPath = \str_replace(DIRECTORY_SEPARATOR,'.',$componentPath);
-               
-                $item['full_name'] = $componentPath;
-                \array_push($items,$item);
-            }
+            $item['name'] = $file->getFilename();   
+            $item['path'] = $file->getPathname();
+            
+            $componentPath = \str_replace($path,'',$file->getRealPath());                
+            $componentPath = \str_replace(DIRECTORY_SEPARATOR,'.',$componentPath);
+            
+            $item['full_name'] = $componentPath;
+            \array_push($items,$item);         
         }
 
         return $items;
