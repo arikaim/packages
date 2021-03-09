@@ -17,6 +17,7 @@ use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Arikaim;
 use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Packages\Traits\Drivers;
+use Arikaim\Core\Packages\Traits\ConsoleCommands;
 use DirectoryIterator;
 
 /**
@@ -25,6 +26,7 @@ use DirectoryIterator;
 class ExtensionPackage extends Package implements PackageInterface, ViewComponentsInterface
 {
     use ViewComponents,
+        ConsoleCommands,
         Drivers;
 
     /**
@@ -123,31 +125,6 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         }
 
         return $result;
-    }
-
-    /**
-     * Get extension console commands
-     *
-     * @return array
-     */
-    public function getConsoleCommands(): array
-    {
-        $extension = $this->packageRegistry->getPackage($this->getName()); 
-        if ($extension == false) {
-            return [];
-        }
-        $result = [];
-        foreach ($extension['console_commands'] as $class) {
-            $command = Factory::createInstance($class);
-            if (\is_object($command) ==true) {
-                $item['name'] = $command->getName();
-                $item['title'] = $command->getDescription();      
-                $item['help'] = 'php cli ' . $command->getName();         
-                \array_push($result,$item);
-            }          
-        } 
-
-        return $result;      
     }
 
     /**

@@ -11,11 +11,13 @@ namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\Factory;
-use Arikaim\Core\Utils\File;
+use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
-use Arikaim\Core\Packages\Traits\Drivers;
 use Arikaim\Core\Interfaces\ModuleInterface;
 use Arikaim\Core\Arikaim;
+
+use Arikaim\Core\Packages\Traits\ConsoleCommands;
+use Arikaim\Core\Packages\Traits\Drivers;
 use Exception;
 
 /**
@@ -23,7 +25,8 @@ use Exception;
 */
 class ModulePackage extends Package implements PackageInterface
 {
-    use Drivers;
+    use Drivers, 
+        ConsoleCommands;
 
     const SERVICE = 0;
     const PACKAGE = 1;
@@ -82,43 +85,6 @@ class ModulePackage extends Package implements PackageInterface
     }
     
     /**
-     * Get module console commands class list.
-     *
-     * @return array
-     */
-    public function getConsoleCommands(): array
-    {      
-        $path = $this->getConsolePath();
-        if (File::exists($path) == false) {
-            return [];
-        }
-
-        $result = [];
-        foreach (new \DirectoryIterator($path) as $file) {
-            if (
-                $file->isDot() == true || 
-                $file->isDir() == true ||
-                $file->getExtension() != 'php'
-            ) continue;
-         
-            $fileName = $file->getFilename();
-            $baseClass = \str_replace('.php','',$fileName);
-            $class = Factory::getModuleConsoleClassName($this->getName(),$baseClass);          
-
-            $command = Factory::createInstance($class);
-
-            if (\is_subclass_of($command,'Arikaim\Core\System\Console\ConsoleCommand') == true) {                   
-                $item['name'] = $command->getName();
-                $item['title'] = $command->getDescription();      
-                $item['help'] = 'php cli ' . $command->getName();         
-                \array_push($result,$item);                                                              
-            }
-        }     
-        
-        return $result;
-    }
-
-    /**
      * Install module
      *
      * @param boolean|null $primary Primary package replaces routes or other params
@@ -128,7 +94,7 @@ class ModulePackage extends Package implements PackageInterface
     public function install(?bool $primary = null): bool
     {
         $data = $this->properties->toArray();
-               
+      
         $module = Factory::createModule($this->getName(),$this->getClass());
         if (\is_object($module) == false) {
             throw new Exception('Not valid module class.');
@@ -143,7 +109,6 @@ class ModulePackage extends Package implements PackageInterface
         }
 
         // Bind methods
-
         /**
          *  Install driver
          */
@@ -174,6 +139,23 @@ class ModulePackage extends Package implements PackageInterface
             return (bool)Arikaim::get('service')->register($serviceProvider);            
         };
 
+        /**
+         * Register console command class
+         *
+         * @param string $class
+         * @return bool
+         */
+        $module->registerConsoleCommand = function(string $class)
+        {
+            $class = Factory::getModuleConsoleClassName($this->getModuleName(),Utils::getBaseClassName($class));
+            if (\class_exists($class) == false) {       
+                return false;
+            }
+            $this->addConsoleClass($class);
+          
+            return true;
+        };
+
         $module->install();
 
         unset($data['requires']);
@@ -186,7 +168,7 @@ class ModulePackage extends Package implements PackageInterface
             'type'              => Self::getTypeId($this->properties->get('type')),
             'category'          => $this->properties->get('category',null),
             'class'             => $this->getClass(),
-            'console_commands'  => $this->getConsoleCommands()
+            'console_commands'  => $module->getConsoleCommandClasses()
         ];
         $data = \array_merge($data,$details);
         $result = $this->packageRegistry->AddPackage($this->getName(),$data);
