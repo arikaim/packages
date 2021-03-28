@@ -27,6 +27,7 @@ trait ConsoleCommands
         if ($package == false) {
             return [];
         }
+        
         $result = [];
         foreach ($package['console_commands'] as $class) {
             $command = Factory::createInstance($class);

@@ -132,7 +132,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
     public function buildAssets(): bool
     {        
         $cssPath = Path::TEMPLATES_PATH . $this->getName() . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR;
-        $twig = Arikaim::view()->createEnvironment($cssPath);
+        $twig = Arikaim::view()->createEnvironment([$cssPath]);
         $params = [
             'template_url' => Url::TEMPLATES_URL . '/' . $this->getName() . '/'
         ];

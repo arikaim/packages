@@ -19,13 +19,6 @@ use Arikaim\Core\Packages\PackageManagerFactory;
 class PackageFactory implements PackageFactoryInterface
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Create package 
      *
      * @param string $packageType

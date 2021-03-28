@@ -18,6 +18,7 @@ use Arikaim\Core\Arikaim;
 
 use Arikaim\Core\Packages\Traits\ConsoleCommands;
 use Arikaim\Core\Packages\Traits\Drivers;
+use Arikaim\Core\Packages\Traits\Jobs;
 use Exception;
 
 /**
@@ -26,6 +27,7 @@ use Exception;
 class ModulePackage extends Package implements PackageInterface
 {
     use Drivers, 
+        Jobs,
         ConsoleCommands;
 
     const SERVICE = 0;
@@ -65,7 +67,8 @@ class ModulePackage extends Package implements PackageInterface
             $this->properties->set('status',$this->packageRegistry->getPackageStatus($this->getName()));
             $this->properties['console_commands'] = $this->getConsoleCommands();
             $this->properties['drivers'] = $this->getDrivers();
-
+            $this->properties['jobs'] = $this->getPackageJobs();
+            
             $service = Factory::createModule($this->getName(),$this->getClass());
             $error = ($service == null) ? false : $service->getTestError();
             $this->properties->set('error',$error);            

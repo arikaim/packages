@@ -18,6 +18,7 @@ use Arikaim\Core\Arikaim;
 use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Packages\Traits\Drivers;
 use Arikaim\Core\Packages\Traits\ConsoleCommands;
+use Arikaim\Core\Packages\Traits\Jobs;
 use DirectoryIterator;
 
 /**
@@ -27,6 +28,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
 {
     use ViewComponents,
         ConsoleCommands,
+        Jobs,
         Drivers;
 
     /**
@@ -64,7 +66,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
             $this->properties['subscribers'] = Arikaim::event()->getSubscribers(['extension_name' => $this->getName()]);
             $this->properties['database'] = $this->getModels();
             $this->properties['console_commands'] = $this->getConsoleCommands();
-            $this->properties['jobs'] = $this->getExtensionJobs();
+            $this->properties['jobs'] = $this->getPackageJobs();
             $this->properties['pages'] = $this->getPages();
             $this->properties['emails'] = $this->getEmails();
             $this->properties['components'] = $this->getComponentsRecursive();
@@ -94,37 +96,6 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         $result = $this->packageRegistry->setPrimary($this->getName());            
       
         return (bool)$result;       
-    }
-
-    /**
-     * Get extension jobs
-     *
-     * @return array
-     */
-    public function getExtensionJobs(): array
-    {
-        $path = $this->getJobsPath();
-        $result = [];
-        if (File::exists($path) == false) {
-            return [];
-        }
-
-        foreach (new DirectoryIterator($path) as $file) {
-            if (
-                $file->isDot() == true || 
-                $file->isDir() == true ||
-                $file->getExtension() != 'php'
-            ) continue;
-          
-            $item['base_class'] = \str_replace('.php','',$file->getFilename());
-            $job = Factory::createJob($item['base_class'],$this->getName());
-            if (\is_object($job) == true) {
-                $item['name'] = $job->getName();
-                \array_push($result,$item);
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -336,16 +307,6 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
     public function getTypeId($typeName)
     {
         return (\is_string($typeName) == true) ? \array_search($typeName,$this->typeName) : $typeName;          
-    }
-
-    /**
-     * Get extension jobs path
-     *   
-     * @return string
-     */
-    public function getJobsPath(): string   
-    {
-        return $this->path . $this->getName() . DIRECTORY_SEPARATOR . 'jobs' . DIRECTORY_SEPARATOR;
     }
 
     /**

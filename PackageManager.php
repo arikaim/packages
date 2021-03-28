@@ -198,8 +198,8 @@ class PackageManager implements PackageManagerInterface
      */
     public function getPackages(bool $cached = false, $filter = null)
     {
-        $result = ($cached == true) ? $this->cache->fetch($this->packageType . '.list') : null;
-        if (\is_array($result) == false) {
+        $result = ($cached == true) ? $this->cache->fetch($this->packageType . '.list') : false;
+        if ($result === false) {
             $result = $this->scan($filter);
             $this->cache->save($this->packageType . '.list',$result,Self::$cacheSaveTime);
         } 
@@ -216,6 +216,7 @@ class PackageManager implements PackageManagerInterface
     {
         return $this->path;
     }
+
 
     /**
      * Load package properties file 
@@ -236,7 +237,6 @@ class PackageManager implements PackageManagerInterface
             $data = (\is_array($data) == true) ? $data : [];
         }
        
-
         $properties = new Collection($data);    
         if (empty($properties->name) == true) {
             $properties->set('name',$name);
