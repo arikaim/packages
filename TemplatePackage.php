@@ -22,6 +22,7 @@ use DirectoryIterator;
 
 use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Packages\Traits\ComponentTranslations;
+use Arikaim\Core\Packages\Traits\Themes;
 
 /**
  * Template package 
@@ -30,6 +31,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
 {
     use    
         ViewComponents,
+        Themes,
         ComponentTranslations;
 
     /**
@@ -66,7 +68,10 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      */
     public function setPrimary(): bool
     {
+        $defaultTheme = $this->getDefautTheme();
+
         Arikaim::config()->setValue('settings/primaryTemplate',$this->getName());
+        Arikaim::config()->setValue('settings/templateTheme',$defaultTheme);
         Arikaim::config()->save();
 
         return true;
@@ -154,8 +159,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
                     $cssfileName = \str_replace('.html','',$fileName);
                     File::write($cssPath . $cssfileName,$code);
                 }
-            }
-           
+            }           
         }
 
         return true;
