@@ -125,8 +125,6 @@ class PackageManager implements PackageManagerInterface
         $this->httpClient = $httpClient;
         $this->packageClass = $packageClass;      
         $this->packageRegistry = $packageRegistry;
-
-        Self::$cacheSaveTime = \defined('CACHE_SAVE_TIME') ? \constant('CACHE_SAVE_TIME') : Self::$cacheSaveTime;
     }
 
     /**

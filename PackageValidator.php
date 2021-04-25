@@ -181,7 +181,7 @@ class PackageValidator
     {
         $result = [];
         $coreItem = $this->requires['core'] ?? false;
-        $coreVersion = Composer::getInstalledPackageVersion(ARIKAIM_PACKAGE_NAME);    
+        $coreVersion = Composer::getInstalledPackageVersion("arikaim/core");    
         if ($coreItem == false) {
             $result[] = $this->getResultItem('Core',$coreVersion,$coreVersion,true,false);           
         } else{

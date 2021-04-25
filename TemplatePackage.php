@@ -123,6 +123,14 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
                 }
             }
         }
+
+        // check theme 
+        $theme = Arikaim::config()->getByPath('settings/templateTheme',null);
+        if (empty($theme) == true) {                    
+            Arikaim::config()->setValue('settings/templateTheme',$this->getDefautTheme());
+            Arikaim::config()->save();           
+        }
+
         // build assets
         $this->buildAssets();
 
