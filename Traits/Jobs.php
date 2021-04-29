@@ -50,6 +50,7 @@ trait Jobs
           
             $item['base_class'] = \str_replace('.php','',$file->getFilename());
             $job = Factory::createJob($item['base_class'],$this->getName());
+            $item['class'] = \get_class($job);
             if (\is_object($job) == true) {
                 $item['name'] = $job->getName();
                 \array_push($result,$item);
