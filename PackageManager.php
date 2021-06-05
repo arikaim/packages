@@ -317,6 +317,35 @@ class PackageManager implements PackageManagerInterface
     }
 
     /**
+     * Sort packages by 'install-order' property
+     *
+     * @param array $packages
+     * @return array
+     */
+    public function sortPackages(array $packages): array
+    {
+        $result = [];
+        foreach ($packages as $name) { 
+            $package = $this->createPackage($name);
+            $type = $package->getProperty('type',0);
+            $installOrder = ($type == 'system') ? 0 : $package->getProperty('install-order',1000);
+            $result[] = [ 
+                'name' => $name, 
+                'order' => (int)$installOrder
+            ];           
+        }
+       
+        usort($result, function($a,$b) {
+            if ($a['order'] == $b['order']) {
+                return 0;
+            }
+            return ($a['order'] < $b['order']) ? -1 : 1;            
+        });
+
+        return \array_column($result,'name');
+    } 
+
+    /**
      * Install all packages
      *
      * @param Closure|null $onProgress
@@ -329,10 +358,9 @@ class PackageManager implements PackageManagerInterface
         $this->cache->clear();
         $errors = 0;
         $packages = $this->getPackages();
-
+        $packages = $this->sortPackages($packages);
+        // 
         foreach ($packages as $name) {       
-            $package = $this->createPackage($name);
-
             $result = $this->installPackage($name);   
             if (($result == true) || ($skipErrors == true)) {               
                 if (\is_callable($onProgress) == true) {

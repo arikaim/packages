@@ -139,6 +139,17 @@ class Package implements PackageInterface
     }
 
     /**
+     * Get install order
+     *
+     * @param mixed|null $default
+     * @return mixed
+     */
+    public function getInstalOrder($default = null)
+    {
+        return $this->properties->get('install-order',$default);
+    }
+
+    /**
      * Return package name
      *
      * @return string

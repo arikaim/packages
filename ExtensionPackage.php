@@ -155,12 +155,6 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         // delete extension routes
         Arikaim::routes()->deleteRoutes(['extension_name' => $extensionName]);
 
-        // delete jobs 
-        Arikaim::queue()->deleteJobs(['extension_name' => $extensionName]);
-
-        // delete registered events
-        Arikaim::event()->deleteEvents(['extension_name' => $extensionName]);     
-
         // delete registered events subscribers
         Arikaim::event()->deleteSubscribers(['extension_name' => $extensionName]);
 
