@@ -45,5 +45,4 @@ class ComponentsLibraryPackage extends Package implements PackageInterface
 
         return $this->properties; 
     }
-
 }

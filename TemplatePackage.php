@@ -21,6 +21,8 @@ use Arikaim\Core\Collection\Collection;
 use DirectoryIterator;
 
 use Arikaim\Core\Packages\Traits\ViewComponents;
+use Arikaim\Core\Packages\Traits\CssFiles;
+use Arikaim\Core\Packages\Traits\JsFiles;
 use Arikaim\Core\Packages\Traits\ComponentTranslations;
 use Arikaim\Core\Packages\Traits\Themes;
 
@@ -32,6 +34,8 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
     use    
         ViewComponents,
         Themes,
+        CssFiles,
+        JsFiles,
         ComponentTranslations;
 
     /**
