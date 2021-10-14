@@ -118,8 +118,19 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
             $pattern = $route['path']; 
             // Route type
             $type = ($route->get('home',false) == false) ? 1 : 3; 
-          
-            $result = Arikaim::routes()->saveTemplateRoute($pattern,$handlerClass,$handlerMethod,$this->getName(),$pageName,$auth,$primary,$redirect,$type,$languagePath);
+                    
+            $result = Arikaim::routes()->saveTemplateRoute(
+                $pattern,
+                $handlerClass,
+                $handlerMethod,
+                $this->getName(),
+                $pageName,
+                $auth,
+                $primary,
+                $redirect,
+                $type,
+                $languagePath
+            );
             if ($result != false) {
                 $routesAdded++;
                 if (empty($handlerParams) == false) {
