@@ -58,7 +58,10 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         $this->properties['installed'] = $this->packageRegistry->hasPackage($this->getName());       
         $this->properties['status'] = $this->packageRegistry->getPackageStatus($this->getName());
         $this->properties['admin_menu'] = $this->properties->get('admin-menu',null);
-        $this->properties['primary'] = $this->packageRegistry->isPrimary($this->getName());
+
+        // resolve primary extension type
+        $primary = $this->properties->get('primary',null);
+        $this->properties['primary'] = (empty($primary) == true) ? $this->packageRegistry->isPrimary($this->getName()) : (bool)$primary;
 
         if ($full == true) { 
             $this->properties['routes'] = Arikaim::routes()->getRoutes(['extension_name' => $this->getName()]);
