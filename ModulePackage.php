@@ -92,9 +92,9 @@ class ModulePackage extends Package implements PackageInterface
      *
      * @param boolean|null $primary Primary package replaces routes or other params
      * @throws Exception
-     * @return bool
+     * @return mixed
      */
-    public function install(?bool $primary = null): bool
+    public function install(?bool $primary = null)
     {
         $data = $this->properties->toArray();
       

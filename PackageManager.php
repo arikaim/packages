@@ -399,9 +399,9 @@ class PackageManager implements PackageManagerInterface
      * Install package
      *
      * @param string $name
-     * @return bool
+     * @return mixed
      */
-    public function installPackage(string $name): bool
+    public function installPackage(string $name)
     {
         $package = $this->createPackage($name);
 

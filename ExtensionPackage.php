@@ -140,7 +140,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
      * @param boolean|null $primary Primary package replaces routes or other params
      * @return mixed|true
      */
-    public function install(?bool $primary = null): bool
+    public function install(?bool $primary = null)
     {
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
@@ -174,7 +174,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
 
         $this->packageRegistry->AddPackage($extensionName,$details->toArray());
         
-        return ($extObj->hasError() == false);  
+        return ($extObj->hasError() == false) ? true : $extObj->getError();  
     }
 
     /**

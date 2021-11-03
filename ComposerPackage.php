@@ -51,9 +51,9 @@ class ComposerPackage extends Package implements PackageInterface
      * Install package.
      *
      * @param boolean|null $primary Primary package replaces routes or other params
-     * @return bool
+     * @return mixed
      */
-    public function install(?bool $primary = null): bool   
+    public function install(?bool $primary = null)   
     {        
         Composer::updatePackage($this->getName());
 

@@ -85,9 +85,9 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      * Install template package
      *
      * @param boolean|null $primary Primary package replaces routes or other params
-     * @return bool
+     * @return mixed
      */
-    public function install(?bool $primary = null): bool
+    public function install(?bool $primary = null)
     {
         $routes = $this->getRoutes();
        
