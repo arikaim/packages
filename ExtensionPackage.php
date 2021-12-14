@@ -66,7 +66,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         if ($full == true) { 
             $this->properties['routes'] = Arikaim::routes()->getRoutes(['extension_name' => $this->getName()]);
             $this->properties['events'] = Arikaim::event()->getEvents(['extension_name' => $this->getName()]);
-            $this->properties['subscribers'] = Arikaim::event()->getSubscribers(['extension_name' => $this->getName()]);
+            $this->properties['subscribers'] = Arikaim::event()->getSubscribers(null,$this->getName());
             $this->properties['database'] = $this->getModels();
             $this->properties['console_commands'] = $this->getConsoleCommands();
             $this->properties['jobs'] = $this->getPackageJobs();
