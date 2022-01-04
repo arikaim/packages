@@ -165,8 +165,10 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
             'template_url' => Url::TEMPLATES_URL . '/' . $this->getName() . '/'
         ];
 
+        @File::setWritable($cssPath);
+
         if (File::isWritable($cssPath) == false) {
-            File::setWritable($cssPath);
+            return false;
         }
         
         foreach (new DirectoryIterator($cssPath) as $file) {
