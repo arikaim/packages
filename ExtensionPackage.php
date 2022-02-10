@@ -19,6 +19,7 @@ use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Packages\Traits\Drivers;
 use Arikaim\Core\Packages\Traits\ConsoleCommands;
 use Arikaim\Core\Packages\Traits\Jobs;
+use Arikaim\Core\Packages\Traits\Middlewares;
 use DirectoryIterator;
 
 /**
@@ -29,6 +30,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
     use ViewComponents,
         ConsoleCommands,
         Jobs,
+        Middlewares,
         Drivers;
 
     /**
