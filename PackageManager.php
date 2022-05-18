@@ -24,6 +24,7 @@ use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Utils\ZipFile;
 use Closure;
+use Exception;
 
 /**
  * Package managers base class
@@ -149,7 +150,7 @@ class PackageManager implements PackageManagerInterface
         if (empty($propertes->get('name')) == true) {
             $propertes->set('name',$name);
         }
-        $class = $this->packageClass;
+        $class = $this->packageClass;        
         $package = null;
         if (\class_exists($class) == true) {
             $package = new $class($this->path,$propertes,$this->packageRegistry);
@@ -221,6 +222,7 @@ class PackageManager implements PackageManagerInterface
      *
      * @param string $name
      * @param string $path
+     * @throws Exception
      * @return Collection
      */
     public static function loadPackageProperties(string $name, ?string $path, ?string $packageType = null) 
@@ -232,7 +234,10 @@ class PackageManager implements PackageManagerInterface
         } else {
             $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
             $data = File::readJsonFile($fileName);
-            $data = (\is_array($data) == true) ? $data : [];
+            if (\is_array($data) == false) {
+                throw new Exception('Not valid package description file for package: ' . $name, 1);
+                $data = [];
+            }           
         }
        
         $properties = new Collection($data);    
@@ -266,7 +271,7 @@ class PackageManager implements PackageManagerInterface
             $name = $file->getFilename();
             if (\is_array($filter) == true) {
                 $package = $this->createPackage($name);
-                if (empty($package) == false) {
+                if (\is_object($package) == true) {
                     $properties = $package->getProperties();                
                     foreach ($filter as $key => $value) {                
                         if ($properties->get($key) == $value) {
