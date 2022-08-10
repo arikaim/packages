@@ -35,7 +35,7 @@ trait ConsoleCommands
                 $item['name'] = $command->getName();
                 $item['title'] = $command->getDescription();      
                 $item['help'] = 'php cli ' . $command->getName();         
-                \array_push($result,$item);
+                $result[] = $item;
             }          
         } 
 

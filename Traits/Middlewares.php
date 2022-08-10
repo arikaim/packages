@@ -10,7 +10,6 @@
 namespace Arikaim\Core\Packages\Traits;
 
 use Arikaim\Core\Utils\Factory;
-use Arikaim\Core\Utils\File;
 use DirectoryIterator;
 
 /**
@@ -36,7 +35,7 @@ trait Middlewares
     public function getPackageMiddlewares(): array
     {
         $path = $this->getMiddlewaresPath();
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }
 

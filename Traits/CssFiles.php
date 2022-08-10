@@ -9,8 +9,6 @@
 */
 namespace Arikaim\Core\Packages\Traits;
 
-use Arikaim\Core\Utils\File;
-
 /**
  * Css files trait
 */
@@ -34,7 +32,7 @@ trait CssFiles
     public function getCssFiles(): array
     {      
         $path = $this->getCssPath();
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }        
 

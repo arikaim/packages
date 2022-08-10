@@ -10,7 +10,6 @@
 namespace Arikaim\Core\Packages\Traits;
 
 use Arikaim\Core\Utils\Factory;
-use Arikaim\Core\Utils\File;
 use DirectoryIterator;
 
 /**
@@ -36,7 +35,7 @@ trait Jobs
     public function getPackageJobs(): array
     {
         $path = $this->getJobsPath();
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }
 
@@ -54,7 +53,7 @@ trait Jobs
                 $item['class'] = \get_class($job);
                 if (\is_object($job) == true) {
                     $item['name'] = $job->getName();
-                    \array_push($result,$item);
+                    $result[] = $item;
                 }
             }
         }

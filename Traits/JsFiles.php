@@ -9,8 +9,6 @@
 */
 namespace Arikaim\Core\Packages\Traits;
 
-use Arikaim\Core\Utils\File;
-
 /**
  * Js files trait
 */
@@ -34,7 +32,7 @@ trait JsFiles
     public function getJsFiles(): array
     {      
         $path = $this->getJsPath();
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }        
 

@@ -9,8 +9,6 @@
 */
 namespace Arikaim\Core\Packages\Traits;
 
-use Arikaim\Core\Utils\File;
-
 /**
  * Get package drivers.
 */
@@ -24,7 +22,7 @@ trait Drivers
     public function getDrivers(): array
     { 
         $path = $this->getDriversPath();
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }
 

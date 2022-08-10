@@ -129,7 +129,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
 
             if (\is_subclass_of($schema,'Arikaim\Core\Db\Schema') == true) {               
                 $item['name'] = $schema->getTableName();               
-                \array_push($result,$item);
+                $result[] = $item;
             }
         }    
 

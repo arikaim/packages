@@ -275,12 +275,12 @@ class PackageManager implements PackageManagerInterface
                     $properties = $package->getProperties();                
                     foreach ($filter as $key => $value) {                
                         if ($properties->get($key) == $value) {
-                            \array_push($items,$name);   
+                            $items[] = $name;   
                         }
                     }
                 }
             } else {
-                \array_push($items,$name);        
+                $items[] = $name;        
             }
         }  
         

@@ -9,8 +9,6 @@
 */
 namespace Arikaim\Core\Packages\Traits;
 
-use Arikaim\Core\Utils\File;
-
 /**
  * View components trait
 */
@@ -88,7 +86,7 @@ trait ViewComponents
     public function getMacros(?string $path = null): array
     {       
         $path = (empty($path) == true) ? $this->getMacrosPath() : $path;
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }
         
@@ -100,7 +98,7 @@ trait ViewComponents
             if ($fileExt != 'html' && $fileExt != 'htm') continue;           
             
             $item['name'] = \str_replace('.' . $fileExt,'',$file->getFilename());
-            \array_push($items,$item);            
+            $items[] = $item;            
         }
 
         return $items;
@@ -154,7 +152,7 @@ trait ViewComponents
     {
         $parent = $parent ?? '';
         $path = $this->getComponentPath($parent,$type);
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }        
 
@@ -170,7 +168,7 @@ trait ViewComponents
                 $fileId = (empty($parent) == false) ? $item['parent'] . '_' . $item['name'] : $item['name'];  
                 $item['id'] = \str_replace('.','_',$fileId);
 
-                \array_push($items,$item);
+                $items[] = $item;
             }
         }
 
@@ -186,7 +184,7 @@ trait ViewComponents
     public function getComponentsRecursive(?string $path = null): array
     {       
         $path = (empty($path) == true) ? $this->getComponentsPath() : $path;
-        if (File::exists($path) == false) {
+        if (\file_exists($path) == false) {
             return [];
         }        
 
@@ -211,7 +209,7 @@ trait ViewComponents
             $componentPath = \str_replace(DIRECTORY_SEPARATOR,'.',$componentPath);
             
             $item['full_name'] = $componentPath;
-            \array_push($items,$item);         
+            $items[] = $item;         
         }
 
         return $items;
