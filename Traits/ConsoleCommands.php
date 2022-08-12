@@ -31,7 +31,7 @@ trait ConsoleCommands
         $result = [];
         foreach ($package['console_commands'] as $class) {
             $command = Factory::createInstance($class);
-            if (\is_object($command) ==true) {
+            if (\is_object($command) == true) {
                 $item['name'] = $command->getName();
                 $item['title'] = $command->getDescription();      
                 $item['help'] = 'php cli ' . $command->getName();         
