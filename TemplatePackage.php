@@ -16,7 +16,6 @@ use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Http\Url;
 use Arikaim\Core\Utils\File;
-use Arikaim\Core\Arikaim;
 use Arikaim\Core\Collection\Collection;
 use DirectoryIterator;
 
@@ -46,19 +45,21 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      */
     public function getProperties(bool $full = false)
     {
+        global $container;
+
         $this->properties['icon'] = $this->properties->get('icon',null); 
         if ($full == true) {              
             $this->viewPath = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
             $this->properties['path'] = $this->viewPath;
             $this->properties['components_path'] = $this->getComponentsPath();
             $this->properties['pages_path'] = $this->getPagesPath();
-            $this->properties['routes'] = Arikaim::routes()->getRoutes(['template_name' => $this->getName()]);
+            $this->properties['routes'] = $container->get('routes')->getRoutes(['template_name' => $this->getName()]);
             $this->properties['pages'] = $this->getPages();
             $this->properties['components'] = $this->getComponentsRecursive();
             $this->properties['emails'] = $this->getEmails();
             $this->properties['macros'] = $this->getMacros();
 
-            $primaryTemplate = Arikaim::config()->getByPath('settings/primaryTemplate',null);
+            $primaryTemplate = $container->get('config')->getByPath('settings/primaryTemplate',null);
             $this->properties['primary'] = ($primaryTemplate == $this->getName());
         }
 
@@ -72,11 +73,11 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      */
     public function setPrimary(): bool
     {
-        $defaultTheme = $this->getDefautTheme();
+        global $container;
 
-        Arikaim::config()->setValue('settings/primaryTemplate',$this->getName());
-        Arikaim::config()->setValue('settings/templateTheme',$defaultTheme);
-        Arikaim::config()->save();
+        $container->get('config')->setValue('settings/primaryTemplate',$this->getName());
+        $container->get('config')->setValue('settings/templateTheme',$this->getDefautTheme());
+        $container->get('config')->save();
 
         return true;
     }
@@ -89,11 +90,13 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      */
     public function install(?bool $primary = null)
     {
+        global $container;
+
         $routes = $this->getRoutes();
        
         // install template routes
         $routesAdded = 0;
-        $primaryTemplate = Arikaim::config()->getByPath('settings/primaryTemplate','system');
+        $primaryTemplate = $container->get('config')->getByPath('settings/primaryTemplate','system');
         $primary = (empty($primary) == true) ? ($this->getName() == $primaryTemplate) : $primary;
 
         foreach ($routes as $item) {
@@ -112,14 +115,14 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
             $handlerMethod = $route->getByPath('handler/method',null);
             $pageName = ($route->isEmpty('page') == false) ? $this->getName() . ':' . $route['page'] : null;
             $auth = $route->getByPath('access/auth',null);
-            $auth = Arikaim::access()->resolveAuthType($auth);
+            $auth = $container->get('access')->resolveAuthType($auth);
             $redirect = $route->getByPath('access/redirect',null);
             $languagePath = $route->get('language-path',false); 
             $pattern = $route['path']; 
             // Route type
             $type = ($route->get('home',false) == false) ? 1 : 3; 
                     
-            $result = Arikaim::routes()->saveTemplateRoute(
+            $result = $container->get('routes')->saveTemplateRoute(
                 $pattern,
                 $handlerClass,
                 $handlerMethod,
@@ -134,16 +137,16 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
             if ($result != false) {
                 $routesAdded++;
                 if (empty($handlerParams) == false) {
-                    Arikaim::routes()->saveRouteOptions('GET',$pattern,$handlerParams);
+                    $container->get('routes')->saveRouteOptions('GET',$pattern,$handlerParams);
                 }
             }
         }
 
         // check theme 
-        $theme = Arikaim::config()->getByPath('settings/templateTheme',null);
+        $theme = $container->get('config')->getByPath('settings/templateTheme',null);
         if (empty($theme) == true) {                    
-            Arikaim::config()->setValue('settings/templateTheme',$this->getDefautTheme());
-            Arikaim::config()->save();           
+            $container->get('config')->setValue('settings/templateTheme',$this->getDefautTheme());
+            $container->get('config')->save();           
         }
 
         // build assets
@@ -159,8 +162,10 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      */
     public function buildAssets(): bool
     {        
+        global $container;
+
         $cssPath = Path::TEMPLATES_PATH . $this->getName() . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR;
-        $twig = Arikaim::view()->createEnvironment([$cssPath]);
+        $twig = $container->get('view')->createEnvironment([$cssPath]);
         $params = [
             'template_url' => Url::TEMPLATES_URL . '/' . $this->getName() . '/'
         ];
@@ -197,9 +202,9 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
      */
     public function unInstall(): bool 
     {
-        $result = Arikaim::routes()->deleteRoutes(['template_name' => $this->getName()]);
-       
-        return $result;
+        global $container;
+
+        return $container->get('routes')->deleteRoutes(['template_name' => $this->getName()]);
     }
 
     /**

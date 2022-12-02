@@ -14,7 +14,6 @@ use Arikaim\Core\Packages\Interfaces\ViewComponentsInterface;
 use Arikaim\Core\Packages\Package;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Factory;
-use Arikaim\Core\Arikaim;
 use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Packages\Traits\Drivers;
 use Arikaim\Core\Packages\Traits\ConsoleCommands;
@@ -54,6 +53,8 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
      */
     public function getProperties(bool $full = false)
     {
+        global $container;
+
         $type = $this->properties->get('type','user');
         $this->properties['type'] = $this->getTypeId($type);
         $this->properties['class'] = (empty($this->properties['class']) == true) ? ucfirst($this->getName()) : $this->properties['class'];       
@@ -66,9 +67,9 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         $this->properties['primary'] = (empty($primary) == true) ? $this->packageRegistry->isPrimary($this->getName()) : (bool)$primary;
 
         if ($full == true) { 
-            $this->properties['routes'] = Arikaim::routes()->getRoutes(['extension_name' => $this->getName()]);
-            $this->properties['events'] = Arikaim::event()->getEvents(['extension_name' => $this->getName()]);
-            $this->properties['subscribers'] = Arikaim::event()->getSubscribers(null,$this->getName());
+            $this->properties['routes'] = $container->get('routes')->getRoutes(['extension_name' => $this->getName()]);
+            $this->properties['events'] = $container->get('event')->getEvents(['extension_name' => $this->getName()]);
+            $this->properties['subscribers'] = $container->get('event')->getSubscribers(null,$this->getName());
             $this->properties['database'] = $this->getModels();
             $this->properties['console_commands'] = $this->getConsoleCommands();
             $this->properties['jobs'] = $this->getPackageJobs();
@@ -144,6 +145,8 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
      */
     public function install(?bool $primary = null)
     {
+        global $container;
+
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
@@ -158,10 +161,10 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         }
 
         // delete extension routes
-        Arikaim::routes()->deleteRoutes(['extension_name' => $extensionName]);
+        $container->get('routes')->deleteRoutes(['extension_name' => $extensionName]);
 
         // delete registered events subscribers
-        Arikaim::event()->deleteSubscribers(['extension_name' => $extensionName]);
+        $container->get('event')->deleteSubscribers(['extension_name' => $extensionName]);
 
         // run install extension      
         $extObj->install(); 
@@ -206,24 +209,26 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
      */
     public function unInstall(): bool 
     { 
+        global $container;
+
         $details = $this->getProperties(true);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
         
         // delete registered routes
-        Arikaim::routes()->deleteRoutes(['extension_name' => $extensionName]);
+        $container->get('routes')->deleteRoutes(['extension_name' => $extensionName]);
 
         // delete registered events
-        Arikaim::event()->deleteEvents(['extension_name' => $extensionName]);
+        $container->get('event')->deleteEvents(['extension_name' => $extensionName]);
 
         // delete registered events subscribers
-        Arikaim::event()->deleteSubscribers(['extension_name' => $extensionName]);
+        $container->get('event')->deleteSubscribers(['extension_name' => $extensionName]);
 
         // delete extension options
-        Arikaim::options()->removeOptions(null,$extensionName);
+        $container->get('options')->removeOptions(null,$extensionName);
 
         // delete jobs 
-        Arikaim::queue()->deleteJobs(['extension_name' => $extensionName]);
+        $container->get('queue')->deleteJobs(['extension_name' => $extensionName]);
     
         // run extension unInstall
         $extObj->unInstall();        
@@ -239,14 +244,16 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
      */
     public function enable(): bool 
     {
+        global $container;
+
         $name = $this->getName();
         $this->packageRegistry->setPackageStatus($name,1);
 
         // enable extension routes
-        Arikaim::routes()->setRoutesStatus(['extension_name' => $name],1);
+        $container->get('routes')->setRoutesStatus(['extension_name' => $name],1);
 
         // enable extension events
-        Arikaim::event()->setEventsStatus(['extension_name' => $name],1);  
+        $container->get('event')->setEventsStatus(['extension_name' => $name],1);  
 
         return true;
     }
@@ -258,14 +265,16 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
      */
     public function disable(): bool 
     {
+        global $container;
+
         $name = $this->getName();
         $this->packageRegistry->setPackageStatus($name,0);
 
         // disable extension routes
-        Arikaim::routes()->setRoutesStatus(['extension_name' => $name],0);         
+        $container->get('routes')->setRoutesStatus(['extension_name' => $name],0);         
         
         // disable extension events
-        Arikaim::event()->setEventsStatus(['extension_name' => $name],0);  
+        $container->get('event')->setEventsStatus(['extension_name' => $name],0);  
         
         return true;
     }   
@@ -277,6 +286,8 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
      */
     public function registerEventsSubscribers(): int
     {
+        global $container;
+
         $count = 0;
         $name = $this->getName();
         $path = $this->getSubscribersPath($name);       
@@ -290,7 +301,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
             
             $baseClass = \str_replace('.php','',$file->getFilename());
             // add event subscriber to db table
-            $result = Arikaim::event()->registerSubscriber($baseClass,$name);
+            $result = $container->get('event')->registerSubscriber($baseClass,$name);
             $count += ($result == true) ? 1 : 0;
         }     
 

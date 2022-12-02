@@ -14,7 +14,6 @@ use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Interfaces\ModuleInterface;
-use Arikaim\Core\Arikaim;
 
 use Arikaim\Core\Packages\Traits\ConsoleCommands;
 use Arikaim\Core\Packages\Traits\Drivers;
@@ -124,7 +123,9 @@ class ModulePackage extends Package implements PackageInterface
             ?string $version = null,
             array $config = []) 
         {
-            return Arikaim::driver()->install($name,$class,$category,$title,$description,$version,$config);
+            global $container;
+
+            return $container->get('driver')->install($name,$class,$category,$title,$description,$version,$config);
         };
 
         /**
@@ -135,11 +136,13 @@ class ModulePackage extends Package implements PackageInterface
          */
         $module->registerService = function(string $serviceProvider): bool
         {
+            global $container;
+
             if (\class_exists($serviceProvider) == false) {
                 $serviceProvider = Factory::getModuleNamespace($this->getModuleName()) . "\\Service\\$serviceProvider";
             }
 
-            return (bool)Arikaim::get('service')->register($serviceProvider);            
+            return (bool)$container->get('service')->register($serviceProvider);            
         };
 
         /**
