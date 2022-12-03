@@ -54,13 +54,15 @@ class PackageValidator
             'extensions' => $this->validateItems('extension','extensions'),
             'modules'    => $this->validateItems('module','modules'),
             'themes'     => $this->validateItems('template','themes'),
-            'composer'   => $this->validateComposerPackages()
+            'composer'   => $this->validateComposerPackages(),
+            'pip'        => $this->validatePythonPackages()
         ];
         $result['count'] = 
             count($result['library']) + 
             count($result['extensions']) + 
             count($result['modules']) + 
             count($result['themes']) + 
+            count($result['pip']) + 
             count($result['composer']); 
         
         return $result;
@@ -136,6 +138,30 @@ class PackageValidator
                 $valid = false;
             }  
              
+            $result[] = $this->getResultItem($name,$requiredVersion,$packageVersion,$valid,$optional);
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Validate python packages
+     *
+     * @return array
+     */
+    public function validatePythonPackages(): array 
+    {
+        $result = [];
+        $items = $this->requires['pip'] ?? [];
+        if (count($items) == 0) {
+            return [];
+        }
+      
+        foreach ($items as $item) {
+            list($name,$requiredVersion,$optional) = $this->parseItemName($item);
+            $valid = true;
+            $packageVersion = $requiredVersion;
+            
             $result[] = $this->getResultItem($name,$requiredVersion,$packageVersion,$valid,$optional);
         }
         
