@@ -34,7 +34,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::TEMPLATE_PACKAGE           => 'Arikaim\\Core\\Packages\\TemplatePackage',
         PackageManager::MODULE_PACKAGE             => 'Arikaim\\Core\\Packages\\ModulePackage',
         PackageManager::COMPOSER_PACKAGE           => 'Arikaim\\Core\\Packages\\ComposerPackage',
-        PackageManager::COMPONENTS_LIBRARY_PACKAGE => 'Arikaim\\Core\\Packages\\ComponentsLibraryPackage'
+        PackageManager::COMPONENTS_LIBRARY_PACKAGE => 'Arikaim\\Core\\Packages\\ComponentsLibraryPackage',
+        PackageManager::SERVICE_PACKAGE            => 'Arikaim\\Core\\Packages\\ServicePackage'
     ];
 
     /**
@@ -48,7 +49,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::TEMPLATE_PACKAGE            => Path::TEMPLATES_PATH,
         PackageManager::MODULE_PACKAGE              => Path::MODULES_PATH,
         PackageManager::COMPOSER_PACKAGE            => Path::COMPOSER_VENDOR_PATH,
-        PackageManager::COMPONENTS_LIBRARY_PACKAGE  => Path::COMPONENTS_PATH
+        PackageManager::COMPONENTS_LIBRARY_PACKAGE  => Path::COMPONENTS_PATH,
+        PackageManager::SERVICE_PACKAGE             => Path::SERVICES_PATH
     ];
 
     /**
@@ -62,7 +64,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::TEMPLATE_PACKAGE           => null,
         PackageManager::MODULE_PACKAGE             => CORE_NAMESPACE . '\\Models\\Modules',
         PackageManager::COMPOSER_PACKAGE           => null,
-        PackageManager::COMPONENTS_LIBRARY_PACKAGE => null
+        PackageManager::COMPONENTS_LIBRARY_PACKAGE => null,
+        PackageManager::SERVICE_PACKAGE            => null
     ];
 
     /**
@@ -75,7 +78,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         'extensions' => PackageManager::EXTENSION_PACKAGE,
         'modules'    => PackageManager::MODULE_PACKAGE,   
         'composer'   => PackageManager::COMPOSER_PACKAGE,       
-        'components' => PackageManager::COMPONENTS_LIBRARY_PACKAGE,        
+        'components' => PackageManager::COMPONENTS_LIBRARY_PACKAGE, 
+        'services'   => PackageManager::SERVICE_PACKAGE,     
     ];
 
     /**

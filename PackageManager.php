@@ -40,6 +40,7 @@ class PackageManager implements PackageManagerInterface
     const LIBRARY_PACKAGE            = 'library';
     const COMPOSER_PACKAGE           = 'composer';
     const COMPONENTS_LIBRARY_PACKAGE = 'components';
+    const SERVICE_PACKAGE            = 'service';
 
     /**
      *  Repository type
