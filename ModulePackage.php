@@ -98,7 +98,7 @@ class ModulePackage extends Package implements PackageInterface
         $data = $this->properties->toArray();
       
         $module = Factory::createModule($this->getName(),$this->getClass());
-        if (\is_object($module) == false) {
+        if ($module == null) {
             throw new Exception('Not valid module class.');
             return false;
         }

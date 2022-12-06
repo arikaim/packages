@@ -134,7 +134,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageType
      * @return PackageManagerInterface|null
      */
-    public function create(string $packageType)
+    public function create(string $packageType): ?object
     {
         if (\array_key_exists($packageType,Self::$packageCategory) === true) {
             $packageType = Self::$packageCategory[$packageType];
@@ -153,7 +153,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageType
      * @return object|null
      */
-    public static function createPackageRegistry(string $packageType)
+    public static function createPackageRegistry(string $packageType): ?object
     {
         $class = Self::$packageRegistryClass[$packageType] ?? null;
         
@@ -166,7 +166,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageType
      * @return string|null
      */
-    public static function getPackagePath(string $packageType)
+    public static function getPackagePath(string $packageType): ?string
     {
         return (isset(Self::$packagePath[$packageType]) == true) ? Self::$packagePath[$packageType] : null;
     }

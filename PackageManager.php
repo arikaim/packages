@@ -145,19 +145,19 @@ class PackageManager implements PackageManagerInterface
      * @param string $name
      * @return PackageInterface|null
     */
-    public function createPackage(string $name)
+    public function createPackage(string $name): ?object
     {      
         $propertes = Self::loadPackageProperties($name,$this->path,$this->packageType);
         if (empty($propertes->get('name')) == true) {
             $propertes->set('name',$name);
         }
         $class = $this->packageClass;        
-        $package = null;
+       
         if (\class_exists($class) == true) {
-            $package = new $class($this->path,$propertes,$this->packageRegistry);
+            return new $class($this->path,$propertes,$this->packageRegistry);
         }
 
-        return $package;
+        return null;
     }
 
     /**
@@ -272,7 +272,7 @@ class PackageManager implements PackageManagerInterface
             $name = $file->getFilename();
             if (\is_array($filter) == true) {
                 $package = $this->createPackage($name);
-                if (\is_object($package) == true) {
+                if ($package != null) {
                     $properties = $package->getProperties();                
                     foreach ($filter as $key => $value) {                
                         if ($properties->get($key) == $value) {
@@ -521,9 +521,9 @@ class PackageManager implements PackageManagerInterface
      * @param string $repositoryUrl
      * @param string|null $accessKey
      * @param string|null $type
-     * @return mixed
+     * @return object|null
      */
-    public function createRepository(string $repositoryUrl, ?string $accessKey = null, ?string $type = null)
+    public function createRepository(string $repositoryUrl, ?string $accessKey = null, ?string $type = null): ?object
     {
         if (Utils::isValidUrl($repositoryUrl) == false) {
             $repositoryUrl = Self::createRepositoryUrl($repositoryUrl,$type);

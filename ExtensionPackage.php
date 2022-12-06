@@ -150,7 +150,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
-        if (\is_object($extObj) == false) {
+        if ($extObj == null) {
             return false;
         }
         
@@ -192,7 +192,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         $details = $this->getProperties(false);
         $extensionName = $this->getName();
         $extObj = Factory::createExtension($extensionName,$details->get('class'));
-        if (\is_object($extObj) == false) {
+        if ($extObj == null) {
             return false;
         }
 
