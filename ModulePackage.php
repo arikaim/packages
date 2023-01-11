@@ -177,7 +177,7 @@ class ModulePackage extends Package implements PackageInterface
             'console_commands'  => $module->getConsoleCommandClasses()
         ];
         $data = \array_merge($data,$details);
-        $result = $this->packageRegistry->AddPackage($this->getName(),$data);
+        $result = $this->packageRegistry->addPackage($this->getName(),$data);
 
         return ($result !== false);
     }
