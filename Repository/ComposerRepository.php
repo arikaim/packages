@@ -84,7 +84,7 @@ class ComposerRepository extends Repository implements RepositoryInterface
      */
     protected function resolvePackageName(): void
     {
-        $tokens = \explode('/',\trim($this->repositoryUrl));   
+        $tokens = \explode('/',\trim($this->repositoryUrl ?? ''));   
 
         $this->repositoryName = $tokens[1];
         $this->packageName = $this->repositoryUrl;    

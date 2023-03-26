@@ -121,11 +121,21 @@ class ModulePackage extends Package implements PackageInterface
             ?string $title = null,
             ?string $description = null,
             ?string $version = null,
-            array $config = []) 
+            array $config = []
+        ) use ($module)
         {
             global $container;
 
-            return $container->get('driver')->install($name,$class,$category,$title,$description,$version,$config);
+            return $container->get('driver')->install(
+                $name,
+                $class,
+                $category,
+                $title,
+                $description,
+                $version,
+                $config,
+                $module->getModuleName(),
+                'module');
         };
 
         /**
