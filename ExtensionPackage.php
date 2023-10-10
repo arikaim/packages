@@ -227,9 +227,12 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         // delete extension options
         $container->get('options')->removeOptions(null,$extensionName);
 
-        // delete jobs 
+        // delete jobs from queue
         $container->get('queue')->deleteJobs(['extension_name' => $extensionName]);
     
+        // delete jobs from registry
+        $container->get('queue')->jobsRegistry()->deleteJobs($extensionName,'extension');
+        
         // run extension unInstall
         $extObj->unInstall();        
         $this->packageRegistry->removePackage($extensionName);
