@@ -18,6 +18,7 @@ use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Packages\Traits\Drivers;
 use Arikaim\Core\Packages\Traits\ConsoleCommands;
 use Arikaim\Core\Packages\Traits\Jobs;
+use Arikaim\Core\Packages\Traits\Actions;
 use Arikaim\Core\Packages\Traits\Middlewares;
 use DirectoryIterator;
 
@@ -29,6 +30,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
     use ViewComponents,
         ConsoleCommands,
         Jobs,
+        Actions,
         Middlewares,
         Drivers;
 
@@ -73,6 +75,7 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
             $this->properties['database'] = $this->getModels();
             $this->properties['console_commands'] = $this->getConsoleCommands();
             $this->properties['jobs'] = $this->getPackageJobs();
+            $this->properties['actions'] = $this->getPackageActions();
             $this->properties['pages'] = $this->getPages();
             $this->properties['emails'] = $this->getEmails();
             $this->properties['components'] = $this->getComponentsRecursive();
