@@ -15,6 +15,13 @@ namespace Arikaim\Core\Packages\Traits;
 trait ViewComponents 
 {
     /**
+     * View path
+     *
+     * @var string|null
+     */
+    protected $viewPath;
+
+    /**
      * Get view path
      *    
      * @param string|null $componentsType
