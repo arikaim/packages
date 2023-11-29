@@ -124,9 +124,9 @@ class ModulePackage extends Package implements PackageInterface
             array $config = []
         ) use ($module)
         {
-            global $container;
+            global $arikaim;
 
-            return $container->get('driver')->install(
+            return $arikaim->get('driver')->install(
                 $name,
                 $class,
                 $category,
@@ -146,13 +146,13 @@ class ModulePackage extends Package implements PackageInterface
          */
         $module->registerService = function(string $serviceProvider): bool
         {
-            global $container;
+            global $arikaim;
 
             if (\class_exists($serviceProvider) == false) {
                 $serviceProvider = Factory::getModuleNamespace($this->getModuleName()) . "\\Service\\$serviceProvider";
             }
 
-            return (bool)$container->get('service')->register($serviceProvider);            
+            return (bool)$arikaim->get('service')->register($serviceProvider);            
         };
 
         /**
