@@ -153,6 +153,17 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @param string $packageType
      * @return object|null
      */
+    public function registry(string $packageType): ?object
+    {
+        return Self::createPackageRegistry($packageType);
+    }
+
+    /**
+     * Create package registry
+     *
+     * @param string $packageType
+     * @return object|null
+     */
     public static function createPackageRegistry(string $packageType): ?object
     {
         $class = Self::$packageRegistryClass[$packageType] ?? null;
