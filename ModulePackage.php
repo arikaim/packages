@@ -174,10 +174,8 @@ class ModulePackage extends Package implements PackageInterface
 
         $module->install();
 
-        unset($data['requires']);
-        unset($data['help']);
-        unset($data['facade']);
-
+        unset($data['requires'],$data['help'],$data['facade']);
+    
         $details = [
             'facade_class'      => $this->properties->getByPath('facade/class',null),
             'facade_alias'      => $this->properties->getByPath('facade/alias',null),

@@ -152,6 +152,17 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
         // build assets
         $this->buildAssets();
 
+        // content
+        $content = $this->getContentItems();
+
+        foreach ($content as $item) {
+            $key = $item['key'] ?? null;
+            $type = $item['type'] ?? null;
+            if (empty($key) == true || empty($type) == true) continue;
+
+            $arikaim->get('content')->saveContentItem($key,$type,$item['title'] ?? '');
+        }
+
         return true;          
     }
     
@@ -235,5 +246,15 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
     public function getRoutes(): array
     {
         return $this->properties->get('routes',[]);
+    }
+
+    /**
+     * Get content items
+     *
+     * @return array
+     */
+    public function getContentItems(): array
+    {
+        return $this->properties->get('content',[]);
     }
 }
