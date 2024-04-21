@@ -93,7 +93,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
         global $arikaim;
 
         $routes = $this->getRoutes();
-       
+
         // install template routes
         $routesAdded = 0;
         $primaryTemplate = $arikaim->get('config')->getByPath('settings/primaryTemplate','system');
@@ -148,9 +148,6 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
             $arikaim->get('config')->setValue('settings/templateTheme',$this->getDefautTheme());
             $arikaim->get('config')->save();           
         }
-
-        // build assets
-        $this->buildAssets();
 
         // content
         $content = $this->getContentItems();
