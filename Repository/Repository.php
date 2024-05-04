@@ -20,25 +20,11 @@ use Arikaim\Core\Utils\ZipFile;
 abstract class Repository implements RepositoryInterface
 {
     /**
-     * Repository url
+     * Package ref
      *
-     * @var string
+     * @var object
      */
-    protected $repositoryUrl;
-
-    /**
-     * Package name
-     *
-     * @var string
-     */
-    protected $packageName;
-
-    /**
-     * Repo name
-     *
-     * @var string|null
-     */
-    protected $repositoryName = null;
+    protected $package;
 
     /**
      * Local storage
@@ -55,20 +41,6 @@ abstract class Repository implements RepositoryInterface
     protected $httpClient = null;
 
     /**
-     * Storage repository dir
-     *
-     * @var string|null
-     */
-    protected $repositoryDir = null;
-
-    /**
-     * Access key
-     *
-     * @var string|null
-     */
-    protected $accessKey;
-
-    /**
      * Temp directory
      *
      * @var string|null
@@ -76,39 +48,18 @@ abstract class Repository implements RepositoryInterface
     protected $tempDir = null;
 
     /**
-     * Package install dir
-     *
-     * @var string|null
-     */
-    protected $installDir = null;
-
-    /**
     * Constructor
     *
-    * @param string $repositoryUrl  
-    * @param string|null $repositoryDir
-    * @param string|null $installDir
+    * @param object $package
     * @param StorageInterface|null $storage
     * @param HttpClientInterface|null $httpClient
-    * @param boolean $accessKey
     */
-    public function __construct(
-        string $repositoryUrl,      
-        ?string $repositoryDir = null, 
-        ?string $installDir = null, 
-        ?StorageInterface $storage = null,
-        ?HttpClientInterface $httpClient = null,
-        ?string $accessKey = null
-    )
+    public function __construct(object $package, ?StorageInterface $storage = null, ?HttpClientInterface $httpClient = null)
     {
-        $this->repositoryUrl = $repositoryUrl;   
+        $this->package = $package;
         $this->storage = $storage;  
         $this->httpClient = $httpClient; 
-        $this->repositoryDir = $repositoryDir;  
-        $this->installDir = $installDir;  
-        $this->accessKey = $accessKey;
         $this->tempDir = (empty($storage) == false) ? $storage->getFullPath() . 'temp' . DIRECTORY_SEPARATOR : null;
-        $this->resolvePackageName();
     }
 
     /**
@@ -118,21 +69,6 @@ abstract class Repository implements RepositoryInterface
      * @return boolean
      */
     abstract public function install(?string $version = null): bool;
-
-    /**
-     * Should return last version url
-     *
-     * @return string
-     */
-    abstract public function getLastVersionUrl(): string;
-
-    /**
-     * Should return download repo url
-     *
-     * @param string $version
-     * @return string
-     */
-    abstract public function getDownloadUrl(string $version): string;
 
     /**
      * Download package
@@ -147,7 +83,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return string
      */
-    abstract public function getLastVersion(): ?string;
+    abstract public function getVersion(): ?string;
 
     /**
      * Return true if repo is private
@@ -157,26 +93,6 @@ abstract class Repository implements RepositoryInterface
     abstract public function isPrivate(): bool;
 
     /**
-     * Get access key for private repo
-     *
-     * @return string|null
-     */
-    public function getAccessKey(): ?string
-    {
-        return $this->accessKey;
-    }
-
-    /**
-     * Get repository url
-     *
-     * @return string
-     */
-    public function getRepositoryUrl(): string
-    {
-        return $this->repositoryUrl;
-    }
-
-    /**
      * Get package file name
      *
      * @param string $version
@@ -184,9 +100,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function getPackageFileName(string $version): string
     {
-        $fileName = \str_replace('/','_',$this->getPackageName());
-
-        return $fileName . '-' . $version . '.zip';
+        return \str_replace('/','_',$this->getPackageName()) . '-' . $version . '.zip';
     }
     
     /**
@@ -196,46 +110,16 @@ abstract class Repository implements RepositoryInterface
      */
     public function getPackageName(): string
     {
-        return $this->packageName;
+        return $this->package->getName();
     }
 
     /**
-     * Get repository name
+     * Get package type
      *
      * @return string
      */
-    public function getRepositoryName(): string
+    public function getPackageType(): string
     {
-        return $this->repositoryName ?? '';
-    }
-
-    /**
-     * Extract repositry zip file to  storage/temp folder
-     *
-     * @param string $version
-     * @param string|null $targetDir
-     * @return string|false  Return packge folder
-    */
-    protected function extractRepository(string $version, ?string $targetDir = null)
-    {
-        $targetDir = $targetDir ?? $this->tempDir;
-        $repositoryName = $this->getRepositoryName();
-        $repositoryFolder = $repositoryName . '-' . $version;
-        $packageFileName = $this->getPackageFileName($version);
-        $zipFile = $this->repositoryDir . $packageFileName;
-        
-        $this->storage->deleteDir('temp/' . $repositoryFolder);
-        ZipFile::extract($zipFile,$targetDir);
-
-        return ($this->storage->has('temp/' . $repositoryFolder) == true) ? $repositoryFolder : false;
-    }
-
-    /**
-     * Resolve package name and repository name
-     *
-     * @return void
-    */
-    protected function resolvePackageName(): void
-    {
+        return $this->package->getType();
     }
 }

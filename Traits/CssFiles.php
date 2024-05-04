@@ -21,7 +21,7 @@ trait CssFiles
      */
     public function getCssPath(): string
     {
-        return $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR;
+        return $this->getPath() . 'css' . DIRECTORY_SEPARATOR;
     }
 
     /**

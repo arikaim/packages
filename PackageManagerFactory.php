@@ -29,13 +29,14 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
      * @var array
      */
     private static $packageClass = [
-        PackageManager::EXTENSION_PACKAGE          => 'Arikaim\\Core\\Packages\\ExtensionPackage',
-        PackageManager::LIBRARY_PACKAGE            => 'Arikaim\\Core\\Packages\\LibraryPackage',
-        PackageManager::TEMPLATE_PACKAGE           => 'Arikaim\\Core\\Packages\\TemplatePackage',
-        PackageManager::MODULE_PACKAGE             => 'Arikaim\\Core\\Packages\\ModulePackage',
-        PackageManager::COMPOSER_PACKAGE           => 'Arikaim\\Core\\Packages\\ComposerPackage',
-        PackageManager::COMPONENTS_LIBRARY_PACKAGE => 'Arikaim\\Core\\Packages\\ComponentsLibraryPackage',
-        PackageManager::SERVICE_PACKAGE            => 'Arikaim\\Core\\Packages\\ServicePackage'
+        PackageManager::EXTENSION_PACKAGE          => 'Arikaim\\Core\\Packages\\Type\\ExtensionPackage',
+        PackageManager::LIBRARY_PACKAGE            => 'Arikaim\\Core\\Packages\\Type\\LibraryPackage',
+        PackageManager::TEMPLATE_PACKAGE           => 'Arikaim\\Core\\Packages\\Type\\TemplatePackage',
+        PackageManager::MODULE_PACKAGE             => 'Arikaim\\Core\\Packages\\Type\\ModulePackage',
+        PackageManager::COMPOSER_PACKAGE           => 'Arikaim\\Core\\Packages\\Type\\ComposerPackage',
+        PackageManager::COMPONENTS_LIBRARY_PACKAGE => 'Arikaim\\Core\\Packages\\Type\\ComponentsLibraryPackage',
+        PackageManager::SERVICE_PACKAGE            => 'Arikaim\\Core\\Packages\\Type\\ServicePackage',
+        PackageManager::HTML_COMPONENT_PACKAGE     => 'Arikaim\\Core\\Packages\\Type\\HtmlComponentPackage'
     ];
 
     /**
@@ -50,7 +51,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::MODULE_PACKAGE              => Path::MODULES_PATH,
         PackageManager::COMPOSER_PACKAGE            => Path::COMPOSER_VENDOR_PATH,
         PackageManager::COMPONENTS_LIBRARY_PACKAGE  => Path::COMPONENTS_PATH,
-        PackageManager::SERVICE_PACKAGE             => Path::SERVICES_PATH
+        PackageManager::SERVICE_PACKAGE             => Path::SERVICES_PATH,
+        PackageManager::HTML_COMPONENT_PACKAGE      => Path::COMPONENTS_PATH
     ];
 
     /**
@@ -65,7 +67,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         PackageManager::MODULE_PACKAGE             => CORE_NAMESPACE . '\\Models\\Modules',
         PackageManager::COMPOSER_PACKAGE           => null,
         PackageManager::COMPONENTS_LIBRARY_PACKAGE => null,
-        PackageManager::SERVICE_PACKAGE            => null
+        PackageManager::SERVICE_PACKAGE            => null,
+        PackageManager::HTML_COMPONENT_PACKAGE     => null
     ];
 
     /**
@@ -79,7 +82,8 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         'modules'    => PackageManager::MODULE_PACKAGE,   
         'composer'   => PackageManager::COMPOSER_PACKAGE,       
         'components' => PackageManager::COMPONENTS_LIBRARY_PACKAGE, 
-        'services'   => PackageManager::SERVICE_PACKAGE,     
+        'services'   => PackageManager::SERVICE_PACKAGE,   
+        'component'  => PackageManager::HTML_COMPONENT_PACKAGE,     
     ];
 
     /**

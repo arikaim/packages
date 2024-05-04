@@ -7,11 +7,11 @@
  * @license     http://www.arikaim.com/license
  * 
 */
-namespace Arikaim\Core\Packages;
+namespace Arikaim\Core\Packages\Type;
 
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Packages\Interfaces\ViewComponentsInterface;
-use Arikaim\Core\Packages\Package;
+use Arikaim\Core\Packages\Type\Package;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Packages\Traits\ViewComponents;

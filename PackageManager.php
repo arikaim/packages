@@ -16,12 +16,9 @@ use Arikaim\Core\Interfaces\CacheInterface;
 use Arikaim\Core\Collection\Collection;
 use Arikaim\Core\Packages\Composer;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
-use Arikaim\Core\Packages\Repository\GitHubRepository;
 use Arikaim\Core\Packages\Repository\ArikaimRepository;
-use Arikaim\Core\Packages\Repository\ComposerRepository;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Path;
-use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Utils\ZipFile;
 use Closure;
 use Exception;
@@ -41,21 +38,13 @@ class PackageManager implements PackageManagerInterface
     const COMPOSER_PACKAGE           = 'composer';
     const COMPONENTS_LIBRARY_PACKAGE = 'components';
     const SERVICE_PACKAGE            = 'service';
+    const HTML_COMPONENT_PACKAGE     = 'component';
 
     /**
      *  Repository type
     */
-    const GITHUB_REPOSITORY         = 'github';
-    const GITHUB_PRIVATE_REPOSITORY = 'private-github';
     const ARIKAIM_REPOSITORY        = 'arikaim';
     const COMPOSER_REPOSITORY       = 'composer';
-
-    /**
-     * Cache save time
-     *
-     * @var integer
-     */
-    public static $cacheSaveTime = 4;
 
     /**
      * Package type
@@ -98,6 +87,13 @@ class PackageManager implements PackageManagerInterface
      * @var PackageRegistryInterface
      */
     protected $packageRegistry;
+
+    /**
+     * Package class
+     *
+     * @var string
+     */
+    protected $packageClass;
 
     /**
      * Constructor
@@ -152,12 +148,8 @@ class PackageManager implements PackageManagerInterface
             $propertes->set('name',$name);
         }
         $class = $this->packageClass;        
-       
-        if (\class_exists($class) == true) {
-            return new $class($this->path,$propertes,$this->packageRegistry);
-        }
 
-        return null;
+        return new $class($this->path,$propertes,$this->packageRegistry,$this->packageType);
     }
 
     /**
@@ -177,16 +169,13 @@ class PackageManager implements PackageManagerInterface
      * Get package repository
      *
      * @param string $packageName
-     * @param string|null $accessKey
      * @return RepositoryInterface|null
      */
-    public function getRepository(string $packageName, ?string $accessKey = null)
+    public function getRepository(string $packageName): ?object
     {
-        $properties = Self::loadPackageProperties($packageName,$this->path,$this->packageType);
-        $url = $properties->get('repository',$packageName);
-        $type = $properties->get('repository-type',Self::GITHUB_REPOSITORY);
+        $package = $this->createPackage($packageName);
 
-        return (empty($url) == false) ? $this->createRepository($url,$accessKey,$type) : null;
+        return ($package == null) ? null : new ArikaimRepository($package,$this->storage,$this->httpClient);          
     }
 
     /**
@@ -201,7 +190,7 @@ class PackageManager implements PackageManagerInterface
         $result = ($cached == true) ? $this->cache->fetch($this->packageType . '.list') : false;
         if ($result === false) {
             $result = $this->scan($filter);
-            $this->cache->save($this->packageType . '.list',$result,Self::$cacheSaveTime);
+            $this->cache->save($this->packageType . '.list',$result);
         } 
         
         return $result;
@@ -217,17 +206,21 @@ class PackageManager implements PackageManagerInterface
         return $this->path;
     }
 
-
     /**
      * Load package properties file 
      *
      * @param string $name
-     * @param string $path
+     * @param string|null $path
+     * @param string|null $packageType
      * @throws Exception
      * @return Collection
      */
-    public static function loadPackageProperties(string $name, ?string $path, ?string $packageType = null) 
+    public static function loadPackageProperties(string $name, ?string $path = null, ?string $packageType = null) 
     {         
+        if ($path === null) {
+            $path = PackageManagerFactory::getPackagePath($packageType);
+        }
+
         if ($packageType == Self::COMPOSER_PACKAGE) {
             $data = Composer::getInstalledPackageInfo($name);
             $data = (\is_array($data) == true) ? $data : [];
@@ -236,8 +229,7 @@ class PackageManager implements PackageManagerInterface
             $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
             $data = File::readJsonFile($fileName);
             if (\is_array($data) == false) {
-                throw new Exception('Not valid package description file for package: ' . $name, 1);
-                $data = [];
+                throw new Exception('Not valid package description file for package: ' . $name, 1);             
             }           
         }
        
@@ -501,9 +493,9 @@ class PackageManager implements PackageManagerInterface
         }
 
         $fileName = $package->getName() . '-' . $this->packageType . '-' . $package->getVersion() . '.zip';
-        $sourcePath = $this->getPath() . $name . DIRECTORY_SEPARATOR;
+      
        
-        if (File::exists($sourcePath) == false) {
+        if (File::exists($this->getPath()) == false) {
             // source path not exist
             return false;
         }
@@ -512,94 +504,6 @@ class PackageManager implements PackageManagerInterface
             File::delete($zipFile);
         }
         
-        return ZipFile::create($sourcePath,$zipFile,['.git']);       
+        return ZipFile::create($this->getPath(),$zipFile,['.git']);       
     }
-
-    /**
-     * Create repository driver
-     *
-     * @param string $repositoryUrl
-     * @param string|null $accessKey
-     * @param string|null $type
-     * @return object|null
-     */
-    public function createRepository(string $repositoryUrl, ?string $accessKey = null, ?string $type = null): ?object
-    {
-        if (Utils::isValidUrl($repositoryUrl) == false) {
-            $repositoryUrl = Self::createRepositoryUrl($repositoryUrl,$type);
-        }
-        $type = (empty($type) == true) ? $this->resolveRepositoryType($repositoryUrl) : $type;
-
-        switch ($type) {
-            case Self::GITHUB_REPOSITORY:           
-                return new GitHubRepository(
-                    $repositoryUrl,
-                    Path::STORAGE_REPOSITORY_PATH,
-                    $this->path,
-                    $this->storage,
-                    $this->httpClient,
-                    $accessKey
-                );
-            case Self::ARIKAIM_REPOSITORY:
-                return new ArikaimRepository(
-                    $repositoryUrl,
-                    Path::STORAGE_REPOSITORY_PATH,
-                    $this->path,
-                    $this->storage,
-                    $this->httpClient,
-                    $accessKey
-                );
-            case Self::COMPOSER_REPOSITORY:
-                return new ComposerRepository($repositoryUrl);
-        }
-
-        return null;
-    }
-
-    /**
-     * Create repository url
-     *
-     * @param string $packageName
-     * @param string|null $type
-     * @return string|null
-     */
-    public static function createRepositoryUrl(string $packageName, ?string $type): ?string
-    {
-        $type = $type ?? Self::GITHUB_REPOSITORY; 
-        
-        switch ($type) {
-            case Self::GITHUB_REPOSITORY:           
-                return 'http://github.com/' . $packageName . '.git';
-            case Self::ARIKAIM_REPOSITORY:
-                return $packageName;
-            case Self::COMPOSER_REPOSITORY:
-                return $packageName;
-        }
-
-        return null;
-    }
-
-    /**
-     * Resolve package repository type
-     *   
-     * @param string $repositoryUrl   
-     * @return string|null
-     */
-    protected function resolveRepositoryType(string $repositoryUrl): ?string
-    {
-        if (empty($repositoryUrl) == true) {
-            return null;
-        }
-        if ($repositoryUrl == 'arikaim') {
-            return Self::ARIKAIM_REPOSITORY;
-        }
-        $url = \parse_url($repositoryUrl);
-        $host = $url['host'] ?? null;
-
-        if (($host == 'github.com') || ($host == 'www.github.com')) {
-            return Self::GITHUB_REPOSITORY;
-        }
-
-        return Self::ARIKAIM_REPOSITORY;       
-    }   
 }

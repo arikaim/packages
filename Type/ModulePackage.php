@@ -7,9 +7,9 @@
  * @license     http://www.arikaim.com/license
  * 
 */
-namespace Arikaim\Core\Packages;
+namespace Arikaim\Core\Packages\Type;
 
-use Arikaim\Core\Packages\Package;
+use Arikaim\Core\Packages\Type\Package;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
@@ -100,14 +100,12 @@ class ModulePackage extends Package implements PackageInterface
         $module = Factory::createModule($this->getName(),$this->getClass());
         if ($module == null) {
             throw new Exception('Not valid module class.');
-            return false;
         }
        
         if ($module instanceof ModuleInterface) {
             $module->setModuleName($this->getName());
         } else {
-            throw new Exception('Not valid module class type.');  
-            return false;          
+            throw new Exception('Not valid module class type.');   
         }
 
         // Bind methods

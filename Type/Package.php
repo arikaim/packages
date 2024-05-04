@@ -7,7 +7,7 @@
  * @license     http://www.arikaim.com/license
  * 
 */
-namespace Arikaim\Core\Packages;
+namespace Arikaim\Core\Packages\Type;
 
 use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\Utils\File;
@@ -44,18 +44,31 @@ class Package implements PackageInterface
     protected $path;
 
     /**
+     * Package type
+     *
+     * @var string|null
+     */
+    protected $type;
+
+    /**
      * Constructor
      *
      * @param string $path    
      * @param CollectionInterface $properties
      * @param PackageRegistryInterface|null $packageRegistry
      */
-    public function __construct(string $path, CollectionInterface $properties, ?PackageRegistryInterface $packageRegistry = null) 
+    public function __construct(
+        string $path, 
+        CollectionInterface $properties, 
+        ?PackageRegistryInterface $packageRegistry = null,
+        ?string $type = null
+    ) 
     {
         $this->path = $path;      
         $this->properties = $properties;
         $this->properties['version'] = Utils::formatVersion($properties->get('version','1.0.0'));       
         $this->packageRegistry = $packageRegistry;
+        $this->type = $type;
     }
 
     /**
@@ -95,7 +108,7 @@ class Package implements PackageInterface
      */
     public function getPath(): string
     {
-        return $this->path;
+        return $this->path . $this->getName() . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -135,7 +148,7 @@ class Package implements PackageInterface
      */
     public function getType(): ?string
     {
-        return $this->properties->get('package-type',null);
+        return (empty($this->type) == true) ? $this->properties->get('package-type',null) : $this->type;
     }
 
     /**

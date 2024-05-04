@@ -41,7 +41,7 @@ class Composer
             $option = new InputOption('--quiet',null,InputOption::VALUE_NONE,'Quiet');
             $cmd['--quiet'] = $option;
         }
-      
+    
         $input = new ArrayInput($cmd);       
         $application = new Application();    
         $application->setAutoExit(false); 

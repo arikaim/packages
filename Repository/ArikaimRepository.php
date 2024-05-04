@@ -22,27 +22,6 @@ use Exception;
 class ArikaimRepository extends Repository implements RepositoryInterface
 {
     /**
-     * Get last version url
-     *
-     * @return string
-     */
-    public function getLastVersionUrl(): string
-    {
-        return  ArikaimStore::PACKAGE_VERSION_URL . $this->getPackageName();
-    }
-    
-    /**
-     * Get download repo url
-     *
-     * @param string $version
-     * @return string
-     */
-    public function getDownloadUrl(string $version): string
-    {
-        return ArikaimStore::PACKAGE_DOWNLOAD_URL;
-    }
-
-    /**
      * Return true if repo is private
      *
      * @return boolean
@@ -60,7 +39,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     public function download(?string $version = null): bool
     {
-        $version = $version ?? $this->getLastVersion();
+        $version = $version ?? $this->getVersion();
         $url = $this->getDownloadUrl($version);
       
         File::setWritable($this->repositoryDir);
@@ -93,9 +72,9 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      *
      * @return string|null
      */
-    public function getLastVersion(): ?string
+    public function getVersion(): ?string
     {       
-        $url = $this->getLastVersionUrl();  
+        $url = $this->getPackageApiUrl('/api/repository/package/version/');
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
 
@@ -103,16 +82,14 @@ class ArikaimRepository extends Repository implements RepositoryInterface
     }
 
     /**
-     * Resolve package name and repository name
+     * Get package api url
      *
-     * @return void
+     * @param string $path
+     * @return string
      */
-    protected function resolvePackageName(): void
+    protected function getPackageApiUrl(string $path): string
     {
-        $tokens = \explode('/',\trim($this->repositoryUrl ?? ''));   
-
-        $this->repositoryName = $tokens[1];
-        $this->packageName = $this->repositoryUrl;    
+        return ArikaimStore::HOST . $path . $this->getPackageName() . '/' . $this->getPackageType();
     }
 
     /**

@@ -31,13 +31,13 @@ trait ViewComponents
     {
         switch ($this->getType()) {
             case 'template': 
-                $path = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+                $path = $this->getPath();
                 break;
             case 'components':
-                $path = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+                $path = $this->getPath();
                 break;
             default: 
-                $path = (empty($this->viewPath) == true) ? $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR : $this->viewPath;
+                $path = (empty($this->viewPath) == true) ? $this->getPath() . 'view' . DIRECTORY_SEPARATOR : $this->viewPath;
                 break;
         }
 

@@ -7,9 +7,9 @@
  * @license     http://www.arikaim.com/license
  * 
 */
-namespace Arikaim\Core\Packages;
+namespace Arikaim\Core\Packages\Type;
 
-use Arikaim\Core\Packages\Package;
+use Arikaim\Core\Packages\Type\Package;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Packages\Traits\ViewComponents;
 
@@ -40,7 +40,7 @@ class ComponentsLibraryPackage extends Package implements PackageInterface
     public function getProperties(bool $full = false)
     {
         if ($full == true) {          
-            $this->properties['components'] = $this->getComponentsRecursive($this->getPath() . $this->getName() . DIRECTORY_SEPARATOR);
+            $this->properties['components'] = $this->getComponentsRecursive($this->getPath());
         }
 
         return $this->properties; 

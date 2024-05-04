@@ -7,23 +7,23 @@
  * @license     http://www.arikaim.com/license
  * 
 */
-namespace Arikaim\Core\Packages;
+namespace Arikaim\Core\Packages\Type;
 
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
 use Arikaim\Core\Packages\Interfaces\ViewComponentsInterface;
-use Arikaim\Core\Packages\Package;
+use Arikaim\Core\Packages\Type\Package;
 use Arikaim\Core\Utils\Factory;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Http\Url;
 use Arikaim\Core\Utils\File;
 use Arikaim\Core\Collection\Collection;
-use DirectoryIterator;
 
 use Arikaim\Core\Packages\Traits\ViewComponents;
 use Arikaim\Core\Packages\Traits\CssFiles;
 use Arikaim\Core\Packages\Traits\JsFiles;
 use Arikaim\Core\Packages\Traits\ComponentTranslations;
 use Arikaim\Core\Packages\Traits\Themes;
+use DirectoryIterator;
 
 /**
  * Template package 
@@ -49,7 +49,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
 
         $this->properties['icon'] = $this->properties->get('icon',null); 
         if ($full == true) {              
-            $this->viewPath = $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR;
+            $this->viewPath = $this->getPath();
             $this->properties['path'] = $this->viewPath;
             $this->properties['components_path'] = $this->getComponentsPath();
             $this->properties['pages_path'] = $this->getPagesPath();

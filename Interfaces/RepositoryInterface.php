@@ -15,11 +15,11 @@ namespace Arikaim\Core\Packages\Interfaces;
 interface RepositoryInterface 
 {  
     /**
-     * Get access key for private repo
+     * Get access token for private repo
      *
      * @return string|null
      */
-    public function getAccessKey(): ?string;
+    public function getAccessToken(): ?string;
 
     /**
      * Download package
@@ -30,11 +30,11 @@ interface RepositoryInterface
     public function download(?string $version = null): bool;
 
     /**
-     * Get package last version
+     * Get package version
      *
      * @return string|null
      */
-    public function getLastVersion(): ?string;
+    public function getVersion(): ?string;
 
     /**
      * Get package name
@@ -44,11 +44,11 @@ interface RepositoryInterface
     public function getPackageName(): string;
 
     /**
-     * Get repository name
+     * Get package type
      *
      * @return string
      */
-    public function getRepositoryName(): string;
+    public function getPackageType(): string;
 
     /**
      * Install repository
@@ -57,11 +57,4 @@ interface RepositoryInterface
      * @return boolean
      */
     public function install(?string $version = null): bool;
-
-    /**
-     * Get repository url
-     *
-     * @return string
-     */
-    public function getRepositoryUrl(): string;
 }

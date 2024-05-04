@@ -21,7 +21,7 @@ trait JsFiles
      */
     public function getJsPath(): string
     {
-        return $this->getPath() . $this->getName() . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR;
+        return $this->getPath() . 'js' . DIRECTORY_SEPARATOR;
     }
 
     /**
