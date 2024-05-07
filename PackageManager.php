@@ -139,17 +139,20 @@ class PackageManager implements PackageManagerInterface
      * Create package 
      *
      * @param string $name
+     * @param bool $loadProperties
      * @return PackageInterface|null
     */
-    public function createPackage(string $name): ?object
+    public function createPackage(string $name, bool $loadProperties = true): ?object
     {      
-        $propertes = Self::loadPackageProperties($name,$this->path,$this->packageType);
+        $propertes = ($loadProperties == true) ? 
+            Self::loadPackageProperties($name,$this->path,$this->packageType) :
+            new Collection();
+        
         if (empty($propertes->get('name')) == true) {
             $propertes->set('name',$name);
         }
-        $class = $this->packageClass;        
 
-        return new $class($this->path,$propertes,$this->packageRegistry,$this->packageType);
+        return new ($this->packageClass)($this->path,$propertes,$this->packageRegistry,$this->packageType);
     }
 
     /**
@@ -173,9 +176,11 @@ class PackageManager implements PackageManagerInterface
      */
     public function getRepository(string $packageName): ?object
     {
-        $package = $this->createPackage($packageName);
-
-        return ($package == null) ? null : new ArikaimRepository($package,$this->storage,$this->httpClient);          
+        return new ArikaimRepository(
+            $packageName,
+            $this->packageType,
+            $this->storage,
+            $this->httpClient);          
     }
 
     /**

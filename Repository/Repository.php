@@ -12,7 +12,10 @@ namespace Arikaim\Core\Packages\Repository;
 use Arikaim\Core\Interfaces\StorageInterface;
 use Arikaim\Core\Interfaces\HttpClientInterface;
 use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
+use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Utils\ZipFile;
+use Arikaim\Core\Utils\File;
+use Closure;
 
 /**
  * Repository driver base class
@@ -20,11 +23,18 @@ use Arikaim\Core\Utils\ZipFile;
 abstract class Repository implements RepositoryInterface
 {
     /**
-     * Package ref
+     * Package name
      *
-     * @var object
+     * @var string
      */
-    protected $package;
+    protected $packageName;
+
+    /**
+     * Package type
+     *
+     * @var string
+     */
+    protected $packageType;
 
     /**
      * Local storage
@@ -41,25 +51,29 @@ abstract class Repository implements RepositoryInterface
     protected $httpClient = null;
 
     /**
-     * Temp directory
-     *
-     * @var string|null
-     */
-    protected $tempDir = null;
-
-    /**
     * Constructor
     *
-    * @param object $package
+    * @param string $packageName
+    * @param string $packageType
     * @param StorageInterface|null $storage
     * @param HttpClientInterface|null $httpClient
     */
-    public function __construct(object $package, ?StorageInterface $storage = null, ?HttpClientInterface $httpClient = null)
+    public function __construct(string $packageName, string $packageType, ?StorageInterface $storage = null, ?HttpClientInterface $httpClient = null)
     {
-        $this->package = $package;
+        $this->packageName = $packageName;
+        $this->packageType = $packageType;
         $this->storage = $storage;  
         $this->httpClient = $httpClient; 
-        $this->tempDir = (empty($storage) == false) ? $storage->getFullPath() . 'temp' . DIRECTORY_SEPARATOR : null;
+    }
+
+    /**
+     * Get access token for private repo
+     *
+     * @return string|null
+    */
+    public function getAccessToken(): ?string
+    {
+        return null;
     }
 
     /**
@@ -93,6 +107,50 @@ abstract class Repository implements RepositoryInterface
     abstract public function isPrivate(): bool;
 
     /**
+     * Extract package
+     *
+     * @param string       $destination
+     * @param string|null  $version
+     * @param Closure|null $callback
+     * @return boolean
+     */
+    public function extractPackage(string $destination, ?string $version = null, ?Closure $callback = null): bool
+    { 
+        if (File::exists($destination) == false) {
+            File::makeDir($destination);
+        }
+
+        $version = $version ?? $this->getVersion();
+        $packageFileName = $this->getRepositoryPath() . $this->getPackageFileName($version);
+        $files = $this->getPackageFiles($version);
+
+        $errors = 0;
+        foreach ($files as $file) {
+            $extract = (\is_callable($callback) == true) ? $callback($file) : true;
+            if ($extract == true) {
+                $result = ZipFile::extract($packageFileName,$destination,$file);
+                $errors += ($result == false) ? 1 : 0;
+            }
+        }
+
+        return ($errors == 0);
+    }
+
+    /**
+     * Get package files
+     *
+     * @param string|null $version
+     * @return array|null
+     */
+    public function getPackageFiles(?string $version = null): ?array
+    {
+        $version = $version ?? $this->getVersion();
+        $packageFileName = $this->getRepositoryPath() . $this->getPackageFileName($version);
+
+        return ZipFile::getFiles($packageFileName);
+    }
+
+    /**
      * Get package file name
      *
      * @param string $version
@@ -104,13 +162,23 @@ abstract class Repository implements RepositoryInterface
     }
     
     /**
+     * Get repository path
+     *
+     * @return string
+     */
+    public function getRepositoryPath(): string
+    {
+        return PATH::STORAGE_REPOSITORY_PATH . $this->getPackageType() . DIRECTORY_SEPARATOR;
+    }
+
+    /**
      * Get package name
      *
      * @return string
      */
     public function getPackageName(): string
     {
-        return $this->package->getName();
+        return $this->packageName;
     }
 
     /**
@@ -120,6 +188,6 @@ abstract class Repository implements RepositoryInterface
      */
     public function getPackageType(): string
     {
-        return $this->package->getType();
+        return $this->packageType;
     }
 }

@@ -12,6 +12,7 @@ namespace Arikaim\Core\Packages\Repository;
 use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 use Arikaim\Core\Packages\Repository\Repository;
 use Arikaim\Core\Utils\File;
+
 use Arikaim\Core\Utils\Utils;
 use Arikaim\Core\App\ArikaimStore;
 use Exception;
@@ -21,6 +22,7 @@ use Exception;
 */
 class ArikaimRepository extends Repository implements RepositoryInterface
 {
+  
     /**
      * Return true if repo is private
      *
@@ -40,24 +42,20 @@ class ArikaimRepository extends Repository implements RepositoryInterface
     public function download(?string $version = null): bool
     {
         $version = $version ?? $this->getVersion();
-        $url = $this->getDownloadUrl($version);
+        $url = $this->getPackageApiUrl('/api/repository/package/download/');
       
-        File::setWritable($this->repositoryDir);
-        $packageFileName = $this->repositoryDir . $this->getPackageFileName($version); 
+        File::makeDir($this->getRepositoryPath());
+        File::setWritable($this->getRepositoryPath());
+
+        $packageFileName = $this->getRepositoryPath() . $this->getPackageFileName($version);
       
         if (File::exists($packageFileName) == true) {
             File::delete($packageFileName);   
         }
        
         try {         
-            $packageName = $this->getPackageName();
-
-            $this->httpClient->put($url,[
-                'sink'        => $packageFileName,
-                'form_params' => [
-                    'repository'  => $packageName,
-                    'license_key' => $this->accessKey
-                ]
+            $this->httpClient->get($url,[
+                'sink' => $packageFileName,
             ]);
         } catch (Exception $e) { 
             echo $e->getMessage();  
@@ -67,6 +65,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
         return File::exists($packageFileName);
     }
 
+   
     /**
      * Get package last version
      *
