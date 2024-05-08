@@ -51,6 +51,13 @@ class Package implements PackageInterface
     protected $type;
 
     /**
+     * Package name
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
      * Constructor
      *
      * @param string $path    
@@ -59,16 +66,34 @@ class Package implements PackageInterface
      */
     public function __construct(
         string $path, 
-        CollectionInterface $properties, 
+        string $name, 
         ?PackageRegistryInterface $packageRegistry = null,
         ?string $type = null
     ) 
     {
         $this->path = $path;      
-        $this->properties = $properties;
-        $this->properties['version'] = Utils::formatVersion($properties->get('version','1.0.0'));       
+        $this->name = $name;      
+        $this->properties = new Collection([]);        
         $this->packageRegistry = $packageRegistry;
         $this->type = $type;
+    }
+
+    /**
+     * Load package descriptor file
+     *
+     * @return void
+     */
+    public function loadProperties(): void 
+    {         
+        $fileName = $this->getPath() . DIRECTORY_SEPARATOR . 'arikaim-package.json';
+        $data = File::readJsonFile($fileName);
+        if (\is_array($data) == true) {
+            if (empty($data['name'] ?? null) == true) {
+                $data['name'] = $this->name;
+            }           
+    
+            $this->properties->withData($data);   
+        }          
     }
 
     /**
@@ -118,7 +143,7 @@ class Package implements PackageInterface
      */
     public function getVersion(): string
     {
-        return $this->properties->get('version','1.0.0');
+        return Utils::formatVersion($this->properties->get('version','1.0.0'));   
     }
 
     /**
@@ -169,7 +194,7 @@ class Package implements PackageInterface
      */
     public function getName(): string
     {
-        return $this->properties->get('name');
+        return $this->name;
     }
 
     /**

@@ -144,15 +144,12 @@ class PackageManager implements PackageManagerInterface
     */
     public function createPackage(string $name, bool $loadProperties = true): ?object
     {      
-        $propertes = ($loadProperties == true) ? 
-            Self::loadPackageProperties($name,$this->path,$this->packageType) :
-            new Collection();
-        
-        if (empty($propertes->get('name')) == true) {
-            $propertes->set('name',$name);
+        $package = new ($this->packageClass)($this->path,$name,$this->packageRegistry,$this->packageType);
+        if ($loadProperties == true) {
+            $package->loadProperties();
         }
 
-        return new ($this->packageClass)($this->path,$propertes,$this->packageRegistry,$this->packageType);
+        return $package;
     }
 
     /**
@@ -209,41 +206,6 @@ class PackageManager implements PackageManagerInterface
     public function getPath(): string
     {
         return $this->path;
-    }
-
-    /**
-     * Load package properties file 
-     *
-     * @param string $name
-     * @param string|null $path
-     * @param string|null $packageType
-     * @throws Exception
-     * @return Collection
-     */
-    public static function loadPackageProperties(string $name, ?string $path = null, ?string $packageType = null) 
-    {         
-        if ($path === null) {
-            $path = PackageManagerFactory::getPackagePath($packageType);
-        }
-
-        if ($packageType == Self::COMPOSER_PACKAGE) {
-            $data = Composer::getInstalledPackageInfo($name);
-            $data = (\is_array($data) == true) ? $data : [];
-            $data['repository-type'] = Self::COMPOSER_REPOSITORY;
-        } else {
-            $fileName = $path . $name . DIRECTORY_SEPARATOR . 'arikaim-package.json';
-            $data = File::readJsonFile($fileName);
-            if (\is_array($data) == false) {
-                throw new Exception('Not valid package description file for package: ' . $name, 1);             
-            }           
-        }
-       
-        $properties = new Collection($data);    
-        if (empty($properties->name) == true) {
-            $properties->set('name',$name);
-        }           
-
-        return $properties;
     }
 
     /**
@@ -310,7 +272,9 @@ class PackageManager implements PackageManagerInterface
     {
         $packages = $this->getPackages();
         foreach ($packages as $name) {
-            $properties = Self::loadPackageProperties($name,$this->path,$this->packageType);
+            $package = $this->createPackage($name);
+            $properties = $package->getProperties();
+
             if ($properties->get($param) == $value) {
                 return $this->createPackage($name);
             }

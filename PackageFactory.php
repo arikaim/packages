@@ -10,7 +10,6 @@
 namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Interfaces\Packages\PackageFactoryInterface;
-use Arikaim\Core\Packages\PackageManager;
 use Arikaim\Core\Packages\PackageManagerFactory;
 
 /**
@@ -26,12 +25,17 @@ class PackageFactory implements PackageFactoryInterface
      * @return PackageInterface
     */
     public function createPackage(string $packageType, string $name)
-    {      
-        $path = PackageManagerFactory::getPackagePath($packageType);
-        $propertes = PackageManager::loadPackageProperties($name,$path);
+    {       
         $class = PackageManagerFactory::getPackageClass($packageType);
-        $registry = PackageManagerFactory::createPackageRegistry($packageType);
+      
+        $package =  new $class(
+            PackageManagerFactory::getPackagePath($packageType),
+            $name,
+            PackageManagerFactory::createPackageRegistry($packageType),
+            $packageType);
 
-        return new $class($path,$propertes,$registry);
+        $package->loadProperties();
+
+        return $package;
     }
 }

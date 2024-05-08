@@ -19,6 +19,20 @@ use Arikaim\Core\Packages\Composer;
 class ComposerPackage extends Package implements PackageInterface
 {
     /**
+     * Load package descriptor file
+     *
+     * @return void
+     */
+    public function loadProperties(): void 
+    {         
+        $data = Composer::getInstalledPackageInfo($this->getName());
+        $data = (\is_array($data) == true) ? $data : [];
+        $data['repository-type'] = Self::COMPOSER_REPOSITORY;
+      
+        $this->properties->withData($data);      
+    }
+
+    /**
      * Get installed composer package details
      *
      * @return mixed
