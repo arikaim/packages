@@ -32,9 +32,9 @@ interface RepositoryInterface
     /**
      * Get package version
      *
-     * @return string|null
+     * @return string
      */
-    public function getVersion(): ?string;
+    public function getVersion(): string;
 
     /**
      * Get package name

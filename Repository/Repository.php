@@ -97,7 +97,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return string
      */
-    abstract public function getVersion(): ?string;
+    abstract public function getVersion(): string;
 
     /**
      * Return true if repo is private

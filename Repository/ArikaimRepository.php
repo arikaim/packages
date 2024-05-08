@@ -69,15 +69,15 @@ class ArikaimRepository extends Repository implements RepositoryInterface
     /**
      * Get package last version
      *
-     * @return string|null
+     * @return string
      */
-    public function getVersion(): ?string
+    public function getVersion(): string
     {       
         $url = $this->getPackageApiUrl('/api/repository/package/version/');
         $json = $this->httpClient->fetch($url);
         $data = \json_decode($json,true);
 
-        return (\is_array($data) == true) ? $data['result']['version'] ?? null : null;         
+        return (\is_array($data) == true) ? $data['result']['version'] ?? '1.0.0' : '1.0.0';         
     }
 
     /**
