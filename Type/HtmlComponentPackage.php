@@ -11,7 +11,6 @@ namespace Arikaim\Core\Packages\Type;
 
 use Arikaim\Core\Packages\Type\Package;
 use Arikaim\Core\Packages\Interfaces\PackageInterface;
-use Arikaim\Core\Interfaces\ComponentInterface;
 
 /**
  * Package base class
@@ -35,8 +34,8 @@ class HtmlComponentPackage extends Package implements PackageInterface
      */
     public function getPath(): string
     {
-        $tokens = \explode(ComponentInterface::COMPONENTS_LIBRARY,$this->getName());
-        $componentPath = \str_replace('.',DIRECTORY_SEPARATOR,$this->getName());
+        $tokens = \explode('~',$this->getName());
+        $componentPath = \str_replace('.',DIRECTORY_SEPARATOR,$tokens[1]);
 
         return $this->path . $tokens[0] . DIRECTORY_SEPARATOR . $componentPath . DIRECTORY_SEPARATOR;
     }

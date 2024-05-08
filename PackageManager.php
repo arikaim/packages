@@ -21,7 +21,6 @@ use Arikaim\Core\Utils\File;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Utils\ZipFile;
 use Closure;
-use Exception;
 
 /**
  * Package managers base class
