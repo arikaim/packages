@@ -41,6 +41,8 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     public function download(?string $version = null): bool
     {
+        global $arikaim;
+
         $version = $version ?? $this->getVersion();
         $url = $this->getPackageApiUrl('/api/repository/package/download/');
       
@@ -54,7 +56,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
         }
        
         try {         
-            $this->httpClient->get($url,[
+            $arikaim->get('http')->get($url,[
                 'sink' => $packageFileName,
             ]);
         } catch (Exception $e) { 
@@ -73,8 +75,10 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     public function getVersion(): string
     {       
+        global $arikaim;
+
         $url = $this->getPackageApiUrl('/api/repository/package/version/');
-        $json = $this->httpClient->fetch($url);
+        $json = $arikaim->get('http')->fetch($url);
         $data = \json_decode($json,true);
 
         return (\is_array($data) == true) ? $data['result']['version'] ?? '1.0.0' : '1.0.0';         
@@ -99,6 +103,8 @@ class ArikaimRepository extends Repository implements RepositoryInterface
      */
     public function install(?string $version = null): bool
     {
+        global $arikaim;
+
         $version = (empty($version) == true) ? $this->getLastVersion() : $version;
         $result = $this->download($version);
 
@@ -110,7 +116,7 @@ class ArikaimRepository extends Repository implements RepositoryInterface
                 // Error extracting zip repository file
                 return false;
             }
-            $json = $this->storage->read('temp/' . $repositoryFolder . '/arikaim-package.json');
+            $json = $arikaim->get('storage')->read('temp/' . $repositoryFolder . '/arikaim-package.json');
             
             if (Utils::isJson($json) == true) {
                 $packageProperties = \json_decode($json,true);

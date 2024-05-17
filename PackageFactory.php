@@ -28,7 +28,7 @@ class PackageFactory implements PackageFactoryInterface
     {       
         $class = PackageManagerFactory::getPackageClass($packageType);
       
-        $package =  new $class(
+        $package = new $class(
             PackageManagerFactory::getPackagePath($packageType),
             $name,
             PackageManagerFactory::createPackageRegistry($packageType),

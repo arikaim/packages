@@ -9,11 +9,8 @@
 */
 namespace Arikaim\Core\Packages;
 
-use Arikaim\Core\Interfaces\StorageInterface;
-use Arikaim\Core\Interfaces\HttpClientInterface;
 use Arikaim\Core\Interfaces\Packages\PackageManagerInterface;
 use Arikaim\Core\Interfaces\Packages\PackageManagerFactoryInterface;
-use Arikaim\Core\Interfaces\CacheInterface;
 use Arikaim\Core\Packages\PackageManager;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Packages\PackageValidator;
@@ -87,38 +84,11 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
     ];
 
     /**
-     * Cache
-     *
-     * @var CacheInterface
-     */
-    private $cache;
-
-    /**
-     * Local storage
-     *
-     * @var StorageInterface
-     */
-    private $storage;
-
-    /**
-     * Http client
-     *
-     * @var HttpClientInterface
-     */
-    private $httpClient;
-
-    /**
      * Constructor
      * 
-     * @param CacheInterface $cache
-     * @param StorageInterface $storage
-     * @param HttpClientInterface $httpClient
      */
-    public function __construct(CacheInterface $cache, StorageInterface $storage, HttpClientInterface $httpClient)
-    {
-        $this->cache = $cache;
-        $this->storage = $storage;
-        $this->httpClient = $httpClient;
+    public function __construct()
+    {        
     }
 
     /**
@@ -148,7 +118,7 @@ class PackageManagerFactory implements PackageManagerFactoryInterface
         $path = Self::getPackagePath($packageType);
         $registry = Self::createPackageRegistry($packageType);
 
-        return new PackageManager($path,$packageType,$packageClass,$this->cache,$this->storage,$this->httpClient,$registry);
+        return new PackageManager($path,$packageType,$packageClass,$registry);
     }
 
     /**

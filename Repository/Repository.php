@@ -9,8 +9,6 @@
 */
 namespace Arikaim\Core\Packages\Repository;
 
-use Arikaim\Core\Interfaces\StorageInterface;
-use Arikaim\Core\Interfaces\HttpClientInterface;
 use Arikaim\Core\Packages\Interfaces\RepositoryInterface;
 use Arikaim\Core\Utils\Path;
 use Arikaim\Core\Utils\ZipFile;
@@ -37,33 +35,15 @@ abstract class Repository implements RepositoryInterface
     protected $packageType;
 
     /**
-     * Local storage
-     *
-     * @var StorageInterface|null
-     */
-    protected $storage = null;
-
-    /**
-     * Http client
-     *
-     * @var HttpClientInterface|null
-     */
-    protected $httpClient = null;
-
-    /**
     * Constructor
     *
     * @param string $packageName
     * @param string $packageType
-    * @param StorageInterface|null $storage
-    * @param HttpClientInterface|null $httpClient
     */
-    public function __construct(string $packageName, string $packageType, ?StorageInterface $storage = null, ?HttpClientInterface $httpClient = null)
+    public function __construct(string $packageName, string $packageType)
     {
         $this->packageName = $packageName;
         $this->packageType = $packageType;
-        $this->storage = $storage;  
-        $this->httpClient = $httpClient; 
     }
 
     /**

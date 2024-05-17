@@ -10,9 +10,6 @@
 namespace Arikaim\Core\Packages;
 
 use Arikaim\Core\Interfaces\Packages\PackageManagerInterface;
-use Arikaim\Core\Interfaces\StorageInterface;
-use Arikaim\Core\Interfaces\HttpClientInterface;
-use Arikaim\Core\Interfaces\CacheInterface;
 use Arikaim\Core\Collection\Collection;
 use Arikaim\Core\Packages\Composer;
 use Arikaim\Core\Packages\Interfaces\PackageRegistryInterface;
@@ -60,27 +57,6 @@ class PackageManager implements PackageManagerInterface
     protected $path;
     
     /**
-     * Cache
-     *
-     * @var CacheInterface
-     */
-    protected $cache;
-
-    /**
-     * Local Storage
-     *
-     * @var StorageInterface
-     */
-    protected $storage;
-
-    /**
-     * Http client
-     *
-     * @var HttpClientInterface
-     */
-    protected $httpClient;
-    
-    /**
      * Package Registry
      *
      * @var PackageRegistryInterface
@@ -100,26 +76,17 @@ class PackageManager implements PackageManagerInterface
      * @param string $packagePath
      * @param string $packageType
      * @param string $packageClass
-     * @param CacheInterface $cache
-     * @param StorageInterface $storage
-     * @param HttpClientInterface $httpClient
      * @param PackageRegistryInterface|null $packageRegistry
      */
     public function __construct(
         string $packagePath, 
         string $packageType, 
         string $packageClass, 
-        CacheInterface $cache, 
-        StorageInterface $storage, 
-        HttpClientInterface $httpClient, 
         ?PackageRegistryInterface $packageRegistry = null
     )
     {
         $this->path = $packagePath;
         $this->packageType = $packageType;
-        $this->cache = $cache;
-        $this->storage = $storage;
-        $this->httpClient = $httpClient;
         $this->packageClass = $packageClass;      
         $this->packageRegistry = $packageRegistry;
     }
@@ -172,11 +139,7 @@ class PackageManager implements PackageManagerInterface
      */
     public function getRepository(string $packageName): ?object
     {
-        return new ArikaimRepository(
-            $packageName,
-            $this->packageType,
-            $this->storage,
-            $this->httpClient);          
+        return new ArikaimRepository($packageName,$this->packageType);          
     }
 
     /**
@@ -188,10 +151,12 @@ class PackageManager implements PackageManagerInterface
      */
     public function getPackages(bool $cached = false, $filter = null)
     {
-        $result = ($cached == true) ? $this->cache->fetch($this->packageType . '.list') : false;
+        global $arikaim;
+
+        $result = ($cached == true) ? $arikaim->get('cache')->fetch($this->packageType . '.list') : false;
         if ($result === false) {
             $result = $this->scan($filter);
-            $this->cache->save($this->packageType . '.list',$result);
+            $arikaim->get('cache')->save($this->packageType . '.list',$result);
         } 
         
         return $result;
@@ -321,7 +286,10 @@ class PackageManager implements PackageManagerInterface
      */
     public function installAllPackages(?Closure $onProgress = null, ?Closure $onProgressError = null, bool $skipErrors = true): bool
     {
-        $this->cache->clear();
+        global $arikaim;
+
+        $arikaim->get('cache')->clear();
+
         $errors = 0;
         $packages = $this->getPackages();
         $packages = $this->sortPackages($packages);
@@ -350,7 +318,9 @@ class PackageManager implements PackageManagerInterface
      */
     public function postInstallAllPackages(): bool
     {
-        $this->cache->clear();
+        global $arikaim;
+
+        $arikaim->get('cache')->clear();
         $errors = 0;
 
         $packages = $this->getPackages();
