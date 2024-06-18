@@ -9,7 +9,6 @@
 */
 namespace Arikaim\Core\Packages\Traits;
 
-use Arikaim\Core\Utils\Factory;
 use DirectoryIterator;
 
 /**

@@ -18,6 +18,7 @@ use Arikaim\Core\Interfaces\ModuleInterface;
 use Arikaim\Core\Packages\Traits\ConsoleCommands;
 use Arikaim\Core\Packages\Traits\Drivers;
 use Arikaim\Core\Packages\Traits\Jobs;
+use Arikaim\Core\Packages\Traits\Actions;
 use Exception;
 
 /**
@@ -27,6 +28,7 @@ class ModulePackage extends Package implements PackageInterface
 {
     use Drivers, 
         Jobs,
+        Actions,
         ConsoleCommands;
 
     const SERVICE = 0;
