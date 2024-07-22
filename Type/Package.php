@@ -85,7 +85,7 @@ class Package implements PackageInterface
      */
     public function loadProperties(): void 
     {         
-        $fileName = $this->getPath() . DIRECTORY_SEPARATOR . 'arikaim-package.json';
+        $fileName = $this->getPath() . 'arikaim-package.json';
         $data = File::readJsonFile($fileName);
         if (\is_array($data) == true) {
             if (empty($data['name'] ?? null) == true) {
