@@ -180,6 +180,9 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         // delete registered events subscribers
         $arikaim->get('event')->deleteSubscribers(['extension_name' => $extensionName]);
 
+        // Create db models
+        $extObj->dbInstall();
+
         // run install extension      
         $extObj->install(); 
       
