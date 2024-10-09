@@ -21,6 +21,7 @@ use Arikaim\Core\Packages\Traits\Jobs;
 use Arikaim\Core\Packages\Traits\Actions;
 use Arikaim\Core\Packages\Traits\Middlewares;
 use DirectoryIterator;
+use Closure;
 
 /**
  * Extension Package
@@ -107,19 +108,13 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
         return (bool)$result;       
     }
 
-    /**
-     * Get extension models.
-     *
-     * @return array
-     */
-    public function getModels(): array
-    {      
+    protected function getModelsIterator(Closure $callback)
+    {
         $path = $this->getModelsSchemaPath();
         if (File::exists($path) == false) {
             return [];
         }
-
-        $result = [];
+        
         foreach (new DirectoryIterator($path) as $file) {
             if (
                 $file->isDot() == true || 
@@ -131,11 +126,27 @@ class ExtensionPackage extends Package implements PackageInterface, ViewComponen
             $baseClass = \str_replace('.php','',$fileName);
             $schema = Factory::createSchema($baseClass,$this->getName());
 
-            if (\is_subclass_of($schema,'Arikaim\Core\Db\Schema') == true) {               
-                $item['name'] = $schema->getTableName();               
-                $result[] = $item;
+            if (\is_subclass_of($schema,'Arikaim\Core\Db\Schema') == true) {    
+                $callback($schema);                         
             }
         }    
+    }
+
+    /**
+     * Get extension models.
+     *
+     * @return array
+     */
+    public function getModels(): array
+    {      
+        $result = [];
+        $this->getModelsIterator(function($schema) use(&$result) {
+            $item = [
+                'name'  => $schema->getTableName(),
+                'class' => \get_class($schema)   
+            ];
+            $result[] = $item;
+        });
 
         return $result;
     }
