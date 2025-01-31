@@ -113,7 +113,7 @@ class TemplatePackage extends Package implements PackageInterface, ViewComponent
             //       
             $handlerParams = $route->getByPath('handler/params',null); 
             $handlerMethod = $route->getByPath('handler/method',null);
-            $pageName = ($route->isEmpty('page') == false) ? $this->getName() . ':' . $route['page'] : null;
+            $pageName = ($route->isEmpty('page') == false) ? $route['page'] : null;
             $auth = $route->getByPath('access/auth',null);
             $auth = $arikaim->get('access')->resolveAuthType($auth);
             $redirect = $route->getByPath('access/redirect',null);
