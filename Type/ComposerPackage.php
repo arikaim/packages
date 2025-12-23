@@ -18,6 +18,9 @@ use Arikaim\Core\Packages\Composer;
 */
 class ComposerPackage extends Package implements PackageInterface
 {
+    const COMPOSER_REPOSITORY = 'composer';
+    
+    
     /**
      * Load package descriptor file
      *
